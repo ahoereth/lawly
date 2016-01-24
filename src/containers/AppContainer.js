@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { App } from 'components';
+import { App } from '../components';
 
 
 class AppContainer extends React.Component {

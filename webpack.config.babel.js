@@ -1,19 +1,57 @@
 import process from 'process';
 import path from 'path';
-import webpack from 'webpack';
+import {
+  HotModuleReplacementPlugin,
+  NoErrorsPlugin,
+  optimize
+} from 'webpack';
 
 
 /* global __dirname */
 export const ROOT = __dirname;
 
 
-let devtool;
-let entry = ['./src/index'];
-let plugins, devServer;
 
 
+// *****************************************************************************
+// Defaults
+let config = {
+  devtool: '', // 'cheap-source-map',
+  entry: ['./src/index'],
+  output: {
+    path: path.join(ROOT, 'public', 'assets'),
+    publicPath: '/assets/',
+    filename: 'bundle.js'
+  },
+  module: {
+    loaders: [{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      loader: 'babel',
+      query: {
+        plugins: [
+          'transform-class-properties',
+          'transform-export-extensions'
+        ]
+      }
+    }, {
+      test: /\.js$/,
+      loader: 'eslint-loader',
+      exclude: /node_modules/
+    }]
+  },
+  plugins: [
+    new optimize.OccurenceOrderPlugin()
+  ]
+};
+
+
+
+
+// *****************************************************************************
+// Development
 if (process.env.NODE_ENV === 'development') {
-  devServer = {
+  config.devServer = {
     quiet: false,
     noInfo: false,
     stats: {
@@ -25,47 +63,45 @@ if (process.env.NODE_ENV === 'development') {
       chunks: false,
       chunkModules: false
     },
-    publicPath: '/assets/'
+    publicPath: '/'
   };
 
-  devtool = '#cheap-module-eval-source-map';
-  entry.push('webpack-hot-middleware/client');
+  config.devtool = '#cheap-module-eval-source-map';
+  config.entry.push('webpack-hot-middleware/client');
 
-  plugins = [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  ];
+  // Configure babel
+  config.module.loaders[0].query.plugins.push(
+    ['react-transform', {
+      transforms: [{
+        transform: 'react-transform-hmr',
+        imports: [ 'react' ],
+        locals: [ 'module' ]
+      }]
+    }]
+  );
+
+  config.plugins.push(new HotModuleReplacementPlugin());
+  config.plugins.push(new NoErrorsPlugin());
 }
 
 
-const config = {
-  devtool: devtool || 'eval',
-  entry: entry || ['./src/index'],
-  output: {
-    path: path.join(ROOT, 'public'),
-    publicPath: '/assets/',
-    filename: 'bundle.js'
-  },
-  resolve: {
-    modulesDirectories: [
-      './src',
-      './node_modules'
-    ]
-  },
-  module: {
-    loaders: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      loader: 'babel'
-    }, {
-      test: /\.js$/,
-      loader: 'eslint-loader',
-      include: 'src'
-    }]
-  },
-  devServer: devServer || {},
-  plugins: plugins || []
-};
 
 
-export default config;
+// *****************************************************************************
+// Production
+if (process.env.NODE_ENV === 'production') {
+  config.plugins.push(new optimize.UglifyJsPlugin({
+    mangle: true,
+    compress: true,
+    comments: () => false
+  }));
+  // OfflinePlugin https://github.com/NekR/offline-plugin
+}
+
+
+
+
+// *****************************************************************************
+// Export
+const CONFIG = config;
+export default CONFIG;
