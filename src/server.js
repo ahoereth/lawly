@@ -1,22 +1,24 @@
+import process from 'process';
 import path from 'path';
 import express from 'express';
 import webpack from 'webpack';
-import config from '../webpack.config.babel';
+import CONFIG, { ROOT } from '../webpack.config.babel';
 
 
 const app = express();
 
 
 if (process.env.NODE_ENV === 'development') {
-  const compiler = webpack(config);
+  const compiler = webpack(CONFIG);
 
-  app.use(require('webpack-dev-middleware')(compiler, config.devServer));
+  /* global require */
+  app.use(require('webpack-dev-middleware')(compiler, CONFIG.devServer));
   app.use(require('webpack-hot-middleware')(compiler));
 }
 
 
 app.get('*', function(req, res) {
-  res.sendFile(path.join(__dirname, '..', 'public', req.path));
+  res.sendFile(path.join(ROOT, 'public', req.path));
 });
 
 app.listen(3000, 'localhost', function(err) {

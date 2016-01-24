@@ -1,7 +1,10 @@
-import path from 'path'
+import process from 'process';
+import path from 'path';
 import webpack from 'webpack';
 
-const ROOT = path.resolve(__dirname);
+
+/* global __dirname */
+export const ROOT = __dirname;
 
 
 let devtool;
@@ -22,8 +25,7 @@ if (process.env.NODE_ENV === 'development') {
       chunks: false,
       chunkModules: false
     },
-    path: 'public',
-    publicPath: '/'
+    publicPath: '/assets/'
   };
 
   devtool = '#cheap-module-eval-source-map';
@@ -40,7 +42,8 @@ const config = {
   devtool: devtool || 'eval',
   entry: entry || ['./src/index'],
   output: {
-    path: path.join(__dirname, 'public', 'assets'),
+    path: path.join(ROOT, 'public'),
+    publicPath: '/assets/',
     filename: 'bundle.js'
   },
   resolve: {
@@ -53,7 +56,11 @@ const config = {
     loaders: [{
       test: /\.js$/,
       exclude: /node_modules/,
-      loader: 'babel',
+      loader: 'babel'
+    }, {
+      test: /\.js$/,
+      loader: 'eslint-loader',
+      include: 'src'
     }]
   },
   devServer: devServer || {},
