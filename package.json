@@ -4,13 +4,18 @@
   "description": "Web client for Lawly.",
   "scripts": {
     "start": "npm run dev",
-    "dev": "NODE_ENV=development ./node_modules/.bin/babel-node src/server.js",
-    "prod": "NODE_ENV=production ./node_modules/.bin/babel-node src/server.js",
-    "build": "NODE_ENV=production ./node_modules/.bin/webpack",
-    "lint": "./node_modules/.bin/eslint src"
+    "dev": "NODE_ENV=development babel-node src/server.js",
+    "prod": "NODE_ENV=production node dist/server/server.js",
+    "build": "npm run clear && npm run build:webpack && npm run build:server",
+    "build:webpack": "NODE_ENV=production webpack",
+    "build:server": "babel src --out-dir dist/server",
+    "clear": "rimraf dist",
+    "lint": "eslint src"
   },
   "author": "Alexander Hoereth",
   "dependencies": {
+    "compression": "^1.6.1",
+    "express": "^4.13.4",
     "react": "^0.14.6",
     "react-dom": "^0.14.6"
   },
@@ -27,10 +32,10 @@
     "eslint": "^1.10.3",
     "eslint-loader": "^1.2.0",
     "eslint-plugin-react": "^3.16.0",
-    "express": "^4.13.4",
     "react-transform-catch-errors": "^1.0.1",
     "react-transform-hmr": "^1.0.1",
     "redbox-react": "^1.2.0",
+    "rimraf": "^2.5.1",
     "webpack": "^1.12.12",
     "webpack-dev-middleware": "^1.5.1",
     "webpack-hot-middleware": "^2.6.0"

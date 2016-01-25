@@ -18,7 +18,7 @@ class Html extends React.Component {
         </head>
         <body>
           <div id='app'>{children}</div>
-          <script src='/assets/bundle.js' />
+          <script src='/bundle.js' />
         </body>
       </html>
     );

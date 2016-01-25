@@ -7,20 +7,14 @@ import {
 } from 'webpack';
 
 
-/* global __dirname */
-export const ROOT = __dirname;
-
-
-
-
 // *****************************************************************************
 // Defaults
 let config = {
-  devtool: '', // 'cheap-source-map',
+  devtool: 'eval',
   entry: ['./src/index'],
   output: {
-    path: path.join(ROOT, 'public', 'assets'),
-    publicPath: '/assets/',
+    path: path.join(__dirname, 'dist', 'assets'), /* global __dirname */
+    publicPath: '/',
     filename: 'bundle.js'
   },
   module: {
