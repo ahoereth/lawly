@@ -4,28 +4,23 @@
   "description": "Web client for Lawly.",
   "scripts": {
     "start": "npm run dev",
-    "dev": "NODE_ENV=development babel-node src/server.js",
-    "prod": "NODE_ENV=production node dist/server/server.js",
-    "build": "npm run clear && npm run build:webpack && npm run build:server",
-    "build:webpack": "NODE_ENV=production webpack",
-    "build:server": "babel src --out-dir dist/server",
-    "clear": "rimraf dist",
+    "dev": "NODE_ENV=development webpack-dev-server",
+    "build": "npm run clear && NODE_ENV=production webpack",
+    "clear": "rimraf ./dist/assets",
     "lint": "eslint src"
   },
   "author": "Alexander Hoereth",
   "dependencies": {
-    "compression": "^1.6.1",
-    "express": "^4.13.4",
+    "material-design-icons": "^2.1.3",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",
+    "react-mdl": "^1.2.0",
     "react-redux": "^4.0.6",
     "react-router": "^2.0.0-rc5",
     "react-router-redux": "^2.1.0",
-    "redux": "^3.0.6",
-    "serialize-javascript": "^1.1.2"
+    "redux": "^3.0.6"
   },
   "devDependencies": {
-    "babel-cli": "^6.4.5",
     "babel-core": "^6.4.5",
     "babel-eslint": "^5.0.0-beta6",
     "babel-loader": "^6.2.1",
@@ -35,15 +30,18 @@
     "babel-plugin-transform-object-rest-spread": "^6.3.13",
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
+    "css-loader": "^0.23.1",
     "eslint": "^1.10.3",
     "eslint-loader": "^1.2.0",
     "eslint-plugin-react": "^3.16.0",
+    "extract-text-webpack-plugin": "^1.0.1",
+    "file-loader": "^0.8.5",
     "react-transform-catch-errors": "^1.0.1",
     "react-transform-hmr": "^1.0.1",
     "redbox-react": "^1.2.0",
     "rimraf": "^2.5.1",
+    "style-loader": "^0.13.0",
     "webpack": "^1.12.12",
-    "webpack-dev-middleware": "^1.5.1",
-    "webpack-hot-middleware": "^2.6.0"
+    "webpack-dev-server": "^1.14.1"
   }
 }

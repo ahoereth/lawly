@@ -5,6 +5,7 @@ import {
   NoErrorsPlugin,
   optimize
 } from 'webpack';
+import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 
 // *****************************************************************************
@@ -13,8 +14,8 @@ let config = {
   devtool: 'eval',
   entry: ['./src/client'],
   output: {
-    path: path.join(__dirname, 'dist', 'assets'), /* global __dirname */
-    publicPath: '/',
+    path: path.resolve(__dirname, 'dist', 'assets'), /* global __dirname */
+    publicPath: '/assets/',
     filename: 'bundle.js'
   },
   module: {
@@ -33,20 +34,19 @@ let config = {
       test: /\.js$/,
       loader: 'eslint-loader',
       exclude: /node_modules/
+    }, {
+      test: /\.css$/,
+      loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
+    }, {
+      test: /\.(woff|woff2|eot|ttf)$/,
+      loader: 'file-loader?name=[name].[ext]'
     }]
   },
   plugins: [
-    new optimize.OccurenceOrderPlugin()
-  ]
-};
-
-
-
-
-// *****************************************************************************
-// Development
-if (process.env.NODE_ENV === 'development') {
-  config.devServer = {
+    new optimize.OccurenceOrderPlugin(),
+    new ExtractTextPlugin('bundle.css')
+  ],
+  devServer: {
     quiet: false,
     noInfo: false,
     stats: {
@@ -58,11 +58,21 @@ if (process.env.NODE_ENV === 'development') {
       chunks: false,
       chunkModules: false
     },
-    publicPath: '/'
-  };
+    hot: true,
+    publicPath: '/assets/',
+    contentBase: 'dist'
+  }
+};
 
+
+
+
+// *****************************************************************************
+// Development
+if (process.env.NODE_ENV === 'development') {
   config.devtool = '#cheap-module-eval-source-map';
-  config.entry.push('webpack-hot-middleware/client');
+  config.entry.unshift('webpack-dev-server/client?http://localhost:8080');
+  config.entry.unshift('webpack/hot/dev-server');
 
   // Configure babel
   config.module.loaders[0].query.plugins.push(
