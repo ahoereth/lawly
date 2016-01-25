@@ -1,13 +1,16 @@
 import React, { PropTypes } from 'react';
+import serialize from 'serialize-javascript';
 
 
 class Html extends React.Component {
   static propTypes = {
-    children: PropTypes.node
+    children: PropTypes.node,
+    state: PropTypes.object
   };
 
   render() {
-    const { children } = this.props;
+    const { children, state } = this.props;
+    const serializedState = serialize(state || {});
 
     return (
       <html lang='de'>
@@ -18,6 +21,12 @@ class Html extends React.Component {
         </head>
         <body>
           <div id='app'>{children}</div>
+          <script
+            type='text/javascript' charSet='UTF-8'
+            dangerouslySetInnerHTML={{
+              __html: `window.__state=${serializedState}`
+            }}
+          />
           <script src='/bundle.js' />
         </body>
       </html>

@@ -6,10 +6,12 @@ import compression from 'compression';
 import webpack from 'webpack';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { match, RouterContext } from 'react-router';
+import { match, RouterContext, createMemoryHistory } from 'react-router';
+import { Provider } from 'react-redux';
 
-import { Html } from './helpers';
+import createStore from './redux/createStore';
 import routes from './routes';
+import { Html } from './helpers';
 
 
 const app = express();
@@ -42,6 +44,9 @@ app.get('*', function(req, res) {
       renderToString(<Html />)
     );
   } else {
+    const history = createMemoryHistory(); // History mock.
+    const store = createStore(history);
+
     // Server side rendering. Match the requested route and render the
     // complete app component tree for the current state.
     match({ routes, location: req.url }, (error, redirect, props) => {
@@ -52,7 +57,13 @@ app.get('*', function(req, res) {
       } else if (props) {
         res.send(
           '<!doctype html>\n' +
-          renderToString(<Html><RouterContext {...props} /></Html>)
+          renderToString(
+            <Html state={store.getState()}>
+              <Provider store={store}>
+                <RouterContext {...props} />
+              </Provider>
+            </Html>
+          )
         );
       } else {
         res.status(404).send('Not found');

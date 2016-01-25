@@ -25,7 +25,8 @@ let config = {
       query: {
         plugins: [
           'transform-class-properties',
-          'transform-export-extensions'
+          'transform-export-extensions',
+          'transform-object-rest-spread'
         ]
       }
     }, {
