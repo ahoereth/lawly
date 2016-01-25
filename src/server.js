@@ -5,13 +5,15 @@ import express from 'express';
 import compression from 'compression';
 import webpack from 'webpack';
 import React from 'react';
-import ReactDOM from 'react-dom/server';
+import { renderToString } from 'react-dom/server';
+import { match, RouterContext } from 'react-router';
 
 import { Html } from './helpers';
-import { App } from './containers';
+import routes from './routes';
 
 
 const app = express();
+app.use(compression());
 
 
 // Development specific
@@ -29,21 +31,33 @@ if (process.env.NODE_ENV === 'development') {
 if (process.env.NODE_ENV === 'production') {
   /* global __dirname */
   app.use(express.static(path.join(__dirname, '..', 'assets')));
-  app.use(compression());
 }
 
 
 app.get('*', function(req, res) {
-  if (process.env.NOSSR) { // No searver side rendering.
+  if (process.env.NOSSR) {
+    // No searver side rendering. Serve basic DOM without rendered app.
     res.send(
       '<!doctype html>\n' +
-      ReactDOM.renderToString(<Html />)
+      renderToString(<Html />)
     );
   } else {
-    res.send(
-      '<!doctype html>\n' +
-      ReactDOM.renderToString(<Html><App /></Html>)
-    );
+    // Server side rendering. Match the requested route and render the
+    // complete app component tree for the current state.
+    match({ routes, location: req.url }, (error, redirect, props) => {
+      if (error) {
+        res.status(500).send(error.message);
+      } else if (redirect) {
+        res.redirect(302, redirect.pathname + redirect.search);
+      } else if (props) {
+        res.send(
+          '<!doctype html>\n' +
+          renderToString(<Html><RouterContext {...props} /></Html>)
+        );
+      } else {
+        res.status(404).send('Not found');
+      }
+    });
   }
 });
 

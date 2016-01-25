@@ -11,7 +11,7 @@ import {
 // Defaults
 let config = {
   devtool: 'eval',
-  entry: ['./src/index'],
+  entry: ['./src/client'],
   output: {
     path: path.join(__dirname, 'dist', 'assets'), /* global __dirname */
     publicPath: '/',

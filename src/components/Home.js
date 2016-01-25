@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-class App extends React.Component {
+class Home extends React.Component {
   render() {
     return (
       <div>Hello Lawly.</div>
@@ -10,4 +10,4 @@ class App extends React.Component {
 }
 
 
-export default App;
+export default Home;
