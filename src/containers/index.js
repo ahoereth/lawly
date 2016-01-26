@@ -1,2 +1,2 @@
-export App from './AppContainer';
+export Layout from './LayoutContainer';
 export Home from './HomeContainer';

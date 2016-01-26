@@ -1,7 +1,9 @@
 import React, { PropTypes } from 'react';
 
+import { Layout } from '../components';
 
-class AppContainer extends React.Component {
+
+class LayoutContainer extends React.Component {
   static propTypes = {
     children: PropTypes.node
   };
@@ -10,10 +12,10 @@ class AppContainer extends React.Component {
     const { children } = this.props;
 
     return (
-      <div>{children}</div>
+      <Layout title='Lawly'>{children}</Layout>
     );
   }
 }
 
 
-export default AppContainer;
+export default LayoutContainer;

@@ -2,13 +2,13 @@ import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 
 import {
-  App,
+  Layout,
   Home
 } from './containers';
 
 
 const routes = (
-  <Route path='/' component={App} name='Lawly'>
+  <Route path='/' component={Layout} name='Lawly'>
     <IndexRoute component={Home} />
   </Route>
 );
