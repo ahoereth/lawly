@@ -60,7 +60,8 @@ let config = {
     },
     hot: true,
     publicPath: '/assets/',
-    contentBase: 'dist'
+    contentBase: 'dist',
+    historyApiFallback: true
   }
 };
 
