@@ -4,6 +4,12 @@ import { connect } from 'react-redux';
 import { Layout } from '../components';
 
 
+const navigation = [
+  {to: '/', text: 'Home'},
+  {to: '/gesetze', text: 'Gesetz Index'}
+];
+
+
 class LayoutContainer extends React.Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
@@ -25,7 +31,7 @@ class LayoutContainer extends React.Component {
     const { title, children } = this.props;
 
     return (
-      <Layout title={title}>{children}</Layout>
+      <Layout title={title} navigation={navigation}>{children}</Layout>
     );
   }
 }

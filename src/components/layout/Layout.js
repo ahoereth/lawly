@@ -7,24 +7,23 @@ import Content from './Content';
 // import Footer from './Footer';
 
 
-const primaryNavigation = [
-  {style: 'internal', to: '/', text: 'home'}
-];
-
-
 class Layout extends React.Component {
   static propTypes = {
     title: PropTypes.string,
-    children: PropTypes.node
+    children: PropTypes.node,
+    navigation: PropTypes.arrayOf(PropTypes.shape({
+      to: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired
+    }))
   };
 
   render() {
-    const { title, children } = this.props;
+    const { title, children, navigation } = this.props;
 
     return (
       <MaterialLayout fixedDrawer>
-        <Header title={title} links={primaryNavigation}/>
-        <Drawer title={title} primary={primaryNavigation} />
+        <Header title={title} links={navigation}/>
+        <Drawer title={title} primary={navigation} />
         <Content>{children}</Content>
         {/*<Footer primary={primaryNavigation} />*/}
       </MaterialLayout>
