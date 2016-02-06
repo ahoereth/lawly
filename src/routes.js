@@ -8,8 +8,8 @@ import {
 
 
 const routes = (
-  <Route path='/' component={Layout} name='Lawly'>
-    <IndexRoute component={Home} />
+  <Route path='/' component={Layout}>
+    <IndexRoute component={Home} title='Home' />
   </Route>
 );
 

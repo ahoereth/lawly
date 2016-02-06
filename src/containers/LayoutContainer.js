@@ -1,21 +1,47 @@
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
 import { Layout } from '../components';
 
 
 class LayoutContainer extends React.Component {
   static propTypes = {
-    children: PropTypes.node
+    title: PropTypes.string.isRequired,
+    htmltitle: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired
   };
 
+  constructor(props) {
+    super(props);
+    this.componentWillReceiveProps(props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    /* global document */
+    document.title = nextProps.htmltitle;
+  }
+
   render() {
-    const { children } = this.props;
+    const { title, children } = this.props;
 
     return (
-      <Layout title='Lawly'>{children}</Layout>
+      <Layout title={title}>{children}</Layout>
     );
   }
 }
 
 
-export default LayoutContainer;
+function mapStateToProps(state = {
+  title: 'Lawly'
+}, ownProps) {
+  const { routes } = ownProps;
+  const title = routes[routes.length - 1].title;
+
+  return {
+    title,
+    htmltitle: title + ' | Lawly'
+  };
+}
+
+
+export default connect(mapStateToProps)(LayoutContainer);
