@@ -1,7 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Router, browserHistory as history } from 'react-router';
+import { Router, browserHistory } from 'react-router';
 import { Provider } from 'react-redux';
+import { syncHistoryWithStore } from 'react-router-redux';
 
 import createStore from './redux/createStore';
 import routes from './routes';
@@ -12,7 +13,9 @@ import 'material-design-icons/iconfont/material-icons.css';
 
 
 const target = document.getElementById('app'); /* global document */
-const store = createStore(history, window.__state); /* global window */
+const store = createStore(window.__state); /* global window */
+const history = syncHistoryWithStore(browserHistory, store);
+
 
 render(
   <Provider store={store}>

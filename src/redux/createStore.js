@@ -1,14 +1,10 @@
-import { createStore as _createStore, applyMiddleware } from 'redux';
-import { syncHistory } from 'react-router-redux';
+import { createStore as _createStore } from 'redux';
 
 import reducer from './modules/reducer';
 
 
-export default function createStore(history, data) {
-  const createStoreWithMiddleware = applyMiddleware(
-    syncHistory(history)
-  )(_createStore);
-  const store = createStoreWithMiddleware(reducer, data);
+export default function createStore(data) {
+  const store = _createStore(reducer, data);
 
   /* global module, require */
   if (module.hot) {
