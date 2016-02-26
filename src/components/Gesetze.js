@@ -17,11 +17,11 @@ class Gesetze extends React.Component {
     const columns = [
       { name: 'groupid', label: 'Abkürzung' },
       { name: 'titel', label: 'Bezeichnung' },
-      { name: 'button' }
+      { name: 'action' },
     ];
 
     const rows = gesetze.map((gesetz, idx) => {
-      return Object.assign({}, gesetz, { button: (
+      return Object.assign({}, gesetz, { action: (
         <FABButton mini onClick={() => onChoice(gesetz, idx)}>
           <Icon name='launch' />
         </FABButton>
