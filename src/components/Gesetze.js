@@ -15,7 +15,7 @@ class Gesetze extends React.Component {
     const { gesetze, onChoice } = this.props;
 
     const columns = [
-      { name: 'groupkey', label: 'Abkürzung' },
+      { name: 'groupid', label: 'Abkürzung' },
       { name: 'titel', label: 'Bezeichnung' },
       { name: 'button' }
     ];

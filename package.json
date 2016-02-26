@@ -11,6 +11,7 @@
   },
   "author": "Alexander Hoereth",
   "dependencies": {
+    "isomorphic-fetch": "^2.2.1",
     "material-design-icons": "^2.1.3",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",

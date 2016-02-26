@@ -1,10 +1,13 @@
-import { createStore as _createStore } from 'redux';
+import { createStore as _createStore, applyMiddleware } from 'redux';
 
+import fetchMiddleware from './middleware/fetchMiddleware';
 import reducer from './modules/reducer';
 
 
-export default function createStore(data) {
-  const store = _createStore(reducer, data);
+export default function createStore(client, data) {
+  const middlewares = [fetchMiddleware(client)];
+  const finalCreateStore = applyMiddleware(...middlewares)(_createStore);
+  const store = finalCreateStore(reducer, data);
 
   /* global module, require */
   if (module.hot) {

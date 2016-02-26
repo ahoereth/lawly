@@ -1,23 +1,35 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 
+import { toc as fetchGesetzeToc } from '../redux/modules/gesetze';
 import { Gesetze } from '../components';
 
 
-const mockData = [
-  { groupkey: 'a', titel: 'Eins' },
-  { groupkey: 'b', titel: 'Zwei' },
-  { groupkey: 'c', titel: 'Drei' },
-  { groupkey: 'd', titel: 'Vier' },
-  { groupkey: 'e', titel: 'Fünf' }
-];
-
-
 class GesetzeContainer extends React.Component {
+  static propTypes = {
+    fetchGesetzeToc: PropTypes.func.isRequired,
+    initials: PropTypes.array.isRequired,
+    loading: PropTypes.bool.isRequired,
+    toc: PropTypes.array.isRequired
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = {};
+    props.fetchGesetzeToc();
+  }
+
   render() {
+    const { loading, toc } = this.props;
+
+    if (loading) {
+      return <div>Loading...</div>;
+    }
+
     return (
       <Gesetze
         onChoice={this.choice}
-        gesetze={mockData}
+        gesetze={toc}
       />
     );
   }
@@ -28,4 +40,25 @@ class GesetzeContainer extends React.Component {
 }
 
 
-export default GesetzeContainer;
+function mapStateToProps(state) {
+  const { loading, error, toc, initials } = state.gesetze || {
+    loading: false,
+    error: false,
+    toc: [],
+    initials: ('ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789').split('')
+  };
+
+  return {
+    loading,
+    error,
+    toc,
+    initials
+  };
+}
+
+const mapDispatchToProps = {
+  fetchGesetzeToc
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(GesetzeContainer);
