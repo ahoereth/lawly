@@ -1,5 +1,7 @@
 import React, { PropTypes } from 'react';
 
+import NormText from './NormText';
+
 
 const Norm = ({ data }) => {
   if (data.kind === 'gliederung') {
@@ -9,10 +11,7 @@ const Norm = ({ data }) => {
     return (
       <div key={data.doknr}>
         <h3>{enbez ? enbez : gliederungsbez + titel}</h3>
-        <div
-          className='doctext'
-          dangerouslySetInnerHTML={{__html: text}}
-        />
+        <NormText>{text}</NormText>
       </div>
     );
   }
@@ -22,10 +21,7 @@ const Norm = ({ data }) => {
     return (
       <div key={data.doknr}>
         <h4>{enbez}: {titel}</h4>
-        <div
-          className='doctext'
-          dangerouslySetInnerHTML={{__html: text}}
-        />
+        <NormText>{text}</NormText>
       </div>
     );
   }

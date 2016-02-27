@@ -5,6 +5,7 @@ import Header from './Header';
 import Drawer from './Drawer';
 import Content from './Content';
 // import Footer from './Footer';
+import './layout.scss';
 
 
 class Layout extends React.Component {

@@ -1,4 +1,4 @@
-.doctext {
+.norm-text {
   dl {
     margin: 1ex auto 0px;
     padding: 0 0.2em;
@@ -11,5 +11,22 @@
   dd {
     margin-bottom: 1ex;
     -webkit-margin-start: 2.5em;
+  }
+}
+
+.norm-table, .norm-pre {
+  width: 100% !important;
+  min-height: 0 !important;
+
+  table {
+    width: 100%;
+
+    tbody {
+      vertical-align: baseline;
+    }
+  }
+
+  pre {
+    margin: 0;
   }
 }

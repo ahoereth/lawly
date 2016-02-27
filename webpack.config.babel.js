@@ -1,3 +1,4 @@
+/* global __dirname */
 import process from 'process';
 import path from 'path';
 import {
@@ -13,9 +14,12 @@ let config = {
   devtool: 'eval',
   entry: ['./src/client'],
   output: {
-    path: path.resolve(__dirname, 'dist', 'assets'), /* global __dirname */
+    path: path.resolve(__dirname, 'dist', 'assets'),
     publicPath: '/assets/',
     filename: 'bundle.js'
+  },
+  resolve: {
+    root: path.resolve(__dirname, 'src')
   },
   module: {
     loaders: [{
