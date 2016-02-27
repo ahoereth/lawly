@@ -5,7 +5,6 @@ import {
   NoErrorsPlugin,
   optimize
 } from 'webpack';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
 
 // *****************************************************************************
@@ -36,15 +35,17 @@ let config = {
       exclude: /node_modules/
     }, {
       test: /\.css$/,
-      loader: ExtractTextPlugin.extract('style-loader', 'css-loader')
+      loaders: ['style', 'css']
+    },{
+      test: /\.scss$/,
+      loaders: ['style', 'css', 'sass']
     }, {
       test: /\.(woff|woff2|eot|ttf)$/,
       loader: 'file-loader?name=[name].[ext]'
     }]
   },
   plugins: [
-    new optimize.OccurenceOrderPlugin(),
-    new ExtractTextPlugin('bundle.css')
+    new optimize.OccurenceOrderPlugin()
   ],
   devServer: {
     quiet: false,
