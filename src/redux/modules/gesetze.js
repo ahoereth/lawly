@@ -9,7 +9,7 @@ const SINGLE_FAIL = 'gesetze/fetch/SINGLE_FAIL';
 
 export default function reducer(
   state = {
-    loading: false,
+    loading: 0,
     toc: [],
     initials: [],
     groups: {},
@@ -19,32 +19,36 @@ export default function reducer(
 ) {
   switch (action.type) {
     case TOC:
-      return Object.assign({}, state, { loading: true });
+      return {...state,
+        loading: state.loading + 1,
+      };
     case TOC_SUCCESS:
-      return Object.assign({}, state, {
-        loading: false,
+      return {...state,
+        loading: state.loading - 1,
         toc: action.result.toc,
-        initials: action.result.initials
-      });
+        initials: action.result.initials,
+      };
     case TOC_FAIL:
-      return Object.assign({}, state, {
-        isFetching: false,
-        error: action.error
-      });
+      return {...state,
+        loading: state.loading - 1,
+        error: action.error,
+      };
     case SINGLE:
-      return Object.assign({}, state, {
-        loading: true
-      });
+      return {...state,
+        loading: state.loading + 1,
+      };
     case SINGLE_SUCCESS:
-      return Object.assign({}, state, {
-        groups: Object.assign({}, state.groups, {
-          [action.result[0].groupkey]: action.result
-        })
-      });
+      return {...state,
+        loading: state.loading - 1,
+        groups: {...state.groups,
+          [action.result[0].groupkey]: action.result,
+        },
+      };
     case SINGLE_FAIL:
-      return Object.assign({}, state, {
-        error: action.error
-      });
+      return {...state,
+        loading: state.loading - 1,
+        error: action.error,
+      };
     default:
       return state;
   }
@@ -52,7 +56,6 @@ export default function reducer(
 
 
 export function toc() {
-  console.log('toc called');
   return {
     types: [TOC, TOC_SUCCESS, TOC_FAIL],
     promise: client => client.get('gesetze/toc')

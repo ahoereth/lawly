@@ -31,14 +31,14 @@ class GesetzeContainer extends React.Component {
 
 function mapStateToProps(state) {
   const { loading, error, toc, initials } = state.gesetze || {
-    loading: false,
+    loading: 0,
     error: false,
     toc: [],
     initials: ('ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789').split('')
   };
 
   return {
-    loading,
+    loading: !!loading,
     error,
     toc,
     initials
