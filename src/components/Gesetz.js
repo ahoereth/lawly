@@ -1,6 +1,9 @@
 import React, { PropTypes } from 'react';
 import { Card, CardTitle, CardText } from 'react-mdl';
 
+import Norm from './Norm';
+import './gesetz.scss';
+
 
 const Gesetz = ({ normen }) => {
   const lead = normen[0];
@@ -13,7 +16,7 @@ const Gesetz = ({ normen }) => {
           <div>{lead.groupkey}</div>
         </CardTitle>
         <CardText>
-          {normen.map(norm => norm.text)}
+          {normen.map((norm, i) => <Norm key={i} data={norm} />)}
         </CardText>
       </Card>
     </div>
