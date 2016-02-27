@@ -1,17 +1,20 @@
-import { createStore as _createStore, applyMiddleware } from 'redux';
+import { createStore as _createStore, applyMiddleware, compose } from 'redux';
 import { browserHistory } from 'react-router';
 import { routerMiddleware, } from 'react-router-redux';
 
 import fetchMiddleware from './middleware/fetchMiddleware';
 import reducer from './modules/reducer';
 
-
+/* global window */
 export default function createStore(client, data) {
   const middlewares = [
     fetchMiddleware(client),
     routerMiddleware(browserHistory),
   ];
-  const finalCreateStore = applyMiddleware(...middlewares)(_createStore);
+  const finalCreateStore = compose(
+    applyMiddleware(...middlewares),
+    window && window.devToolsExtension ? window.devToolsExtension() : f => f,
+  )(_createStore);
   const store = finalCreateStore(reducer, data);
 
   /* global module, require */
