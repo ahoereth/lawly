@@ -1,42 +1,37 @@
 import React, { PropTypes } from 'react';
+import { Link } from 'react-router';
 import { DataTable, FABButton, Icon } from 'react-mdl';
-
 
 import './gesetze.css';
 
 
-class Gesetze extends React.Component {
-  static propTypes = {
-    gesetze: PropTypes.array.isRequired,
-    onChoice: PropTypes.func.isRequired
-  };
+const Gesetze = ({ gesetze }) => {
+  const columns = [
+    { name: 'groupkey', label: 'Abkürzung' },
+    { name: 'titel', label: 'Bezeichnung' },
+    { name: 'action' },
+  ];
 
-  render() {
-    const { gesetze, onChoice } = this.props;
-
-    const columns = [
-      { name: 'groupid', label: 'Abkürzung' },
-      { name: 'titel', label: 'Bezeichnung' },
-      { name: 'action' },
-    ];
-
-    const rows = gesetze.map((gesetz, idx) => {
-      return Object.assign({}, gesetz, { action: (
-        <FABButton mini onClick={() => onChoice(gesetz, idx)}>
+  const rows = gesetze.map((gesetz, idx) => {
+    return {...gesetz, action: (
+      <Link key={idx} to={'/gesetze/' + gesetz.groupkey}>
+        <FABButton mini>
           <Icon name='launch' />
         </FABButton>
-      )});
-    });
+      </Link>
+    )};
+  });
 
-    return (
-      <div className='gesetze-data-table'>
-        <DataTable
-          columns={columns}
-          rows={rows}
-        />
-      </div>
-    );
-  }
-}
+  return (
+    <div className='gesetze-data-table'>
+      <DataTable columns={columns} rows={rows} />
+    </div>
+  );
+};
+
+Gesetze.propTypes = {
+  gesetze: PropTypes.array.isRequired,
+};
+
 
 export default Gesetze;

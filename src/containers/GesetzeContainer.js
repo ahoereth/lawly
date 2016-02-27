@@ -13,10 +13,8 @@ class GesetzeContainer extends React.Component {
     toc: PropTypes.array.isRequired
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {};
-    props.fetchGesetzeToc();
+  componentWillMount() {
+    this.props.fetchGesetzeToc();
   }
 
   render() {
@@ -26,16 +24,7 @@ class GesetzeContainer extends React.Component {
       return <div>Loading...</div>;
     }
 
-    return (
-      <Gesetze
-        onChoice={this.choice}
-        gesetze={toc}
-      />
-    );
-  }
-
-  choice(gesetz, idx) {
-    console.log(idx, gesetz);
+    return <Gesetze gesetze={toc.slice(1, 100)} />;
   }
 }
 
