@@ -2,27 +2,36 @@ import React, { PropTypes } from 'react';
 import { Card, CardText } from 'react-mdl';
 
 import { isString } from 'helpers/utils';
-import Html from 'components/Html';
 
 
-export function handlePres(content, i) {
-  if (!isString(content)) { return content; }
+export function handlePres(input, i) {
+  if (!isString(input)) { return input; }
 
-  const pres = content.match(/(.*?)<pre(.*?)>(.*?)<\/pre>/gi);
+  let output = input;
+  const pres = input.match(/.*?<pre.*?>.*?<\/pre>/gi);
   if (pres) {
-    content = [];
+    output = [];
     pres.forEach((text, j) => {
+      // Handle everything before the first and between each pre.
       const start = text.indexOf('<pre');
-      content.push(text.slice(0, start));
-      content.push(
+      output.push(text.slice(0, start));
+
+      // Handle each pre.
+      output.push(
         <NormPre key={`pre-${i}-${j}`}>
           {text.slice(start, text.length)}
         </NormPre>
       );
+
+      // Handle everything after the last pre.
+      if ((j+1) === pres.length) {
+        const end = input.lastIndexOf(text) + text.length;
+        output.push(input.slice(end, input.length));
+      }
     });
   }
 
-  return content;
+  return output;
 }
 
 
@@ -30,9 +39,9 @@ const NormPre = ({ children }) => {
   children = children.replace(/<pre.*?>/, '').replace('</pre>', '');
 
   return (
-    <Card shadow={0} className='norm-pre'>
+    <Card shadow={0} style={{width: '100%', minHeight: 0}}>
       <CardText>
-        <pre><Html>{children}</Html></pre>
+        <pre dangerouslySetInnerHTML={{__html: children}} style={{margin: 0}} />
       </CardText>
     </Card>
   );

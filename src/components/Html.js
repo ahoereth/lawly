@@ -11,7 +11,7 @@ export function handleHtml(content, i) {
 
 
 const Html = ({ className, children }) => (
-  <div className={className} dangerouslySetInnerHTML={{__html: children}} />
+  <span className={className} dangerouslySetInnerHTML={{__html: children}} />
 );
 
 Html.propTypes = {

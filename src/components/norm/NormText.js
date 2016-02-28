@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react';
 import { handleHtml } from 'components/Html';
 import { handleTables } from './NormTable';
 import { handlePres } from './NormPre';
+import { handleParagraphs } from './NormParagraphs';
 
 
 function applyHandlers(handlers, content) {
@@ -18,6 +19,7 @@ const NormText = ({ children }) => {
   const content = applyHandlers([
     handleTables,
     handlePres,
+    handleParagraphs,
     handleHtml,
   ], [children]);
 

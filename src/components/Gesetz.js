@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { Card, CardTitle, CardText } from 'react-mdl';
 
 import { Norm } from 'components';
-import './gesetz.scss';
 
 
 const Gesetz = ({ normen }) => {

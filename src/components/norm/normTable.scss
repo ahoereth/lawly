@@ -1,0 +1,20 @@
+.norm-table {
+  width: 100% !important;
+  min-height: 0 !important;
+
+  table {
+    width: 100%;
+  }
+
+  tbody {
+    vertical-align: baseline;
+  }
+
+  tr:first-of-type td {
+    border-top: 1px solid #ccc;
+  }
+
+  .colbottom {
+    border-bottom: 1px solid #ccc;
+  }
+}

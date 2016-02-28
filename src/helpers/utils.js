@@ -16,3 +16,14 @@ export function endsWith(haystack, needle) {
 export function isString(val) {
   return toString.call(val) == '[object String]';
 }
+
+
+/**
+ * Check if given varaible is undefined.
+ *
+ * @param  {any} x
+ * @return {Boolean}
+ */
+export function isUndefined(x) {
+  return (typeof x === 'undefined');
+}
