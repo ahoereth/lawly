@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
+import { search } from 'redux/modules/search';
 import { Layout } from '../components';
 
 
@@ -12,9 +13,10 @@ const navigation = [
 
 class LayoutContainer extends React.Component {
   static propTypes = {
-    title: PropTypes.string.isRequired,
+    children: PropTypes.node.isRequired,
     htmltitle: PropTypes.string.isRequired,
-    children: PropTypes.node.isRequired
+    search: PropTypes.func.isRequired,
+    title: PropTypes.string.isRequired,
   };
 
   constructor(props) {
@@ -28,10 +30,12 @@ class LayoutContainer extends React.Component {
   }
 
   render() {
-    const { title, children } = this.props;
+    const { children, search, title } = this.props;
 
     return (
-      <Layout title={title} navigation={navigation}>{children}</Layout>
+      <Layout title={title} navigation={navigation} search={search}>
+        {children}
+      </Layout>
     );
   }
 }
@@ -50,4 +54,9 @@ function mapStateToProps(state = {
 }
 
 
-export default connect(mapStateToProps)(LayoutContainer);
+const mapDispatchToProps = {
+  search,
+};
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(LayoutContainer);

@@ -10,20 +10,21 @@ import './layout.scss';
 
 class Layout extends React.Component {
   static propTypes = {
-    title: PropTypes.string,
     children: PropTypes.node,
     navigation: PropTypes.arrayOf(PropTypes.shape({
       to: PropTypes.string.isRequired,
       text: PropTypes.string.isRequired
-    }))
+    })),
+    search: PropTypes.func.isRequired,
+    title: PropTypes.string,
   };
 
   render() {
-    const { title, children, navigation } = this.props;
+    const { title, children, navigation, search } = this.props;
 
     return (
       <MaterialLayout fixedDrawer>
-        <Header title={title} links={navigation}/>
+        <Header title={title} links={navigation} search={search} />
         <Drawer title={title} primary={navigation} />
         <Content>{children}</Content>
         {/*<Footer primary={primaryNavigation} />*/}

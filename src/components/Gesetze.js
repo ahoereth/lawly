@@ -13,13 +13,16 @@ const Gesetze = ({ gesetze }) => {
   ];
 
   const rows = gesetze.map((gesetz, idx) => {
-    return {...gesetz, action: (
-      <Link key={idx} to={'/gesetze/' + gesetz.groupkey}>
-        <FABButton mini>
-          <Icon name='launch' />
-        </FABButton>
-      </Link>
-    )};
+    return {...gesetz,
+      key: gesetz.groupkey,
+      action: (
+        <Link key={idx} to={'/gesetze/' + gesetz.groupkey}>
+          <FABButton mini>
+            <Icon name='launch' />
+          </FABButton>
+        </Link>
+      )
+    };
   });
 
   return (
