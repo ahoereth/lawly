@@ -7,8 +7,8 @@ import './lawList.scss';
 
 const LawList = ({ laws }) => {
   const columns = [
-    { name: 'groupkey', label: 'Abkürzung' },
-    { name: 'titel', label: 'Bezeichnung' },
+    { name: 'groupkey', label: <span>Ab&shy;kür&shy;zung</span> },
+    { name: 'titel', label: <span>Be&shy;zeich&shy;nung</span> },
     { name: 'action' },
   ];
 

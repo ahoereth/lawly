@@ -1,13 +1,14 @@
 .law-list.mdl-data-table {
   white-space: normal;
+  word-wrap: break-word;
   width: 100%;
   table-layout: fixed;
 
   th {
     &:first-child {
-      min-width: 200px;
-      max-width: 200px;
-      width: 200px;
+      min-width: 15%;
+      max-width: 20%;
+      width: 20%;
     }
 
     &:last-child {

@@ -1,21 +1,37 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-mdl';
+import { Grid, Cell, Button } from 'react-mdl';
 
+
+// Square single letter buttons.
+const buttonStyle = {
+  minWidth: 'auto',
+  width: '36px',
+  height: '36px',
+  padding: 0,
+  margin: '0 auto',
+};
+
+// Centered buttons.
+const cellStyle = {
+  marginBottom: '.5em',
+  textAlign: 'center'
+};
 
 const LawInitialChooser = ({ initials, selected, onSelect }) => (
-  <ul style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+  <Grid noSpacing>
     {initials.map(initial => (
-      <li key={initial}>
+      <Cell key={initial} col={12} tablet={8} phone={1} style={cellStyle}>
         <Button
           ripple raised
+          style={buttonStyle}
           disabled={selected == initial}
           onClick={() => onSelect(initial)}
         >
           {initial}
         </Button>
-      </li>
+      </Cell>
     ))}
-  </ul>
+  </Grid>
 );
 
 LawInitialChooser.propTypes = {
