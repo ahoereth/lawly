@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
 
-import { getLaws } from './gesetze';
+import { getLaws } from './laws';
 
 
 // ******************************************************************

@@ -3,26 +3,31 @@ import { connect } from 'react-redux';
 
 import {
   getLawsByInitial,
-  fetchToc, selectTocInitial,
-} from '../redux/modules/gesetze';
-import { Gesetze } from '../components';
+  fetchLawIndex, selectLawIndexInitial,
+} from 'redux/modules/laws';
+import { LawIndex } from 'components';
 
 
-class GesetzeContainer extends React.Component {
+class LawIndexContainer extends React.Component {
   static propTypes = {
-    fetchToc: PropTypes.func.isRequired,
+    fetchLawIndex: PropTypes.func.isRequired,
     initials: PropTypes.array.isRequired,
     laws: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
-    selectTocInitial: PropTypes.func.isRequired,
+    selectLawIndexInitial: PropTypes.func.isRequired,
     selectedInitial: PropTypes.string,
   };
 
   componentWillMount() {
-    const { fetchToc, selectedInitial, selectTocInitial } = this.props;
-    fetchToc();
+    const {
+      fetchLawIndex,
+      selectedInitial,
+      selectLawIndexInitial,
+    } = this.props;
+
+    fetchLawIndex();
     if (!selectedInitial) {
-      selectTocInitial('A');
+      selectLawIndexInitial('A');
     }
   }
 
@@ -31,7 +36,7 @@ class GesetzeContainer extends React.Component {
       selectedInitial,
       initials,
       loading,
-      selectTocInitial,
+      selectLawIndexInitial,
       laws,
     } = this.props;
 
@@ -40,10 +45,10 @@ class GesetzeContainer extends React.Component {
     }
 
     return (
-      <Gesetze
-        gesetze={laws}
+      <LawIndex
+        laws={laws}
         initials={initials}
-        changeGroup={selectTocInitial}
+        changeGroup={selectLawIndexInitial}
         selectedInitial={selectedInitial}
       />
     );
@@ -53,7 +58,7 @@ class GesetzeContainer extends React.Component {
 
 
 const mapStateToProps = (state) => {
-  const { initials, selectedInitial, loading } = state.gesetze;
+  const { initials, selectedInitial, loading } = state.laws;
 
   return {
     laws: getLawsByInitial(state),
@@ -63,7 +68,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = { fetchToc, selectTocInitial };
+const mapDispatchToProps = { fetchLawIndex, selectLawIndexInitial };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(GesetzeContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(LawIndexContainer);

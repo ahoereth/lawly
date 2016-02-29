@@ -3,15 +3,15 @@ import { createSelector } from 'reselect';
 
 // ******************************************************************
 // ACTIONS
-const TOC = 'gesetze/fetch/TOC';
-const TOC_SUCCESS = 'gesetze/fetch/TOC_SUCCESS';
-const TOC_FAIL = 'gesetze/fetch/TOC_FAIL';
+const INDEX = 'laws/fetch/INDEX';
+const INDEX_SUCCESS = 'laws/fetch/INDEX_SUCCESS';
+const INDEX_FAIL = 'laws/fetch/INDEX_FAIL';
 
-const SINGLE = 'gesetze/fetch/SINGLE';
-const SINGLE_SUCCESS = 'gesetze/fetch/SINGLE_SUCCESS';
-const SINGLE_FAIL = 'gesetze/fetch/SINGLE_FAIL';
+const SINGLE = 'laws/fetch/SINGLE';
+const SINGLE_SUCCESS = 'laws/fetch/SINGLE_SUCCESS';
+const SINGLE_FAIL = 'laws/fetch/SINGLE_FAIL';
 
-const SELECT_INITIAL = 'gesetze/SELECT_INITIAL';
+const SELECT_INITIAL = 'laws/SELECT_INITIAL';
 
 
 
@@ -20,7 +20,7 @@ const SELECT_INITIAL = 'gesetze/SELECT_INITIAL';
 export default function reducer(
   state = {
     loading: 0,
-    toc: [],
+    index: [],
     selectedInitial: null,
     initials: [],
     groups: {},
@@ -29,17 +29,17 @@ export default function reducer(
   action
 ) {
   switch (action.type) {
-    case TOC:
+    case INDEX:
       return {...state,
         loading: state.loading + 1,
       };
-    case TOC_SUCCESS:
+    case INDEX_SUCCESS:
       return {...state,
         loading: state.loading - 1,
-        toc: action.result.toc,
+        index: action.result.index,
         initials: action.result.initials,
       };
-    case TOC_FAIL:
+    case INDEX_FAIL:
       return {...state,
         loading: state.loading - 1,
         error: action.error,
@@ -73,21 +73,21 @@ export default function reducer(
 
 // ******************************************************************
 // ACTION CREATORS
-export function fetchToc() {
+export function fetchLawIndex() {
   return {
-    types: [TOC, TOC_SUCCESS, TOC_FAIL],
-    promise: client => client.get('gesetze/toc')
+    types: [INDEX, INDEX_SUCCESS, INDEX_FAIL],
+    promise: client => client.get('laws/index')
   };
 }
 
-export function single(groupkey) {
+export function fetchLaw(groupkey) {
   return {
     types: [SINGLE, SINGLE_SUCCESS, SINGLE_FAIL],
-    promise: client => client.get('gesetze/' + groupkey)
+    promise: client => client.get('laws/' + groupkey)
   };
 }
 
-export const selectTocInitial = (initial) => ({
+export const selectLawIndexInitial = (initial) => ({
   type: SELECT_INITIAL,
   group: initial,
 });
@@ -96,13 +96,13 @@ export const selectTocInitial = (initial) => ({
 
 // ******************************************************************
 // SELECTORS
-export const getLaws = (state) => state.gesetze.toc;
+export const getLaws = (state) => state.laws.index;
 
-export const getInitial = (state) => state.gesetze.selectedInitial;
+export const getInitial = (state) => state.laws.selectedInitial;
 
 export const getLawsByInitial = createSelector(
   [ getLaws, getInitial ],
   (laws, initial) => laws.filter(law => (
-    (law.groupkey.charAt(0).toUpperCase() == initial)
+    (law.groupkey[0].toUpperCase() == initial)
   ))
 );

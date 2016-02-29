@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux';
 import { routerReducer } from 'react-router-redux';
 
-import gesetze from './gesetze';
+import laws from './laws';
 import search from './search';
 
 export default combineReducers({
-  gesetze,
+  laws,
   search,
   routing: routerReducer
 });

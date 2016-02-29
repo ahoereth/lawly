@@ -5,7 +5,7 @@ import LawList from './LawList';
 import LawInitialChooser from './LawInitialChooser';
 
 
-const Gesetze = ({ changeGroup, gesetze, selectedInitial, initials }) => (
+const LawIndex = ({ changeGroup, laws, selectedInitial, initials }) => (
   <Grid>
     <Cell col={1}>
       <LawInitialChooser
@@ -14,18 +14,18 @@ const Gesetze = ({ changeGroup, gesetze, selectedInitial, initials }) => (
         onSelect={changeGroup}
       />
     </Cell>
-    <Cell col={11} className='gesetze-data-table'>
-      <LawList laws={gesetze} />
+    <Cell col={11}>
+      <LawList laws={laws} />
     </Cell>
   </Grid>
 );
 
-Gesetze.propTypes = {
+LawIndex.propTypes = {
   changeGroup: PropTypes.func.isRequired,
-  gesetze: PropTypes.array.isRequired,
   initials: PropTypes.array.isRequired,
+  laws: PropTypes.array.isRequired,
   selectedInitial: PropTypes.string,
 };
 
 
-export default Gesetze;
+export default LawIndex;

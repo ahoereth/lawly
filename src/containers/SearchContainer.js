@@ -1,14 +1,14 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchToc } from 'redux/modules/gesetze';
+import { fetchLawIndex } from 'redux/modules/laws';
 import { search, getLawsByQuery } from 'redux/modules/search';
 import { Search } from 'components';
 
 
 class SearchContainer extends React.Component {
   static propTypes = {
-    fetchToc: PropTypes.func.isRequired,
+    fetchLawIndex: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired,
     params: PropTypes.shape({
       query: PropTypes.string,
@@ -18,9 +18,9 @@ class SearchContainer extends React.Component {
   };
 
   componentWillMount() {
-    const { params, search, fetchToc } = this.props;
+    const { params, search, fetchLawIndex } = this.props;
     search(params.query || ''); // Initialize search on page load.
-    fetchToc(); // Initialize law data.
+    fetchLawIndex(); // Initialize law data.
   }
 
   render() {
@@ -37,10 +37,10 @@ class SearchContainer extends React.Component {
 
 const mapStateToProps = (state) => ({
   results: getLawsByQuery(state),
-  loading: !!state.gesetze.loading,
+  loading: !!state.laws.loading,
 });
 
-const mapDispatchToProps = { fetchToc, search };
+const mapDispatchToProps = { fetchLawIndex, search };
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchContainer);
