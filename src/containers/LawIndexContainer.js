@@ -2,44 +2,63 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import {
-  getLawsByInitial,
-  fetchLawIndex, selectLawIndexInitial,
+  getLawsByInitialAndPage,
+  fetchLawIndex, selectLawIndexInitial, selectLawIndexPage,
 } from 'redux/modules/laws';
 import { LawIndex } from 'components';
 
 
 class LawIndexContainer extends React.Component {
   static propTypes = {
-    fetchLawIndex: PropTypes.func.isRequired,
+    fetchIndex: PropTypes.func.isRequired,
     initials: PropTypes.array.isRequired,
     laws: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
+    page: PropTypes.number.isRequired,
+    pageSize: PropTypes.number.isRequired,
     params: PropTypes.shape({
       initial: PropTypes.string,
     }).isRequired,
-    selectLawIndexInitial: PropTypes.func.isRequired,
+    selectInitial: PropTypes.func.isRequired,
+    selectPage: PropTypes.func.isRequired,
     selectedInitial: PropTypes.string,
+    total: PropTypes.number.isRequired,
   };
 
   componentWillMount() {
     const {
-      fetchLawIndex,
+      fetchIndex,
       params,
+      selectInitial,
+      selectPage,
       selectedInitial,
-      selectLawIndexInitial,
     } = this.props;
 
-    fetchLawIndex();
-    selectedInitial || selectLawIndexInitial(params.initial);
+    console.log('mount', params);
+    fetchIndex();
+    selectedInitial || selectInitial(params.initial);
+    params.page && selectPage(parseInt((params.page || 0), 10));
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if (typeof nextProps.params.page === 'undefined') {
+      this.props.selectPage(1);
+      return false;
+    }
+    return true;
   }
 
   render() {
     const {
-      selectedInitial,
       initials,
-      loading,
-      selectLawIndexInitial,
       laws,
+      loading,
+      page,
+      pageSize,
+      selectedInitial,
+      selectInitial,
+      selectPage,
+      total,
     } = this.props;
 
     if (loading) {
@@ -48,10 +67,14 @@ class LawIndexContainer extends React.Component {
 
     return (
       <LawIndex
-        laws={laws}
         initials={initials}
-        changeGroup={selectLawIndexInitial}
+        laws={laws}
+        page={page}
+        pageSize={pageSize}
+        total={total}
         selectedInitial={selectedInitial}
+        selectInitial={selectInitial}
+        selectPage={selectPage}
       />
     );
   }
@@ -59,17 +82,31 @@ class LawIndexContainer extends React.Component {
 
 
 const mapStateToProps = (state) => {
-  const { initials, selectedInitial, loading } = state.laws;
-
-  return {
-    laws: getLawsByInitial(state),
-    loading: !!loading,
-    selectedInitial,
+  const {
     initials,
+    indexPage,
+    indexPageSize,
+    loading,
+    selectedInitial,
+  } = state.laws;
+
+  const { total, laws } = getLawsByInitialAndPage(state);
+  return {
+    initials,
+    total,
+    laws,
+    loading: !!loading,
+    page: indexPage,
+    pageSize: indexPageSize,
+    selectedInitial,
   };
 };
 
-const mapDispatchToProps = { fetchLawIndex, selectLawIndexInitial };
+const mapDispatchToProps = {
+  fetchIndex: fetchLawIndex,
+  selectInitial: selectLawIndexInitial,
+  selectPage: selectLawIndexPage,
+};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(LawIndexContainer);
