@@ -1,20 +1,20 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { toc as fetchGesetzeToc } from '../redux/modules/gesetze';
+import { fetchToc } from '../redux/modules/gesetze';
 import { Gesetze } from '../components';
 
 
 class GesetzeContainer extends React.Component {
   static propTypes = {
-    fetchGesetzeToc: PropTypes.func.isRequired,
+    fetchToc: PropTypes.func.isRequired,
     initials: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
     toc: PropTypes.array.isRequired
   };
 
   componentWillMount() {
-    this.props.fetchGesetzeToc();
+    this.props.fetchToc();
   }
 
   render() {
@@ -46,7 +46,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = {
-  fetchGesetzeToc
+  fetchToc,
 };
 
 

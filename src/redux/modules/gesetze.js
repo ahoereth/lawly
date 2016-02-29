@@ -55,7 +55,7 @@ export default function reducer(
 }
 
 
-export function toc() {
+export function fetchToc() {
   return {
     types: [TOC, TOC_SUCCESS, TOC_FAIL],
     promise: client => client.get('gesetze/toc')

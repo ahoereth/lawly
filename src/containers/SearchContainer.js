@@ -1,21 +1,27 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 
+import { fetchToc } from 'redux/modules/gesetze';
 import { search } from 'redux/modules/search';
-import { Gesetze } from '../components';
+import { Gesetze } from 'components';
 
 
 class SearchContainer extends React.Component {
   static propTypes = {
-    search: PropTypes.func.isRequired,
+    fetchToc: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired,
+    params: PropTypes.shape({
+      query: PropTypes.string,
+    }).isRequired,
     results: PropTypes.array.isRequired,
-    params: PropTypes.object.isRequired
+    search: PropTypes.func.isRequired,
   };
 
   componentWillMount() {
-    const { search, params } = this.props;
-    search(params.query);
+    const { params, search, fetchToc } = this.props;
+    search(params.query || ''); // Initialize search on page load.
+    fetchToc(); // Initialize law data.
   }
 
   render() {
@@ -30,12 +36,26 @@ class SearchContainer extends React.Component {
 }
 
 
-function mapStateToProps(state) {
-  const { error, loading, results } = state.search;
-  return { error, loading, results };
-}
+const getLaws = (state) => state.gesetze.toc;
+const getQuery = (state) => (state.search.query || '').toLowerCase();
+
+const getLawsByQuery = createSelector(
+  [ getLaws, getQuery ],
+  (laws, query) => laws.filter(law => (
+    (law.titel.toLowerCase().indexOf(query) > -1) ||
+    (law.groupkey.toLowerCase().indexOf(query) > -1)
+  ))
+);
+
+const mapStateToProps = (state) => {
+  return {
+    results: getLawsByQuery(state),
+    loading: !!state.gesetze.loading,
+  };
+};
 
 const mapDispatchToProps = {
+  fetchToc,
   search,
 };
 
