@@ -15,8 +15,8 @@ const Html = ({ className, children }) => (
 );
 
 Html.propTypes = {
-  className: PropTypes.string,
   children: PropTypes.string.isRequired,
+  className: PropTypes.string,
 };
 
 

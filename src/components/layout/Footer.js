@@ -7,30 +7,24 @@ import {
 } from 'react-mdl';
 
 
-class Footer extends React.Component {
-  static propTypes = {
-    title: PropTypes.string,
-    primary: PropTypes.arrayOf(PropTypes.object)
-  };
+const Footer = ({ title, primary }) => (
+  <MaterialFooter size='mini'>
+    <FooterSection type='bottom' logo={title || 'Lawly'}>
+      <FooterLinkList style={{float: 'right'}}>
+        {primary.map((item, idx) => (
+          <Link to={item.to} key={idx} className='mdl-navigation__link'>
+            {item.text}
+          </Link>
+        ))}
+      </FooterLinkList>
+    </FooterSection>
+  </MaterialFooter>
+);
 
-  render() {
-    const { title, primary } = this.props;
-
-    return (
-      <MaterialFooter size='mini'>
-        <FooterSection type='bottom' logo={title || 'Lawly'}>
-          <FooterLinkList style={{float: 'right'}}>
-            {primary.map((item, idx) => (
-              <Link to={item.to} key={idx} className='mdl-navigation__link'>
-                {item.text}
-              </Link>
-            ))}
-          </FooterLinkList>
-        </FooterSection>
-      </MaterialFooter>
-    );
-  }
-}
+Footer.propTypes = {
+  primary: PropTypes.arrayOf(PropTypes.object),
+  title: PropTypes.string,
+};
 
 
 export default Footer;

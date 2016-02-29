@@ -56,7 +56,6 @@ class LawIndexContainer extends React.Component {
 }
 
 
-
 const mapStateToProps = (state) => {
   const { initials, selectedInitial, loading } = state.laws;
 

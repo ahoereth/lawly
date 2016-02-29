@@ -22,7 +22,6 @@ class Header extends React.Component {
     this.dispatchSearch = debounce(props.search, 500);
   }
 
-
   search(e) {
     const query = e.currentTarget.value;
     this.setState({ query });
@@ -30,7 +29,6 @@ class Header extends React.Component {
   }
 
   dispatchSearch() {}
-
 
   render() {
     const { title, links } = this.props;

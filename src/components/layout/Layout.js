@@ -8,30 +8,24 @@ import Content from './Content';
 import './layout.scss';
 
 
-class Layout extends React.Component {
-  static propTypes = {
-    children: PropTypes.node,
-    navigation: PropTypes.arrayOf(PropTypes.shape({
-      to: PropTypes.string.isRequired,
-      text: PropTypes.string.isRequired
-    })),
-    search: PropTypes.func.isRequired,
-    title: PropTypes.string,
-  };
+const Layout = ({ title, children, navigation, search }) => (
+  <MaterialLayout fixedDrawer>
+    <Header title={title} links={navigation} search={search} />
+    <Drawer title={title} primary={navigation} />
+    <Content>{children}</Content>
+    {/*<Footer primary={primaryNavigation} />*/}
+  </MaterialLayout>
+);
 
-  render() {
-    const { title, children, navigation, search } = this.props;
-
-    return (
-      <MaterialLayout fixedDrawer>
-        <Header title={title} links={navigation} search={search} />
-        <Drawer title={title} primary={navigation} />
-        <Content>{children}</Content>
-        {/*<Footer primary={primaryNavigation} />*/}
-      </MaterialLayout>
-    );
-  }
-}
+Layout.propTypes = {
+  children: PropTypes.node,
+  navigation: PropTypes.arrayOf(PropTypes.shape({
+    to: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired
+  })),
+  search: PropTypes.func.isRequired,
+  title: PropTypes.string,
+};
 
 
 export default Layout;
