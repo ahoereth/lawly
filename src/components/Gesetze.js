@@ -1,39 +1,30 @@
 import React, { PropTypes } from 'react';
-import { Link } from 'react-router';
-import { DataTable, FABButton, Icon } from 'react-mdl';
+import { Grid, Cell } from 'react-mdl';
 
-import './gesetze.css';
+import LawList from './LawList';
+import LawInitialChooser from './LawInitialChooser';
 
 
-const Gesetze = ({ gesetze }) => {
-  const columns = [
-    { name: 'groupkey', label: 'Abkürzung' },
-    { name: 'titel', label: 'Bezeichnung' },
-    { name: 'action' },
-  ];
-
-  const rows = gesetze.map((gesetz, idx) => {
-    return {...gesetz,
-      key: gesetz.groupkey,
-      action: (
-        <Link key={idx} to={'/gesetze/' + gesetz.groupkey}>
-          <FABButton mini>
-            <Icon name='launch' />
-          </FABButton>
-        </Link>
-      )
-    };
-  });
-
-  return (
-    <div className='gesetze-data-table'>
-      <DataTable columns={columns} rows={rows} />
-    </div>
-  );
-};
+const Gesetze = ({ changeGroup, gesetze, selectedInitial, initials }) => (
+  <Grid>
+    <Cell col={1}>
+      <LawInitialChooser
+        initials={initials}
+        selected={selectedInitial}
+        onSelect={changeGroup}
+      />
+    </Cell>
+    <Cell col={11} className='gesetze-data-table'>
+      <LawList laws={gesetze} />
+    </Cell>
+  </Grid>
+);
 
 Gesetze.propTypes = {
+  changeGroup: PropTypes.func.isRequired,
   gesetze: PropTypes.array.isRequired,
+  initials: PropTypes.array.isRequired,
+  selectedInitial: PropTypes.string,
 };
 
 

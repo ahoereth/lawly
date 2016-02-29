@@ -7,9 +7,9 @@ import { Gesetz } from '../components';
 
 class GesetzContainer extends React.Component {
   static propTypes = {
+    data: PropTypes.array.isRequired,
     fetchGesetz: PropTypes.func.isRequired,
     loading: PropTypes.bool.isRequired,
-    data: PropTypes.array.isRequired,
     params: PropTypes.shape({
       groupkey: PropTypes.string.isRequired
     }).isRequired,

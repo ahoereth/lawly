@@ -1,10 +1,9 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
 
 import { fetchToc } from 'redux/modules/gesetze';
-import { search } from 'redux/modules/search';
-import { Gesetze } from 'components';
+import { search, getLawsByQuery } from 'redux/modules/search';
+import { Search } from 'components';
 
 
 class SearchContainer extends React.Component {
@@ -31,33 +30,17 @@ class SearchContainer extends React.Component {
       return <div>Loading...</div>;
     }
 
-    return <Gesetze gesetze={results.slice(1, 100)} />;
+    return <Search results={results.slice(1, 100)} />;
   }
 }
 
 
-const getLaws = (state) => state.gesetze.toc;
-const getQuery = (state) => (state.search.query || '').toLowerCase();
+const mapStateToProps = (state) => ({
+  results: getLawsByQuery(state),
+  loading: !!state.gesetze.loading,
+});
 
-const getLawsByQuery = createSelector(
-  [ getLaws, getQuery ],
-  (laws, query) => laws.filter(law => (
-    (law.titel.toLowerCase().indexOf(query) > -1) ||
-    (law.groupkey.toLowerCase().indexOf(query) > -1)
-  ))
-);
-
-const mapStateToProps = (state) => {
-  return {
-    results: getLawsByQuery(state),
-    loading: !!state.gesetze.loading,
-  };
-};
-
-const mapDispatchToProps = {
-  fetchToc,
-  search,
-};
+const mapDispatchToProps = { fetchToc, search };
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchContainer);
