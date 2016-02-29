@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, IndexRoute } from 'react-router';
+import { Route, IndexRoute, Redirect } from 'react-router';
 
 import {
   Layout,
@@ -14,8 +14,10 @@ const routes = (
   <Route path='/' component={Layout}>
     <IndexRoute component={Home} title='Home' />
     <Route path='search(/:query)' component={Search} title='Suche' />
-    <Route path='gesetze/:groupkey' component={Law} title='Gesetz' />
-    <Route path='gesetze' component={LawIndex} title='Index' />
+    <Route path='gesetz/:groupkey' component={Law} title='Gesetz' />
+    <Route path='gesetze(/:initial)' component={LawIndex} title='Index' />
+
+    <Redirect from='gesetz' to='gesetze' />
   </Route>
 );
 

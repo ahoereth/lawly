@@ -24,7 +24,7 @@ const LawInitialChooser = ({ initials, selected, onSelect }) => (
         <Button
           ripple raised
           style={buttonStyle}
-          disabled={selected == initial}
+          disabled={selected == initial.toLowerCase()}
           onClick={() => onSelect(initial)}
         >
           {initial}

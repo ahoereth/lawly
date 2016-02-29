@@ -14,6 +14,9 @@ class LawIndexContainer extends React.Component {
     initials: PropTypes.array.isRequired,
     laws: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
+    params: PropTypes.shape({
+      initial: PropTypes.string,
+    }).isRequired,
     selectLawIndexInitial: PropTypes.func.isRequired,
     selectedInitial: PropTypes.string,
   };
@@ -21,14 +24,13 @@ class LawIndexContainer extends React.Component {
   componentWillMount() {
     const {
       fetchLawIndex,
+      params,
       selectedInitial,
       selectLawIndexInitial,
     } = this.props;
 
     fetchLawIndex();
-    if (!selectedInitial) {
-      selectLawIndexInitial('A');
-    }
+    selectedInitial || selectLawIndexInitial(params.initial);
   }
 
   render() {

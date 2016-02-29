@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { push } from 'react-router-redux';
 
 
 // ******************************************************************
@@ -21,7 +22,7 @@ export default function reducer(
   state = {
     loading: 0,
     index: [],
-    selectedInitial: null,
+    selectedInitial: undefined,
     initials: [],
     groups: {},
     error: '',
@@ -62,7 +63,7 @@ export default function reducer(
       };
     case SELECT_INITIAL:
       return {...state,
-        selectedInitial: action.group,
+        selectedInitial: action.initial,
       };
     default:
       return state;
@@ -73,24 +74,21 @@ export default function reducer(
 
 // ******************************************************************
 // ACTION CREATORS
-export function fetchLawIndex() {
-  return {
-    types: [INDEX, INDEX_SUCCESS, INDEX_FAIL],
-    promise: client => client.get('laws/index')
-  };
-}
-
-export function fetchLaw(groupkey) {
-  return {
-    types: [SINGLE, SINGLE_SUCCESS, SINGLE_FAIL],
-    promise: client => client.get('laws/' + groupkey)
-  };
-}
-
-export const selectLawIndexInitial = (initial) => ({
-  type: SELECT_INITIAL,
-  group: initial,
+export const fetchLawIndex = () => ({
+  types: [INDEX, INDEX_SUCCESS, INDEX_FAIL],
+  promise: client => client.get('laws/index')
 });
+
+export const fetchLaw = (groupkey) => ({
+  types: [SINGLE, SINGLE_SUCCESS, SINGLE_FAIL],
+  promise: client => client.get('laws/' + groupkey)
+});
+
+export const selectLawIndexInitial = (initial = 'A') => (dispatch) => {
+  initial = initial.toLowerCase();
+  dispatch(push('/gesetze/' + initial));
+  dispatch({ type: SELECT_INITIAL, initial });
+};
 
 
 
@@ -103,6 +101,6 @@ export const getInitial = (state) => state.laws.selectedInitial;
 export const getLawsByInitial = createSelector(
   [ getLaws, getInitial ],
   (laws, initial) => laws.filter(law => (
-    (law.groupkey[0].toUpperCase() == initial)
+    (law.groupkey[0].toLowerCase() == initial)
   ))
 );
