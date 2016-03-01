@@ -35,7 +35,7 @@ class Header extends React.Component {
     const { query } = this.state;
 
     return (
-      <MaterialHeader waterfall>
+      <MaterialHeader scroll>
         <HeaderRow title={title || 'woop'}>
           <Textfield
             value={query}
