@@ -19,8 +19,8 @@ class SearchContainer extends React.Component {
 
   componentWillMount() {
     const { params, search, fetchLawIndex } = this.props;
-    search(params.query || ''); // Initialize search on page load.
-    fetchLawIndex(); // Initialize law data.
+    search.query || search(params.query || ''); // Initialize search on page load.
+    fetchLawIndex(); // Initialize law data. TODO!
   }
 
   render() {
@@ -38,6 +38,7 @@ class SearchContainer extends React.Component {
 const mapStateToProps = (state) => ({
   results: getLawsByQuery(state),
   loading: !!state.laws.loading,
+  query: state.search.query,
 });
 
 const mapDispatchToProps = { fetchLawIndex, search };

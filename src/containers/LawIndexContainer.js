@@ -29,13 +29,14 @@ class LawIndexContainer extends React.Component {
     const {
       fetchIndex,
       params,
+      laws,
       selectInitial,
       selectPage,
       selectedInitial,
     } = this.props;
 
     console.log('mount', params);
-    fetchIndex();
+    laws.length > 0 || fetchIndex();
     selectedInitial || selectInitial(params.initial);
     params.page && selectPage(parseInt((params.page || 0), 10));
   }
