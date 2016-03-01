@@ -6,3 +6,4 @@ export LawList from './LawList';
 export Layout from './layout';
 export Norm from './norm/Norm';
 export Search from './Search';
+export SearchInput from './SearchInput';

@@ -7,7 +7,8 @@ import { Layout } from '../components';
 
 const navigation = [
   {to: '/', text: 'Home'},
-  {to: '/gesetze', text: 'Gesetz Index'}
+  {to: '/gesetze', text: 'Gesetz Index'},
+  {to: '/suche', text: 'Suche' },
 ];
 
 
@@ -15,6 +16,7 @@ class LayoutContainer extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     htmltitle: PropTypes.string.isRequired,
+    query: PropTypes.string,
     search: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
   };
@@ -30,10 +32,15 @@ class LayoutContainer extends React.Component {
   }
 
   render() {
-    const { children, search, title } = this.props;
+    const { children, query, search, title } = this.props;
 
     return (
-      <Layout title={title} navigation={navigation} search={search}>
+      <Layout
+        title={title}
+        navigation={navigation}
+        search={search}
+        query={query}
+      >
         {children}
       </Layout>
     );
@@ -48,6 +55,7 @@ function mapStateToProps(state = {
   const title = routes[routes.length - 1].title;
 
   return {
+    query: state.search.query,
     title,
     htmltitle: title + ' | Lawly'
   };

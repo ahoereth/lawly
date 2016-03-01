@@ -13,25 +13,42 @@ import { Search } from 'components';
 class SearchContainer extends React.Component {
   static propTypes = {
     fetchLawIndex: PropTypes.func.isRequired,
+    fetched: PropTypes.bool.isRequired,
     page: PropTypes.number,
     pageSize: PropTypes.number,
     params: PropTypes.shape({
       query: PropTypes.string,
     }).isRequired,
+    query: PropTypes.string,
     results: PropTypes.array.isRequired,
     search: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     total: PropTypes.number.isRequired,
   };
 
-  componentWillMount() {
-    const { params, search, fetchLawIndex } = this.props;
-    search.query || search(params.query || ''); // Initialize search on page load.
-    fetchLawIndex(); // Initialize law data. TODO!
+  componentDidMount() {
+    const { fetched, fetchLawIndex } = this.props;
+    this.componentWillReceiveProps(); // Initialize search on page load.
+    fetched || fetchLawIndex(); // Initialize law data.
+  }
+
+  componentWillReceiveProps(nextProps = this.props) {
+    const { params, query, search } = nextProps;
+    if ((params.query || '') !== query) {
+      search(params.query);
+    }
   }
 
   render() {
-    const { results, selectPage, total, page, pageSize } = this.props;
+    const {
+      results,
+      search,
+      selectPage,
+      total,
+      page,
+      pageSize,
+      query,
+    } = this.props;
 
     if (!results) {
       return <div>Nothing to show...</div>;
@@ -44,6 +61,8 @@ class SearchContainer extends React.Component {
         pageSize={pageSize}
         selectPage={selectPage}
         total={total}
+        search={search}
+        query={query}
       />
     );
   }
@@ -51,14 +70,16 @@ class SearchContainer extends React.Component {
 
 
 const mapStateToProps = (state) => {
-  const { page, pageSize } = state.search;
+  const { page, pageSize, query } = state.search;
   const { results, total } = getLawsByQueryAndPage(state);
 
   return {
     page,
     pageSize,
+    query,
     results,
     total,
+    fetched: state.laws.index.length > 0
   };
 };
 

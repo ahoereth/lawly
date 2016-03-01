@@ -39,7 +39,7 @@ export default function reducer(
 
 // ******************************************************************
 // ACTION CREATORS
-export const search = (query) => (dispatch) => {
+export const search = (query = '') => (dispatch) => {
   dispatch({ type: SEARCH, query });
   dispatch({ type: SELECT_PAGE, page: 1 });
   dispatch(push(`/suche/${query}`));
@@ -63,10 +63,10 @@ export const getPageSize = (state) => state.search.pageSize || 20;
 
 export const getLawsByQuery = createSelector(
   [ getLaws, getQuery ],
-  (laws, query) => laws.filter(law => (
+  (laws, query) => query ? laws.filter(law => (
     (law.titel.toLowerCase().indexOf(query) > -1) ||
     (law.groupkey.toLowerCase().indexOf(query) > -1)
-  ))
+  )) : []
 );
 
 export const getLawsByQueryAndPage = createSelector(

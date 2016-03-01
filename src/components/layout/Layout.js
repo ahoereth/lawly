@@ -8,9 +8,9 @@ import Footer from './Footer';
 import './layout.scss';
 
 
-const Layout = ({ title, children, navigation, search }) => (
+const Layout = ({ title, children, navigation, search, query }) => (
   <MaterialLayout>
-    <Header title={title} links={navigation} search={search} />
+    <Header title={title} links={navigation} search={search} query={query} />
     {/*<Drawer title={title} primary={navigation} />*/}
     <Content>
       {children}
@@ -25,6 +25,7 @@ Layout.propTypes = {
     to: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired
   })),
+  query: PropTypes.string,
   search: PropTypes.func.isRequired,
   title: PropTypes.string,
 };
