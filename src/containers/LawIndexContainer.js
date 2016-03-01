@@ -14,8 +14,8 @@ class LawIndexContainer extends React.Component {
     initials: PropTypes.array.isRequired,
     laws: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
-    page: PropTypes.number.isRequired,
-    pageSize: PropTypes.number.isRequired,
+    page: PropTypes.number,
+    pageSize: PropTypes.number,
     params: PropTypes.shape({
       initial: PropTypes.string,
     }).isRequired,
@@ -35,18 +35,9 @@ class LawIndexContainer extends React.Component {
       selectedInitial,
     } = this.props;
 
-    console.log('mount', params);
     laws.length > 0 || fetchIndex();
     selectedInitial || selectInitial(params.initial);
-    params.page && selectPage(parseInt((params.page || 0), 10));
-  }
-
-  shouldComponentUpdate(nextProps) {
-    if (typeof nextProps.params.page === 'undefined') {
-      this.props.selectPage(1);
-      return false;
-    }
-    return true;
+    params.page && selectPage(parseInt((params.page), 10));
   }
 
   render() {

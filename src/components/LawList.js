@@ -45,13 +45,13 @@ LawList.propTypes = {
   laws: PropTypes.array.isRequired,
   page: PropTypes.number,
   pageSize: PropTypes.number,
-  selectPage: PropTypes.func,
-  total: PropTypes.number,
+  selectPage: PropTypes.func.isRequired,
+  total: PropTypes.number.isRequired,
 };
 
 LawList.defaultProps = {
   page: 1,
-  pageSize: 50,
+  pageSize: 20,
 };
 
 

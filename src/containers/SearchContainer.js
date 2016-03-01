@@ -2,19 +2,26 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
 import { fetchLawIndex } from 'redux/modules/laws';
-import { search, getLawsByQuery } from 'redux/modules/search';
+import {
+  search,
+  getLawsByQueryAndPage,
+  selectSearchPage,
+} from 'redux/modules/search';
 import { Search } from 'components';
 
 
 class SearchContainer extends React.Component {
   static propTypes = {
     fetchLawIndex: PropTypes.func.isRequired,
-    loading: PropTypes.bool.isRequired,
+    page: PropTypes.number,
+    pageSize: PropTypes.number,
     params: PropTypes.shape({
       query: PropTypes.string,
     }).isRequired,
     results: PropTypes.array.isRequired,
     search: PropTypes.func.isRequired,
+    selectPage: PropTypes.func.isRequired,
+    total: PropTypes.number.isRequired,
   };
 
   componentWillMount() {
@@ -24,24 +31,42 @@ class SearchContainer extends React.Component {
   }
 
   render() {
-    const { loading, results } = this.props;
+    const { results, selectPage, total, page, pageSize } = this.props;
 
-    if (loading) {
-      return <div>Loading...</div>;
+    if (!results) {
+      return <div>Nothing to show...</div>;
     }
 
-    return <Search results={results.slice(1, 100)} />;
+    return (
+      <Search
+        results={results}
+        page={page}
+        pageSize={pageSize}
+        selectPage={selectPage}
+        total={total}
+      />
+    );
   }
 }
 
 
-const mapStateToProps = (state) => ({
-  results: getLawsByQuery(state),
-  loading: !!state.laws.loading,
-  query: state.search.query,
-});
+const mapStateToProps = (state) => {
+  const { page, pageSize } = state.search;
+  const { results, total } = getLawsByQueryAndPage(state);
 
-const mapDispatchToProps = { fetchLawIndex, search };
+  return {
+    page,
+    pageSize,
+    results,
+    total,
+  };
+};
+
+const mapDispatchToProps = {
+  fetchLawIndex,
+  search,
+  selectPage: selectSearchPage,
+};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchContainer);

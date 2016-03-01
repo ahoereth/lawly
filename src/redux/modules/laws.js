@@ -16,6 +16,7 @@ const SINGLE_FETCH_SUCCESS = 'laws/single/FETCH_SUCCESS';
 const SINGLE_FETCH_FAIL = 'laws/single/FETCH_FAIL';
 
 
+
 // ******************************************************************
 // REDUCERS
 export default function reducer(
@@ -92,10 +93,11 @@ export const fetchLaw = (groupkey) => ({
   promise: client => client.get('laws/' + groupkey)
 });
 
-export const selectLawIndexInitial = (initial = 'A') => (dispatch) => {
+export const selectLawIndexInitial = (initial = 'a') => (dispatch) => {
   initial = initial.toLowerCase();
-  dispatch(push('/gesetze/' + initial));
   dispatch({ type: INDEX_SELECT_INITIAL, initial });
+  dispatch({ type: INDEX_SELECT_PAGE, page: 1 });
+  dispatch(push('/gesetze/' + initial));
 };
 
 export const selectLawIndexPage = (page = '1') => (dispatch, getState) => {
@@ -121,11 +123,6 @@ export const getLawsByInitial = createSelector(
   (laws, initial) => laws.filter(law => (
     (law.groupkey[0].toLowerCase() == initial)
   ))
-);
-
-export const getLawsByPage = createSelector(
-  [ getLaws, getPage, getPageSize ],
-  (laws, page, size) => laws.slice(size * (page-1), size)
 );
 
 export const getLawsByInitialAndPage = createSelector(
