@@ -42,13 +42,13 @@ export default function reducer(
 export const search = (query) => (dispatch) => {
   dispatch({ type: SEARCH, query });
   dispatch({ type: SELECT_PAGE, page: 1 });
-  dispatch(push(`/search/${query}`));
+  dispatch(push(`/suche/${query}`));
 };
 
 export const selectSearchPage = (page = '1') => (dispatch, getState) => {
   const { query } = getState().search;
   dispatch({ type: SELECT_PAGE, page });
-  dispatch(push(`/search/${query}/${page}`));
+  dispatch(push(`/suche/${query}/${page}`));
 };
 
 
