@@ -13,7 +13,7 @@ export default function createStore(client, data) {
   ];
   const finalCreateStore = compose(
     applyMiddleware(...middlewares),
-    window && window.devToolsExtension ? window.devToolsExtension() : f => f,
+    window && window.devToolsExtension ? window.devToolsExtension() : f => f
   )(_createStore);
   const store = finalCreateStore(reducer, data);
 
