@@ -7,39 +7,35 @@ import { Law } from 'components';
 
 class GesetzContainer extends React.Component {
   static propTypes = {
-    data: PropTypes.array.isRequired,
     fetchLaw: PropTypes.func.isRequired,
-    loading: PropTypes.bool.isRequired,
+    norms: PropTypes.array,
     params: PropTypes.shape({
       groupkey: PropTypes.string.isRequired
     }).isRequired,
   };
 
   componentWillMount() {
-    const { fetchLaw, params } = this.props;
-    fetchLaw(params.groupkey);
+    const { fetchLaw, params, norms } = this.props;
+    norms || fetchLaw(params.groupkey);
   }
 
   render() {
-    const { loading, data } = this.props;
+    const { norms } = this.props;
 
-    if (loading) {
+    if (!norms || norms.length === 0) {
       return <div>Loading...</div>;
     }
 
-    return <Law norms={data} />;
+    return <Law norms={norms} />;
   }
 }
 
 
 function mapStateToProps({ laws }, { params }) {
   const { groups } = laws || { groups: {} };
-  const data = groups[params.groupkey] || [];
-  const loading = (data.length === 0);
 
   return {
-    loading,
-    data,
+    norms: groups[params.groupkey],
   };
 }
 
