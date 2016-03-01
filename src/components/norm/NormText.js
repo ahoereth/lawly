@@ -1,9 +1,10 @@
 import React, { PropTypes } from 'react';
+import cs from 'classnames';
 
 import { handleHtml } from 'components/Html';
 import { handleTables } from './NormTable';
 import { handlePres } from './NormPre';
-import { handleParagraphs } from './NormParagraphs';
+// import { handleParagraphs } from './NormParagraphs';
 
 
 function applyHandlers(handlers, content) {
@@ -15,19 +16,26 @@ function applyHandlers(handlers, content) {
 }
 
 
-const NormText = ({ children }) => {
+const NormText = ({ children, footnote }) => {
+  if (!children) { return <span />; }
+
   const content = applyHandlers([
     handleTables,
     handlePres,
-    handleParagraphs,
+    // handleParagraphs,
     handleHtml,
   ], [children]);
 
-  return <div>{content}</div>;
+  return <div className={cs({footnote})}>{content}</div>;
 };
 
 NormText.propTypes = {
   children: PropTypes.string,
+  footnote: PropTypes.bool
+};
+
+NormText.defaultProps = {
+  footnote: false,
 };
 
 

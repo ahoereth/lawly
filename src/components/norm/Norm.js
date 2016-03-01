@@ -5,29 +5,35 @@ import './norm.scss';
 
 
 const Norm = ({ data }) => {
-  if (data.kind === 'gliederung') {
-    const { gliederungseinheit, enbez, text } = data;
-    const { gliederungsbez, gliederungstitel } = gliederungseinheit;
-    const titel = gliederungstitel ? ': ' + gliederungstitel : '';
-    return (
-      <div key={data.doknr} className='norm'>
-        <h3>{enbez ? enbez : gliederungsbez + titel}</h3>
-        <NormText>{text}</NormText>
-      </div>
+  let output = [];
+
+  if (data.langue) {
+    output.push(<h1 key='langue'>{data.langue} <small>({data.groupkey})</small></h1>);
+  }
+
+  if (data.gliederungseinheit) {
+    const { gliederungseinheit, enbez } = data;
+    const { gliederungsbez: bez, gliederungstitel: titel } = gliederungseinheit;
+    output.push(
+      <h2 key='gliederung'>
+        {enbez ? enbez : bez + (titel ? ': ' + titel : '')}
+      </h2>
     );
   }
 
-  if (data.kind === 'paragraph') {
-    const { enbez, titel, text } = data;
-    return (
-      <div key={data.doknr} className='norm'>
-        <h4>{enbez}{!titel ? false : `: ${titel}`}</h4>
-        <NormText>{text}</NormText>
-      </div>
-    );
+  if (data.enbez) {
+    output.push(<h3 key='enbez'>{data.enbez}</h3>);
   }
 
-  return <span />;
+  if (data.text) {
+    output.push(<NormText key='text'>{data.text}</NormText>);
+  }
+
+  if (data.fussnoten) {
+    output.push(<NormText footnote key='fussnoten'>{data.fussnoten}</NormText>);
+  }
+
+  return <div className='norm'>{output}</div>;
 };
 
 Norm.propTypes = {

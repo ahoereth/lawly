@@ -16,4 +16,26 @@
     -webkit-margin-start: 0;
     margin-left: 2em;
   }
+
+  // .footnote,
+  .footnote {
+    // &:before {
+    //   content: '__________';
+    //   display: block;
+    // }
+
+    p,
+    .mdl-card .mdl-card__supporting-text {
+      font-size: small !important;
+    }
+
+    p {
+      text-indent: 1em;
+    }
+  }
+
+  // Hide consecutive linebreaks.
+  br+br {
+    display: none;
+  }
 }

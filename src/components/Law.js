@@ -1,19 +1,18 @@
 import React, { PropTypes } from 'react';
-import { Card, CardTitle, CardText } from 'react-mdl';
+import { Grid, Cell } from 'react-mdl';
 
-import { Norm } from 'components';
+import { Norm, NormList } from 'components';
 
 
 const Law = ({ norms }) => (
-  <Card shadow={0} className='gesetz'>
-    <CardTitle>
-      <h2 className='mdl-card__title-text'>{norms[0].langue}</h2>
-      <div>{norms[0].groupkey}</div>
-    </CardTitle>
-    <CardText>
+  <Grid>
+    <Cell col={8} className='law'>
       {norms.map((norm, i) => <Norm key={i} data={norm} />)}
-    </CardText>
-  </Card>
+    </Cell>
+    <Cell col={4} className='law-sidebar'>
+      <NormList norms={norms} />
+    </Cell>
+  </Grid>
 );
 
 Law.propTypes = {
