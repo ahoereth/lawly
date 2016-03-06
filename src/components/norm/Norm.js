@@ -1,39 +1,25 @@
 import React, { PropTypes } from 'react';
 
-import NormText from './NormText';
-import './norm.scss';
-
 
 const Norm = ({ data }) => {
-  let output = [];
+  let level = data.enumeration.split('.').length + 1;
+  level = data.enumeration === '1' ? 1 : (level > 6 ? 6 : level);
+  level = `h${level}`;
 
-  if (data.langue) {
-    output.push(<h1 key='langue'>{data.langue} <small>({data.groupkey})</small></h1>);
-  }
-
-  if (data.gliederungseinheit) {
-    const { gliederungseinheit, enbez } = data;
-    const { gliederungsbez: bez, gliederungstitel: titel } = gliederungseinheit;
-    output.push(
-      <h2 key='gliederung'>
-        {enbez ? enbez : bez + (titel ? ': ' + titel : '')}
-      </h2>
+  let children = [<span key='title'>{data.title}</span>];
+  if (data.enumeration === '1') {
+    children.unshift(
+      <small style={{display: 'block'}} key='key'>({data.groupkey})</small>
     );
   }
 
-  if (data.enbez) {
-    output.push(<h3 key='enbez'>{data.enbez}</h3>);
-  }
-
-  if (data.text) {
-    output.push(<NormText key='text'>{data.text}</NormText>);
-  }
-
-  if (data.fussnoten) {
-    output.push(<NormText footnote key='fussnoten'>{data.fussnoten}</NormText>);
-  }
-
-  return <div className='norm'>{output}</div>;
+  return (
+    <div className='norm'>
+      {React.createElement(level, {children})}
+      <div  dangerouslySetInnerHTML={{__html: data.body}} />
+      <div  dangerouslySetInnerHTML={{__html: data.foot}} />
+    </div>
+  );
 };
 
 Norm.propTypes = {

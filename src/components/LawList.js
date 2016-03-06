@@ -9,7 +9,7 @@ import './lawList.scss';
 const LawList = ({ laws, page, pageSize, selectPage, total }) => {
   const columns = [
     { name: 'groupkey', label: <span>Ab&shy;kür&shy;zung</span> },
-    { name: 'titel', label: <span>Be&shy;zeich&shy;nung</span> },
+    { name: 'title', label: <span>Be&shy;zeich&shy;nung</span> },
     { name: 'action' },
   ];
 

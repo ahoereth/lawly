@@ -64,7 +64,7 @@ export const getPageSize = (state) => state.search.pageSize || 20;
 export const getLawsByQuery = createSelector(
   [ getLaws, getQuery ],
   (laws, query) => query ? laws.filter(law => (
-    (law.titel.toLowerCase().indexOf(query) > -1) ||
+    (law.title.toLowerCase().indexOf(query) > -1) ||
     (law.groupkey.toLowerCase().indexOf(query) > -1)
   )) : []
 );

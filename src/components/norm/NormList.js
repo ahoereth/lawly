@@ -4,26 +4,19 @@ import { List } from 'components';
 
 
 const NormList = ({ norms }) => {
-  let list = [];
+  let list = [{ items: [] }];
 
   norms.forEach(norm => {
-    if (norm.gliederungseinheit) {
-      const { gliederungseinheit: einheit, enbez } = norm;
-      const { gliederungsbez: bez, gliederungstitel: titel } = einheit;
-      list.push({
-        name: enbez ? enbez : bez + (titel ? ': ' + titel : '')
-      });
-    } else if (norm.enbez) {
-      let len = list.length-1;
-      if (!list[len]) {
-        list[len] = {};
+    let level = norm.enumeration.split('.').length;
+    let currentList = list;
+    while (0 < (level--)) {
+      if (!currentList[currentList.length-1]) {
+        currentList.push({ items: [] });
       }
-      if (!list[len].items) {
-        list[len].items = [];
-      }
-
-      list[len].items.push({ name: norm.enbez });
+      currentList = currentList[currentList.length-1].items;
     }
+
+    currentList.push({ name: norm.title, items: [] });
   });
 
   return <List>{list}</List>;
