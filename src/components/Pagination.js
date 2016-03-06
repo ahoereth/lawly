@@ -15,7 +15,7 @@ const Pagination = ({ page, hasNext, hasPrev, selectPage }) => (
     }
     {!hasNext ? false :
       <Button
-        raised colored
+        raised accent
         onClick={() => selectPage(page+1)}
         style={{float: 'right'}}
       >
