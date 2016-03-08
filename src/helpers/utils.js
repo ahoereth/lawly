@@ -27,3 +27,7 @@ export function isString(val) {
 export function isUndefined(x) {
   return (typeof x === 'undefined');
 }
+
+export function slugify(str) {
+  return str.toLowerCase().replace(/[^\wüöä]+/ig, '-');
+}

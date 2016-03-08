@@ -1,13 +1,18 @@
 import React, { PropTypes } from 'react';
 
+import { slugify } from 'helpers/utils';
+
 
 const Norm = ({ data }) => {
   let level = data.enumeration.split('.').length + 1;
-  level = data.enumeration === '1' ? 1 : (level > 6 ? 6 : level);
+  level = data.enumeration === '0' ? 1 : (level > 6 ? 6 : level);
   level = `h${level}`;
 
-  let children = [<span key='title'>{data.title}</span>];
-  if (data.enumeration === '1') {
+  let children = [
+    <span key='title' id={slugify(data.title)}>{data.title}</span>
+  ];
+
+  if (level === 'h1') {
     children.unshift(
       <small style={{display: 'block'}} key='key'>({data.groupkey})</small>
     );
