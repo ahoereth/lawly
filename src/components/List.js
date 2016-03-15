@@ -2,8 +2,8 @@ import React, { PropTypes } from 'react';
 
 
 class List extends React.Component {
-  createList = (arr, className) => (
-    <ul className={className}>
+  createList = (arr, otherProps) => (
+    <ul {...otherProps}>
       {arr.map((li, i) =>
         <li key={i}>
           {!li.name ? false : <span>{li.name}</span>}
@@ -14,8 +14,8 @@ class List extends React.Component {
   );
 
   render() {
-    const { children, className} = this.props;
-    return this.createList(children, className);
+    const { children, ...otherProps} = this.props;
+    return this.createList(children, otherProps);
   }
 }
 
