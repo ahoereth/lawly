@@ -14,8 +14,8 @@ const Layout = ({ title, children, navigation, search, query }) => (
     {/*<Drawer title={title} primary={navigation} />*/}
     <Content>
       {children}
-      <Footer primary={navigation} mega />
     </Content>
+    <Footer primary={navigation} />
   </MaterialLayout>
 );
 

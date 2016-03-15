@@ -8,7 +8,7 @@ import {
 
 
 const Footer = ({ title, primary }) => (
-  <MaterialFooter size='mini'>
+  <MaterialFooter size='mega'>
     <FooterSection type='bottom' logo={title || 'Lawly'}>
       <FooterLinkList style={{float: 'right'}}>
         {primary.map((item, idx) => (
