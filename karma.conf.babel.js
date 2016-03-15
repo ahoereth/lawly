@@ -6,7 +6,7 @@ export default (config) => {
     singleRun: true,
     frameworks: [ 'mocha' ],
     files: [
-      'tests.webpack.js'
+      'src/**/*.spec.js',
     ],
     plugins: [
       'karma-chrome-launcher',
