@@ -27,7 +27,10 @@ const NormList = ({ norms }) => {
 };
 
 NormList.propTypes = {
-  norms: PropTypes.array.isRequired,
+  norms: PropTypes.arrayOf(PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    enumeration: PropTypes.string.isRequired,
+  })).isRequired,
 };
 
 

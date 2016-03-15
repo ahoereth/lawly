@@ -5,6 +5,7 @@ export LawInitialChooser from './LawInitialChooser';
 export LawList from './LawList';
 export Layout from './layout';
 export List from './List';
-export * from './norm';
+export Norm from './Norm';
+export NormList from './NormList';
 export Search from './Search';
 export SearchInput from './SearchInput';

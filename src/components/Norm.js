@@ -1,18 +1,19 @@
 import React, { PropTypes } from 'react';
 
 import { slugify } from 'helpers/utils';
+import './norm.scss';
 
 
 const Norm = ({ data }) => {
-  let level = data.enumeration.split('.').length + 1;
-  level = data.enumeration === '0' ? 1 : (level > 6 ? 6 : level);
-  level = `h${level}`;
+  let heading = data.enumeration.split('.').length + 1;
+  heading = data.enumeration === '0' ? 1 : (heading > 6 ? 6 : heading);
+  heading = `h${heading}`;
 
   let children = [
     <span key='title' id={slugify(data.title)}>{data.title}</span>
   ];
 
-  if (level === 'h1') {
+  if (heading === 'h1') {
     children.unshift(
       <small style={{display: 'block'}} key='key'>({data.groupkey})</small>
     );
@@ -20,9 +21,9 @@ const Norm = ({ data }) => {
 
   return (
     <div className='norm'>
-      {React.createElement(level, {children})}
-      <div  dangerouslySetInnerHTML={{__html: data.body}} />
-      <div  dangerouslySetInnerHTML={{__html: data.foot}} />
+      {React.createElement(heading, {children})}
+      <div dangerouslySetInnerHTML={{__html: data.body}} />
+      <div dangerouslySetInnerHTML={{__html: data.foot}} />
     </div>
   );
 };

@@ -1,0 +1,10 @@
+.norm {
+  pre {
+    overflow: auto;
+  }
+
+  // Hide consecutive linebreaks.
+  br+br {
+    display: none;
+  }
+}
