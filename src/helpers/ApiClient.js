@@ -27,27 +27,6 @@ function getRequestUrl(base, path, query = {}) {
 }
 
 
-function checkStatus(response) {
-  if (response.status >= 200 && response.status < 300) {
-    return response;
-  } else {
-    let error = new Error(response.statusText);
-    error.response = response;
-    throw error;
-  }
-}
-
-
-function getBody(response) {
-  const type = response.headers.get('content-type');
-  if (startsWith(type, 'application/json')) {
-    return response.json();
-  } else {
-    return response.text();
-  }
-}
-
-
 export default class ApiClient {
   constructor(apiurl) {
     this.headers = {};
@@ -69,7 +48,7 @@ export default class ApiClient {
    * @param {string} token
    */
   setAuthToken(token) {
-    this.headers.Authorization =  token ? `JWT ${token}` : undefined;
+    this.headers.Authorization = token ? `JWT ${token}` : undefined;
 
     /* global window */
     if (window && window.localStorage) {
@@ -84,6 +63,41 @@ export default class ApiClient {
   }
 
   /**
+   * All responses contain a JSON object surrounding the actual response
+   * **data** (*optional*, `object`) with additional information like the
+   * **status** (*required*, `success|fail|error`), a
+   * **message** (*optional*, `string`) and a renewed JSON Web Token
+   * **token** (*optional*, `string`) to replace the old one.
+   *
+   * @param  {Response} res
+   * @return {Promise}
+   */
+  parseResponse(response) {
+    const type = response.headers.get('content-type');
+    if (!startsWith(type, 'application/json')) {
+      // We should not end up here. All responses should be JSON!
+      return response.text();
+    }
+
+    response.json().then(result => {
+      const { status, message, data, token } = result;
+      if (!status) { // We just received the data, its not wrapped as expected.
+        return result;
+      }
+
+      switch (status) {
+        case 'error':
+          throw new Error(message ? message : response.statusText);
+        case 'fail':
+          // return
+        case 'success':
+          token && this.setAuthToken(token);
+          return data;
+      }
+    });
+  }
+
+  /**
    * Wrapper around the fetch api for smoother response handling.
    *
    * @param  {string} url
@@ -91,11 +105,8 @@ export default class ApiClient {
    * @return {Promise}
    */
   fetch(url, options = {}) {
-    return new Promise((resolve, reject) => {
-      fetch(url, options)
-        .then(checkStatus).then(getBody).then(resolve)
-        .catch(error => reject(error.toString()));
-    });
+    return fetch(url, options).then(res => this.parseResponse(res))
+                              .catch(error => { throw error.toString(); });
   }
 
   /**
@@ -138,8 +149,9 @@ export default class ApiClient {
    * @param  {string} password
    * @return {Promise}
    */
-  auth(email, password) {
-    return this.post('user/authenticate', { email, password }).then(
+  auth(email, password, signup = false) {
+    const resource = !signup ? 'user/authenticate' : 'user/create';
+    return this.post(resource, { email, password }).then(
       ({ email, token }) => {
         this.setAuthToken(token);
         return { email };

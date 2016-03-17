@@ -39,7 +39,7 @@ export default function reducer(
 
 // ******************************************************************
 // ACTION CREATORS
-export const login = (email, password) => (dispatch) => {
+export const login = (email, password, signup = false) => (dispatch) => {
   email = email ? email.trim() : false;
   password = password ? password.trim() : false;
   if (!email || !password) {
@@ -47,7 +47,7 @@ export const login = (email, password) => (dispatch) => {
   } else {
     dispatch({
       types: [USER_LOGIN, USER_LOGIN_SUCCESS, USER_LOGIN_FAIL],
-      promise: client => client.auth(email, password),
+      promise: client => client.auth(email, password, signup)
     });
   }
 };

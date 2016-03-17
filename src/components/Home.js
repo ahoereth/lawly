@@ -22,6 +22,12 @@ class Home extends React.Component {
     this.props.login(email, password);
   }
 
+  signup(e) {
+    e && e.preventDefault();
+    const { email, password } = this.state;
+    this.props.login(email, password, /*signup:*/ true);
+  }
+
   input(e) {
     const elem = e.currentTarget;
     if (['email', 'password'].includes(elem.name)) {
@@ -59,9 +65,18 @@ class Home extends React.Component {
                   />
               </CardText>
               <CardActions>
-                <Button ripple raised type='submit' style={{float: 'right'}}>
-                  Login
+                <Button ripple raised accent
+                  style={{float: 'right'}}
+                  type='submit'
+                >
+                  Einloggen
                 </Button>
+                  <Button ripple raised
+                    style={{float: 'right', marginRight: '1em'}}
+                    onClick={this.signup.bind(this)}
+                  >
+                    Registrierieren
+                  </Button>
               </CardActions>
             </Card>
           </form>
