@@ -1,18 +1,12 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { DataTable, FABButton, Icon } from 'react-mdl';
+import { DataTable, TableHeader, FABButton, Icon } from 'react-mdl';
 
 import Pagination from './Pagination';
 import './lawList.scss';
 
 
 const LawList = ({ laws, page, pageSize, selectPage, total }) => {
-  const columns = [
-    { name: 'groupkey', label: <span>Ab&shy;kür&shy;zung</span> },
-    { name: 'title', label: <span>Be&shy;zeich&shy;nung</span> },
-    { name: 'action' },
-  ];
-
   const rows = laws.map(law => ({...law,
     key: law.groupkey,
     action: (
@@ -27,10 +21,13 @@ const LawList = ({ laws, page, pageSize, selectPage, total }) => {
   return (
     <div>
       <DataTable
-        columns={columns}
         rows={rows}
         className='law-list'
-      />
+      >
+        <TableHeader name='groupkey'>Ab&shy;kür&shy;zung</TableHeader>
+        <TableHeader name='title'>Be&shy;zeich&shy;nung</TableHeader>
+        <TableHeader name='action' />
+      </DataTable>
       <Pagination
         page={page}
         hasNext={total > (pageSize*page)}
