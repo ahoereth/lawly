@@ -48,7 +48,7 @@ export default class ApiClient {
    * @param {string} token
    */
   setAuthToken(token) {
-    this.headers.Authorization = token ? `JWT ${token}` : undefined;
+    this.headers.authorization = token ? `JWT ${token}` : undefined;
 
     /* global window */
     if (window && window.localStorage) {
@@ -79,19 +79,22 @@ export default class ApiClient {
       return response.text();
     }
 
-    response.json().then(result => {
+    return response.json().then(result => {
       const { status, message, data, token } = result;
       if (!status) { // We just received the data, its not wrapped as expected.
         return result;
       }
 
+      // Refresh token if one is provided.
+      if (token) { this.setAuthToken(token); }
+
+      // Handle response accordingly to status.
       switch (status) {
         case 'error':
           throw new Error(message ? message : response.statusText);
         case 'fail':
           // return
         case 'success':
-          token && this.setAuthToken(token);
           return data;
       }
     });
@@ -151,12 +154,7 @@ export default class ApiClient {
    */
   auth(email, password, signup = false) {
     const resource = !signup ? 'user/authenticate' : 'user/create';
-    return this.post(resource, { email, password }).then(
-      ({ email, token }) => {
-        this.setAuthToken(token);
-        return { email };
-      }
-    );
+    return this.post(resource, { email, password });
   }
 
 }
