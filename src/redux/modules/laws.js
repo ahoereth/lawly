@@ -85,12 +85,12 @@ export default function reducer(
 // ACTION CREATORS
 export const fetchLawIndex = () => ({
   types: [INDEX_FETCH, INDEX_FETCH_SUCCESS, INDEX_FETCH_FAIL],
-  promise: client => client.get('laws/index')
+  promise: client => client.get({ name: 'laws' })
 });
 
 export const fetchLaw = (groupkey) => ({
   types: [SINGLE_FETCH, SINGLE_FETCH_SUCCESS, SINGLE_FETCH_FAIL],
-  promise: client => client.get('laws/' + groupkey)
+  promise: client => client.get({ name: 'law', groupkey })
 });
 
 export const selectLawIndexInitial = (initial = 'a') => (dispatch) => {

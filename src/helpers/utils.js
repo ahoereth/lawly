@@ -1,3 +1,5 @@
+import { b64decode } from './base64';
+
 /**
  * Check if given value is a string.
  *
@@ -17,10 +19,7 @@ export function isString(val) {
  * @return {Boolean}
  */
 export function isObject(val) {
-  if (val === null) {
-    return false;
-  }
-
+  if (val === null) { return false; }
   return ( (typeof val === 'function') || (typeof val === 'object') );
 }
 
@@ -33,6 +32,17 @@ export function isObject(val) {
  */
 export function isUndefined(x) {
   return (typeof x === 'undefined');
+}
+
+
+/**
+ * Check if given varaible is a boolean.
+ *
+ * @param  {any} x
+ * @return {Boolean}
+ */
+export function isBoolean(x) {
+  return (typeof x === 'boolean');
 }
 
 
@@ -61,6 +71,39 @@ export function endsWith(haystack, needle) {
 
 
 /**
+ * Parses the header and payload of a JSON webtoken into JavaScript objects.
+ *
+ * @param  {string} token
+ * @return {object}
+ */
+export function parseJWT(token) {
+  const [ header, payload/*, signature*/ ] = token.split('.');
+  return {
+    header: JSON.parse(b64decode(header)),
+    payload: JSON.parse(b64decode(payload)),
+  };
+}
+
+
+/**
+ * Encodes a JavaScript object into a url query string of key=value pairs
+ * delimited with &.
+ *
+ * @param  {object} obj
+ * @return {string}
+ */
+export function obj2query(obj = null) {
+  if (!obj) { return ''; }
+  let str = '';
+  for (let key in obj) {
+    if (str !== '') { str += '&'; }
+    str += key + '=' + encodeURIComponent(obj[key]);
+  }
+  return str;
+}
+
+
+/**
  * Slugifies a string, converting it to lower case and replacing all special
  * characters (besides umlauts!) and spaces with dashes.
  *
@@ -69,4 +112,33 @@ export function endsWith(haystack, needle) {
  */
 export function slugify(str) {
   return str.toLowerCase().replace(/[^\wüöä]+/ig, '-');
+}
+
+
+/**
+ * Joins a list of strings into a single forward slash seperated path string
+ * with optional trailing slash.
+ *
+ * @param  {string} part1
+ * @param  {string} part2
+ * @param  {string} partN
+ * @param  {boolean} trailingSlash
+ * @return {string}
+ */
+export function joinPath(/* parts, trailingSlash = false */) {
+  let path = arguments[0];
+  let n = arguments.length; n = !isBoolean(arguments[n-1]) ? n : n - 1;
+  let trailingSlash = isBoolean(arguments[n-1]) ? arguments[n-1] : false;
+
+  for (let i = 1; i < n; i++) {
+    let a = endsWith(path, '/'), b = startsWith(arguments[i], '/');
+         if (a && b) { path = path.slice(0, -1) + arguments[i]; }
+    else if (a || b) { path += arguments[i]; }
+    else             { path += '/' + arguments[i]; }
+  }
+
+  if ( trailingSlash && !endsWith(path, '/')) { path += '/'; }
+  if (!trailingSlash &&  endsWith(path, '/')) { path  = path.slice(0, -1); }
+
+  return path;
 }

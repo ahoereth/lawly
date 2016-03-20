@@ -41,8 +41,9 @@ export default function reducer(
 // ACTION CREATORS
 export const login = (email, password, signup = false) => (dispatch) => {
   email = email ? email.trim() : false;
-  password = password ? password.trim() : false;
-  if (!email || !password) {
+  // Server will check for a valid authentication token if no password is set.
+  password = password ? password.trim() : undefined;
+  if (!email) {
     dispatch({ type: USER_LOGIN_FAIL });
   } else {
     dispatch({

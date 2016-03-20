@@ -1,43 +1,65 @@
 import fetch from 'isomorphic-fetch';
 
-import { startsWith, endsWith } from './utils';
-
-
-function obj2query(obj = null) {
-  if (!obj) { return ''; }
-  let str = '';
-  for (let key in obj) {
-    if (str !== '') { str += '&'; }
-    str += key + '=' + encodeURIComponent(obj[key]);
-  }
-  return str;
-}
-
-
-function getRequestUrl(base, path, query = {}) {
-  if (!endsWith(base, '/') && !startsWith(path, '/')) {
-    base += '/';
-  }
-
-  if (path.indexOf('?') === '-1') {
-    path += '?';
-  }
-
-  return base + path + obj2query(query);
-}
+import { login } from 'redux/modules/user';
+import {
+  isUndefined, isObject, startsWith,
+  joinPath, parseJWT, obj2query
+} from './utils';
 
 
 export default class ApiClient {
+  static jsonHeaders = {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  };
+
+  static resources = {
+    'users': '/users',
+    'user_sessions': '/users/:email/sessions',
+    'laws': '/laws',
+    'law': '/laws/:groupkey',
+  };
+
   constructor(apiurl) {
     this.headers = {};
     this.apiurl = apiurl;
+  }
+
+  init(store) {
+    this.store = store;
 
     /* global window */
     if (window && window.localStorage) {
       // Recover authentication from last session.
       const token = window.localStorage.getItem('auth');
-      if (token) { this.setAuthToken(token); }
+      if (token) {
+        this.setAuthToken(token);
+        const { payload } = parseJWT(token);
+        this.store.dispatch(login(payload.email));
+      }
     }
+  }
+
+  /**
+   * Compiles an API url required for firing off a request.
+   *
+   * @param  {string/object} resource
+   * @param  {object}        query (optional)
+   * @return {string}
+   */
+  getRequestUrl(resource, query = null) {
+    let path = resource;
+    if (isObject(resource)) {
+      const pattern = ApiClient.resources[resource.name];
+      path = pattern.replace(/:(\w+)/g, (match, key) => {
+        return !isUndefined(resource[key]) ? encodeURIComponent(resource[key])
+                                           : match;
+      });
+    }
+
+    path = joinPath(this.apiurl, path);
+    if (query && path.indexOf('?') === '-1') { path += '?'; }
+    return path + obj2query(query);
   }
 
   /**
@@ -91,9 +113,9 @@ export default class ApiClient {
       // Handle response accordingly to status.
       switch (status) {
         case 'error':
-          throw new Error(message ? message : response.statusText);
+          throw (message || response.statusText);
         case 'fail':
-          // return
+          throw data;
         case 'success':
           return data;
       }
@@ -107,9 +129,9 @@ export default class ApiClient {
    * @param  {object} options (optional)
    * @return {Promise}
    */
-  fetch(url, options = {}) {
-    return fetch(url, options).then(res => this.parseResponse(res))
-                              .catch(error => { throw error.toString(); });
+  fetch(resource, options = {}) {
+    return fetch(this.getRequestUrl(resource), options)
+      .then(res => this.parseResponse(res));
   }
 
   /**
@@ -119,27 +141,38 @@ export default class ApiClient {
    * @return {Promise}
    */
   get(resource) {
-    return this.fetch(getRequestUrl(this.apiurl, resource), {
+    return this.fetch(resource, {
       method: 'get',
       headers: this.headers,
     });
   }
 
   /**
-   * Wrapper around fetch for quick post requests to our api. Handles setting
-   * the correct headers and converting the payload to json.
+   * Wrapper around fetch for quick post requests to the api.
    *
    * @param  {url} resource
    * @param  {object} data
    * @return {Promise}
    */
   post(resource, data) {
-    return this.fetch(getRequestUrl(this.apiurl, resource), {
+    return this.fetch(resource, {
       method: 'post',
-      headers: { ...this.headers,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: { ...ApiClient.jsonHeaders, ...this.headers },
+      body: JSON.stringify(data)
+    });
+  }
+
+  /**
+   * Wrapper around fetch for quick delete requests to the api.
+   *
+   * @param  {url} resource
+   * @param  {object} data
+   * @return {Promise}
+   */
+  remove(resource, data) {
+    return this.fetch(resource, {
+      method: 'delete',
+      headers: { ...ApiClient.jsonHeaders, ...this.headers },
       body: JSON.stringify(data)
     });
   }
@@ -152,9 +185,9 @@ export default class ApiClient {
    * @param  {string} password
    * @return {Promise}
    */
-  auth(email, password, signup = false) {
-    const resource = !signup ? 'user/authenticate' : 'user/create';
+  auth(email, password = undefined, signup = false) {
+    const resource = signup ? { name: 'users' }
+                            : { name: 'user_sessions', email };
     return this.post(resource, { email, password });
   }
-
 }

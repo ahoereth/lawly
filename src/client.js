@@ -13,7 +13,7 @@ import 'react-mdl/extra/css/material.red-amber.min.css';
 import 'material-design-icons/iconfont/material-icons.css';
 
 
-const APIURL = 'http://localhost:3000';
+const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
 const target = document.getElementById('app'); /* global document */
 const store = createStore(client, window.__state); /* global window */

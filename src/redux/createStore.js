@@ -17,6 +17,8 @@ export default function createStore(client, data) {
   )(_createStore);
   const store = finalCreateStore(reducer, data);
 
+  client.init(store);
+
   /* global module, require */
   if (module.hot) {
     module.hot.accept('./modules/reducer', () => {
