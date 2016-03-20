@@ -1,9 +1,12 @@
 // ******************************************************************
 // ACTIONS
-const USER_LOGIN = 'laws/login';
-const USER_LOGIN_SUCCESS = 'laws/login/SUCCESS';
-const USER_LOGIN_FAIL = 'laws/login/FAIL';
+const USER_LOGIN = 'user/login';
+const USER_LOGIN_SUCCESS = 'user/login/SUCCESS';
+const USER_LOGIN_FAIL = 'user/login/FAIL';
 
+const USER_LOGOUT = 'user/logout';
+const USER_LOGOUT_SUCCESS = 'user/logout/SUCCESS';
+const USER_LOGOUT_FAIL = 'user/logout/FAIL';
 
 
 // ******************************************************************
@@ -11,7 +14,7 @@ const USER_LOGIN_FAIL = 'laws/login/FAIL';
 export default function reducer(
   state = {
     loggedin: false,
-    email: '',
+    email: undefined,
     error: false,
   },
   action
@@ -22,14 +25,25 @@ export default function reducer(
     case USER_LOGIN_SUCCESS:
       return {...state,
         loggedin: true,
-        email: action.email,
+        email: action.result.email,
+        error: false,
       };
     case USER_LOGIN_FAIL:
       return {...state,
         loggedin: false,
-        email: '',
+        email: undefined,
         error: action.error,
       };
+    case USER_LOGOUT:
+      return state;
+    case USER_LOGOUT_SUCCESS:
+      return {...state,
+        loggedin: false,
+        email: undefined,
+        error: false,
+      };
+    case USER_LOGOUT_FAIL: // Can this even occur?
+      return state;
     default:
       return state;
   }
@@ -51,4 +65,11 @@ export const login = (email, password, signup = false) => (dispatch) => {
       promise: client => client.auth(email, password, signup)
     });
   }
+};
+
+export const logout = (email) => (dispatch) => {
+  dispatch({
+    types: [USER_LOGOUT, USER_LOGOUT_SUCCESS, USER_LOGOUT_FAIL],
+    promise: client => client.unauth(email)
+  });
 };

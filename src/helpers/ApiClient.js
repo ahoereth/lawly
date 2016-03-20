@@ -115,7 +115,7 @@ export default class ApiClient {
         case 'error':
           throw (message || response.statusText);
         case 'fail':
-          throw data;
+          throw message;
         case 'success':
           return data;
       }
@@ -189,5 +189,17 @@ export default class ApiClient {
     const resource = signup ? { name: 'users' }
                             : { name: 'user_sessions', email };
     return this.post(resource, { email, password });
+  }
+
+  /**
+   * Wrapper around the remove function for not only destroying the session
+   * on the server side but also client side.
+   *
+   * @param  {string} email
+   * @return {Promise}
+   */
+  unauth(email) {
+    return this.remove({ name: 'user_sessions', email })
+      .then(() => this.setAuthToken());
   }
 }
