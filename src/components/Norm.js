@@ -1,35 +1,36 @@
 import React, { PropTypes } from 'react';
 
 import { slugify } from 'helpers/utils';
+import Html from 'components/Html';
 import './norm.scss';
 
 
 const Norm = ({ data }) => {
-  let heading = data.enumeration.split('.').length + 1;
-  heading = data.enumeration === '0' ? 1 : (heading > 6 ? 6 : heading);
-  heading = `h${heading}`;
+  const { enumeration, groupkey, title, body, foot } = data;
 
-  let children = [
-    <span key='title' id={slugify(data.title)}>{data.title}</span>
-  ];
+  let heading = enumeration.split('.').length + 1;
+  heading = enumeration === '0' ? 1 : (heading > 6 ? 6 : heading);
 
-  if (heading === 'h1') {
-    children.unshift(
-      <small style={{display: 'block'}} key='key'>({data.groupkey})</small>
-    );
-  }
+  const children = heading !== 1 ? title :
+    [<small style={{display: 'block'}} key='key'>({groupkey})</small>, title];
 
   return (
     <div className='norm'>
-      {React.createElement(heading, {children})}
-      <div dangerouslySetInnerHTML={{__html: data.body}} />
-      <div dangerouslySetInnerHTML={{__html: data.foot}} />
+      {React.createElement('h' + heading, {id: slugify(title), children})}
+      <div><Html>{body}</Html></div>
+      <div><Html>{foot}</Html></div>
     </div>
   );
 };
 
 Norm.propTypes = {
-  data: PropTypes.object,
+  data: PropTypes.shape({
+    enumeration: PropTypes.string.isRequired,
+    groupkey: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    body: PropTypes.string.isRequired,
+    foot: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 

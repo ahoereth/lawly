@@ -9,6 +9,10 @@ class LoginForm extends React.Component {
   static propTypes = {
     login: PropTypes.func.isRequired,
     shadow: PropTypes.number,
+    user: PropTypes.shape({
+      loggedin: PropTypes.bool.isRequired,
+      email: PropTypes.string,
+    }).isRequired,
   };
 
   static defaultProps = {
@@ -17,25 +21,28 @@ class LoginForm extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      email: props.user.email || '',
+      password: '',
+    };
   }
 
-  submit(e) {
+  submit = (e) => {
     e && e.preventDefault();
     const { email, password } = this.state;
     this.props.login(email, password);
   }
 
-  signup(e) {
+  signup = (e) => {
     e && e.preventDefault();
     const { email, password } = this.state;
     this.props.login(email, password, /*signup:*/ true);
   }
 
-  input(e) {
-    const elem = e.currentTarget;
-    if (['email', 'password'].includes(elem.name)) {
-      this.setState({ [elem.name]: elem.value });
+  input = (e) => {
+    const { name, value } = e.currentTarget;
+    if (name === 'email' || name === 'password') {
+      this.setState({ [name]: value });
     }
   }
 
@@ -44,7 +51,7 @@ class LoginForm extends React.Component {
     const { shadow, ...otherProps } = this.props;
 
     return (
-      <form action='/~' method='POST' onSubmit={this.submit.bind(this)}>
+      <form onSubmit={this.submit}>
         <Card shadow={shadow} style={{width: '100%'}} {...otherProps}>
           <CardTitle>Login</CardTitle>
           <CardText>
@@ -55,7 +62,7 @@ class LoginForm extends React.Component {
                 label='E-Mail'
                 style={{width: '100%'}}
                 value={email}
-                onChange={this.input.bind(this)}
+                onChange={this.input}
               />
               <Textfield
                 floatingLabel
@@ -64,22 +71,24 @@ class LoginForm extends React.Component {
                 label='Passwort'
                 style={{width: '100%'}}
                 value={password}
-                onChange={this.input.bind(this)}
+                onChange={this.input}
               />
           </CardText>
           <CardActions>
-            <Button ripple raised accent
+            <Button
+              ripple raised accent
               style={{float: 'right'}}
               type='submit'
             >
               Einloggen
             </Button>
-              <Button ripple raised
-                style={{float: 'right', marginRight: '1em'}}
-                onClick={this.signup.bind(this)}
-              >
-                Registrierieren
-              </Button>
+            <Button
+              ripple raised
+              style={{float: 'right', marginRight: '1em'}}
+              onClick={this.signup}
+            >
+              Registrierieren
+            </Button>
           </CardActions>
         </Card>
       </form>

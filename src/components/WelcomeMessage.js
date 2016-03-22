@@ -5,7 +5,7 @@ import {
 } from 'react-mdl';
 
 
-const WelcomeMessage = ({ shadow, logout, ...otherProps }) => (
+const WelcomeMessage = ({ shadow, logout, user, ...otherProps }) => (
   <Card shadow={shadow} style={{width: '100%'}} {...otherProps}>
     <CardTitle>Willkommen bei Lawly!</CardTitle>
     <CardText>
@@ -15,9 +15,15 @@ const WelcomeMessage = ({ shadow, logout, ...otherProps }) => (
     </CardText>
     <CardActions>
       <Button>Schreib uns was du denkst</Button>
-      <Button ripple raised onClick={logout} style={{float: 'right'}}>
-        Logout
-      </Button>
+      {!user.loggedin ? null :
+        <Button
+          ripple raised
+          onClick={() => logout(user.email)}
+          style={{float: 'right'}}
+        >
+          Logout
+        </Button>
+      }
     </CardActions>
   </Card>
 );
@@ -25,6 +31,10 @@ const WelcomeMessage = ({ shadow, logout, ...otherProps }) => (
 WelcomeMessage.propTypes = {
   logout: PropTypes.func.isRequired,
   shadow: PropTypes.number,
+  user: PropTypes.shape({
+    loggedin: PropTypes.bool.isRequired,
+    email: PropTypes.string,
+  }).isRequired,
 };
 
 WelcomeMessage.defaultProps = {
