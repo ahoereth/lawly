@@ -1,3 +1,8 @@
+import { createSelector } from 'reselect';
+
+import { arr2obj } from 'helpers/utils';
+
+
 // ******************************************************************
 // ACTIONS
 const USER_LOGIN = 'user/login';
@@ -8,6 +13,11 @@ const USER_LOGOUT = 'user/logout';
 const USER_LOGOUT_SUCCESS = 'user/logout/SUCCESS';
 const USER_LOGOUT_FAIL = 'user/logout/FAIL';
 
+const STAR = 'user/laws/star';
+const STAR_SUCCESS = 'user/laws/star/success';
+const STAR_FAIL = 'user/laws/star/fail';
+
+
 
 // ******************************************************************
 // REDUCERS
@@ -15,6 +25,7 @@ export default function reducer(
   state = {
     loggedin: false,
     email: undefined,
+    laws: {},
     error: false,
   },
   action
@@ -26,24 +37,36 @@ export default function reducer(
       return {...state,
         loggedin: true,
         email: action.result.email,
+        laws: arr2obj(action.result.laws, 'groupkey'),
         error: false,
       };
     case USER_LOGIN_FAIL:
       return {...state,
         loggedin: false,
         email: undefined,
+        laws: {},
         error: action.error,
       };
+
     case USER_LOGOUT:
       return state;
     case USER_LOGOUT_SUCCESS:
       return {...state,
         loggedin: false,
         email: undefined,
+        laws: {},
         error: false,
       };
     case USER_LOGOUT_FAIL: // Can this even occur?
       return state;
+
+    case STAR_SUCCESS:
+      return {...state,
+        laws: {...state.laws,
+          [action.result.groupkey]: action.result,
+        },
+      };
+
     default:
       return state;
   }
@@ -73,3 +96,26 @@ export const logout = (email) => (dispatch) => {
     promise: client => client.unauth(email)
   });
 };
+
+export const starLaw = (groupkey, state = true) => ({
+  types: [STAR, STAR_SUCCESS, STAR_FAIL],
+  promise: client => client.put({ name: 'user_law', groupkey }, {
+    starred: state
+  })
+});
+
+
+
+// ******************************************************************
+// SELECTORS
+export const getUserLaws = ({user}) => {
+  return user.laws;
+};
+
+export const getStars = createSelector(
+  [getUserLaws],
+  (userLaws) => Object.keys(userLaws).reduce((laws, key) => {
+    if (userLaws[key].starred) { laws[key] = true; }
+    return laws;
+  }, {})
+);

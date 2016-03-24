@@ -14,11 +14,16 @@ export default class ApiClient {
   };
 
   static resources = {
-    'users': '/users',
-    'user_sessions': '/users/:email/sessions',
     'laws': '/laws',
     'law': '/laws/:groupkey',
+    'users': '/users',
+    'user_sessions': '/users/:email/sessions',
+    'user_law': '/users/:email/laws/:groupkey',
   };
+
+  static defaultParams = {
+    email: '~',
+  }
 
   constructor(apiurl) {
     this.headers = {};
@@ -43,6 +48,9 @@ export default class ApiClient {
   /**
    * Compiles an API url required for firing off a request.
    *
+   * TODO: Consider making it possible to have params and body in a single
+   * object which is splitted into the two by this function.
+   *
    * @param  {string/object} resource
    * @param  {object}        query (optional)
    * @return {string}
@@ -51,9 +59,10 @@ export default class ApiClient {
     let path = resource;
     if (isObject(resource)) {
       const pattern = ApiClient.resources[resource.name];
+      const params = {...ApiClient.defaultParams, ...resource};
       path = pattern.replace(/:(\w+)/g, (match, key) => {
-        return !isUndefined(resource[key]) ? encodeURIComponent(resource[key])
-                                           : match;
+        return !isUndefined(params[key]) ? encodeURIComponent(params[key])
+                                         : match;
       });
     }
 
@@ -172,6 +181,21 @@ export default class ApiClient {
   remove(resource, data) {
     return this.fetch(resource, {
       method: 'delete',
+      headers: { ...ApiClient.jsonHeaders, ...this.headers },
+      body: JSON.stringify(data)
+    });
+  }
+
+  /**
+   * Wrapper around fetch for quick put requests to the api.
+   *
+   * @param  {url} resource
+   * @param  {object} data
+   * @return {Promise}
+   */
+  put(resource, data) {
+    return this.fetch(resource, {
+      method: 'put',
       headers: { ...ApiClient.jsonHeaders, ...this.headers },
       body: JSON.stringify(data)
     });

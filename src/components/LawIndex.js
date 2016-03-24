@@ -13,6 +13,8 @@ const LawIndex = ({
   selectInitial,
   selectPage,
   selectedInitial,
+  star,
+  stars,
   total,
 }) => (
   <Grid>
@@ -24,13 +26,7 @@ const LawIndex = ({
       />
     </Cell>
     <Cell col={11} tablet={7} phone={4}>
-      <LawList
-        laws={laws}
-        page={page}
-        pageSize={pageSize}
-        total={total}
-        selectPage={selectPage}
-      />
+      <LawList {...{laws, page, pageSize, total, selectPage, star, stars}} />
     </Cell>
   </Grid>
 );
@@ -43,6 +39,8 @@ LawIndex.propTypes = {
   selectInitial: PropTypes.func.isRequired,
   selectPage: PropTypes.func.isRequired,
   selectedInitial: PropTypes.string,
+  star: PropTypes.func.isRequired,
+  stars: PropTypes.objectOf(PropTypes.bool).isRequired,
   total: PropTypes.number,
 };
 

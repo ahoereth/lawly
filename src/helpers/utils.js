@@ -104,6 +104,23 @@ export function obj2query(obj = null) {
 
 
 /**
+ * Convert an array of objects to an object of objects using a specific key
+ * of the original objects as key for the new object. CAUTION: Objects further
+ * down in the array overwrite earlier objects with the same key value.
+ *
+ * @param  {array} arr
+ * @param  {string} key
+ * @return {object}
+ */
+export function arr2obj(arr, key) {
+  return arr.reduce((agg, obj) => {
+    agg[obj[key]] = obj;
+    return agg;
+  }, {});
+}
+
+
+/**
  * Slugifies a string, converting it to lower case and replacing all special
  * characters (besides umlauts!) and spaces with dashes.
  *

@@ -6,6 +6,12 @@
 
   th {
     &:first-child {
+      min-width: 50px;
+      max-width: 50px;
+      width: 50px;
+    }
+
+    &:nth-child(2) {
       min-width: 15%;
       max-width: 20%;
       width: 20%;
@@ -21,6 +27,7 @@
   td {
     padding-bottom: 12px;
 
+    &:first-child,
     &:last-child {
       text-align: center;
       padding-left: 0;

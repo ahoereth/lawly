@@ -5,6 +5,10 @@ import {
   getLawsByInitialAndPage,
   fetchLawIndex, selectLawIndexInitial, selectLawIndexPage,
 } from 'redux/modules/laws';
+import {
+  getStars,
+  starLaw,
+} from 'redux/modules/user';
 import { LawIndex } from 'components';
 
 
@@ -22,6 +26,8 @@ class LawIndexContainer extends React.Component {
     selectInitial: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     selectedInitial: PropTypes.string,
+    star: PropTypes.func.isRequired,
+    stars: PropTypes.objectOf(PropTypes.bool).isRequired,
     total: PropTypes.number.isRequired,
   };
 
@@ -50,6 +56,8 @@ class LawIndexContainer extends React.Component {
       selectedInitial,
       selectInitial,
       selectPage,
+      star,
+      stars,
       total,
     } = this.props;
 
@@ -58,16 +66,12 @@ class LawIndexContainer extends React.Component {
     }
 
     return (
-      <LawIndex
-        initials={initials}
-        laws={laws}
-        page={page}
-        pageSize={pageSize}
-        total={total}
-        selectedInitial={selectedInitial}
-        selectInitial={selectInitial}
-        selectPage={selectPage}
-      />
+      <LawIndex {...{
+        initials, laws, total,
+        page, pageSize,
+        selectedInitial, selectInitial, selectPage,
+        star, stars
+      }} />
     );
   }
 }
@@ -91,6 +95,7 @@ const mapStateToProps = (state) => {
     page: indexPage,
     pageSize: indexPageSize,
     selectedInitial,
+    stars: getStars(state),
   };
 };
 
@@ -98,6 +103,7 @@ const mapDispatchToProps = {
   fetchIndex: fetchLawIndex,
   selectInitial: selectLawIndexInitial,
   selectPage: selectLawIndexPage,
+  star: starLaw,
 };
 
 
