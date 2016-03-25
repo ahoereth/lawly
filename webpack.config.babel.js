@@ -6,6 +6,8 @@ import {
   NoErrorsPlugin,
   optimize
 } from 'webpack';
+import autoprefixer from 'autoprefixer';
+import precss from 'precss';
 
 
 // *****************************************************************************
@@ -39,14 +41,17 @@ let config = {
       exclude: /node_modules/
     }, {
       test: /\.css$/,
-      loaders: ['style', 'css']
-    },{
-      test: /\.scss$/,
-      loaders: ['style', 'css', 'sass']
+      loaders: ['style', 'css', 'postcss']
+    }, {
+      test: /\.sss$/,
+      loaders: ['style', 'css', 'postcss?parser=sugarss']
     }, {
       test: /\.(woff|woff2|eot|ttf)$/,
       loader: 'file-loader?name=[name].[ext]'
     }]
+  },
+  postcss: function () {
+      return [autoprefixer, precss];
   },
   plugins: [
     new optimize.OccurenceOrderPlugin()

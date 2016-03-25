@@ -3,7 +3,7 @@ import { IconToggle } from 'react-mdl';
 
 import { slugify } from 'helpers/utils';
 import Html from 'components/Html';
-import './norm.scss';
+import './norm.sss';
 
 
 const Norm = ({ data, star, starred }) => {

@@ -7,7 +7,7 @@ import {
 } from 'react-mdl';
 
 import Pagination from './Pagination';
-import './lawList.scss';
+import './lawList.sss';
 
 
 const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
