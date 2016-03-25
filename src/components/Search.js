@@ -12,6 +12,8 @@ const Search  = ({
   results,
   search,
   selectPage,
+  star,
+  stars,
   total
 }) => (
   <Grid>
@@ -29,6 +31,8 @@ const Search  = ({
         pageSize={pageSize}
         selectPage={selectPage}
         total={total}
+        star={star}
+        stars={stars}
       />
     </Cell>
   </Grid>
@@ -41,6 +45,8 @@ Search.propTypes = {
   results: PropTypes.array.isRequired,
   search: PropTypes.func.isRequired,
   selectPage: PropTypes.func.isRequired,
+  star: PropTypes.func.isRequired,
+  stars: PropTypes.objectOf(PropTypes.bool).isRequired,
   total: PropTypes.number.isRequired,
 };
 

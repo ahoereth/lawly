@@ -7,12 +7,16 @@ import {
   getLawsByQueryAndPage,
   selectSearchPage,
 } from 'redux/modules/search';
+import {
+  getStars,
+  starLaw,
+} from 'redux/modules/user';
 import { Search } from 'components';
 
 
 class SearchContainer extends React.Component {
   static propTypes = {
-    fetchLawIndex: PropTypes.func.isRequired,
+    fetch: PropTypes.func.isRequired,
     fetched: PropTypes.bool.isRequired,
     page: PropTypes.number,
     pageSize: PropTypes.number,
@@ -23,13 +27,15 @@ class SearchContainer extends React.Component {
     results: PropTypes.array.isRequired,
     search: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
+    star: PropTypes.func.isRequired,
+    stars: PropTypes.objectOf(PropTypes.bool).isRequired,
     total: PropTypes.number.isRequired,
   };
 
   componentDidMount() {
-    const { fetched, fetchLawIndex } = this.props;
+    const { fetched, fetch } = this.props;
     this.componentWillReceiveProps(); // Initialize search on page load.
-    fetched || fetchLawIndex(); // Initialize law data.
+    fetched || fetch(); // Initialize law data.
   }
 
   componentWillReceiveProps(nextProps = this.props) {
@@ -48,6 +54,8 @@ class SearchContainer extends React.Component {
       page,
       pageSize,
       query,
+      star,
+      stars,
     } = this.props;
 
     if (!results) {
@@ -63,6 +71,8 @@ class SearchContainer extends React.Component {
         total={total}
         search={search}
         query={query}
+        star={star}
+        stars={stars}
       />
     );
   }
@@ -79,14 +89,16 @@ const mapStateToProps = (state) => {
     query,
     results,
     total,
-    fetched: state.laws.index.length > 0
+    fetched: state.laws.index.length > 0,
+    stars: getStars(state),
   };
 };
 
 const mapDispatchToProps = {
-  fetchLawIndex,
+  fetch: fetchLawIndex,
   search,
   selectPage: selectSearchPage,
+  star: starLaw,
 };
 
 

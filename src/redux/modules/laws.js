@@ -1,6 +1,8 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
 
+import { arr2obj } from 'helpers/utils';
+
 
 // ******************************************************************
 // ACTIONS
@@ -22,7 +24,7 @@ const SINGLE_FETCH_FAIL = 'laws/single/FETCH_FAIL';
 export default function reducer(
   state = {
     loading: 0,
-    index: [],
+    index: {},
     selectedInitial: undefined,
     initials: [],
     groups: {},
@@ -40,7 +42,7 @@ export default function reducer(
     case INDEX_FETCH_SUCCESS:
       return {...state,
         loading: state.loading - 1,
-        index: action.result.index,
+        index: arr2obj(action.result.index, 'groupkey'),
         initials: action.result.initials,
       };
     case INDEX_FETCH_FAIL:
@@ -74,6 +76,7 @@ export default function reducer(
         loading: state.loading - 1,
         error: action.error,
       };
+
     default:
       return state;
   }
@@ -110,7 +113,7 @@ export const selectLawIndexPage = (page = '1') => (dispatch, getState) => {
 
 // ******************************************************************
 // SELECTORS
-export const getLaws = (state) => state.laws.index;
+export const getLawIndexRaw = (state) => state.laws.index;
 
 export const getInitial = (state) => state.laws.selectedInitial;
 
@@ -118,11 +121,24 @@ export const getPage = (state) => state.laws.indexPage;
 
 export const getPageSize = (state) => state.laws.indexPageSize;
 
+export const getLaws = (state) => state.laws.groups;
+
+/* global window */
+const collator = new window.Intl.Collator('de');
+
+export const getLawIndex = createSelector(
+  [ getLawIndexRaw ],
+  (laws) => Object.keys(laws).map(key => laws[key]).sort((a, b) =>
+    collator.compare(a.groupkey, b.groupkey)
+    // (a.groupkey.localeCompare(b.groupkey))
+  )
+);
+
 export const getLawsByInitial = createSelector(
-  [ getLaws, getInitial ],
-  (laws, initial) => laws.filter(law => (
+  [ getLawIndex, getInitial ],
+  (laws, initial) => laws.filter(law =>
     (law.groupkey[0].toLowerCase() == initial)
-  ))
+  )
 );
 
 export const getLawsByInitialAndPage = createSelector(

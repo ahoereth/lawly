@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
 
-import { getLaws } from './laws';
+import { getLawIndex } from './laws';
 
 
 // ******************************************************************
@@ -62,7 +62,7 @@ export const getPage = (state) => state.search.page || 1;
 export const getPageSize = (state) => state.search.pageSize || 20;
 
 export const getLawsByQuery = createSelector(
-  [ getLaws, getQuery ],
+  [ getLawIndex, getQuery ],
   (laws, query) => query ? laws.filter(law => (
     (law.title.toLowerCase().indexOf(query) > -1) ||
     (law.groupkey.toLowerCase().indexOf(query) > -1)
