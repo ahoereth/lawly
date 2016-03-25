@@ -103,9 +103,10 @@ export const selectLawIndexInitial = (initial = 'a') => (dispatch) => {
   dispatch(push('/gesetze/' + initial));
 };
 
-export const selectLawIndexPage = (page = '1') => (dispatch, getState) => {
+export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
   const { selectedInitial } = getState().laws;
-  dispatch(push(`/gesetze/${selectedInitial}/${page}`));
+  const pagePath = page > 1 ? '/' + page : '';
+  dispatch(push(`/gesetze/${selectedInitial}${pagePath}`));
   dispatch({ type: INDEX_SELECT_PAGE, page });
 };
 

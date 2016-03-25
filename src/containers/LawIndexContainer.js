@@ -34,6 +34,7 @@ class LawIndexContainer extends React.Component {
   componentWillMount() {
     const {
       fetchIndex,
+      page,
       params,
       laws,
       selectInitial,
@@ -42,8 +43,8 @@ class LawIndexContainer extends React.Component {
     } = this.props;
 
     laws.length > 0 || fetchIndex();
-    selectedInitial || selectInitial(params.initial);
-    params.page && selectPage(parseInt((params.page), 10));
+    selectInitial(params.initial || selectedInitial);
+    selectPage(params.page ? parseInt(params.page, 10) : page);
   }
 
   render() {
