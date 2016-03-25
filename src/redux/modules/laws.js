@@ -25,7 +25,7 @@ export default function reducer(
   state = {
     loading: 0,
     index: {},
-    selectedInitial: undefined,
+    selectedInitial: 'a',
     initials: [],
     groups: {},
     error: '',

@@ -1,40 +1,69 @@
 import React, { PropTypes } from 'react';
-import { Button } from 'react-mdl';
+import { Grid, Cell, Button, Icon } from 'react-mdl';
 
 
-const Pagination = ({ page, hasNext, hasPrev, selectPage }) => (
-  <div style={{margin: '1em 0'}}>
-    {!hasPrev || page <= 1 ? false :
-      <Button
-        raised colored
-        onClick={() => selectPage(page-1)}
-        style={{float: 'left'}}
-      >
-        Letzte Seite
-      </Button>
-    }
-    {!hasNext ? false :
-      <Button
-        raised accent
-        onClick={() => selectPage(page+1)}
-        style={{float: 'right'}}
-      >
-        Nächste Seite
-      </Button>
-    }
+const iconAdjust = { marginBottom: '3px' };
+
+const Pagination = ({ page, pages, selectPage }) => (
+  <div style={{margin: '1em 0', position: 'relative'}}>
+    <div style={{width: '100%', position: 'absolute'}}>
+      <div style={{float: 'left'}}>
+        {page < 3 ? null :
+          <Button
+            raised colored
+            onClick={() => selectPage(1)}
+            style={{margin: '0 1em 0 0'}}
+          >
+            <Icon name='skip_previous' style={iconAdjust} />
+            Anfang
+          </Button>
+        }
+        {page === 1 ? null :
+          <Button
+            raised colored
+            onClick={() => selectPage(page-1)}
+          >
+            <Icon name='fast_rewind' style={iconAdjust} />
+            Zurück
+          </Button>
+        }
+      </div>
+      <div style={{float: 'right'}}>
+        {page === pages ? null :
+          <Button
+            raised accent
+            onClick={() => selectPage(page+1)}
+            style={{margin: '0 1em 0 0'}}
+          >
+            Weiter
+            <Icon name='fast_forward' style={iconAdjust} />
+          </Button>
+        }
+        {page >= (pages-1) ? null :
+          <Button
+            raised colored
+            onClick={() => selectPage(pages)}
+          >
+            Ende
+            <Icon name='skip_next' style={iconAdjust} />
+          </Button>
+        }
+      </div>
+    </div>
+    <div style={{textAlign: 'center'}}>
+      <Button disabled>Seite {page} von {pages}</Button>
+    </div>
   </div>
 );
 
 Pagination.propTypes = {
-  hasNext: PropTypes.bool,
-  hasPrev: PropTypes.bool,
   page: PropTypes.number,
+  pages: PropTypes.number.isRequired,
   selectPage: PropTypes.func.isRequired,
 };
 
 Pagination.defaultProps = {
   hasNext: true,
-  hasPrev: true,
   page: 1,
 };
 
