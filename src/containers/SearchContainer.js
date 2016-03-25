@@ -33,16 +33,9 @@ class SearchContainer extends React.Component {
   };
 
   componentDidMount() {
-    const { fetched, fetch } = this.props;
-    this.componentWillReceiveProps(); // Initialize search on page load.
+    const { fetched, fetch, params, query, search  } = this.props;
     fetched || fetch(); // Initialize law data.
-  }
-
-  componentWillReceiveProps(nextProps = this.props) {
-    const { params, query, search } = nextProps;
-    if ((params.query || '') !== query) {
-      search(params.query);
-    }
+    search(params.query || query); // Initialize search.
   }
 
   render() {
@@ -57,10 +50,6 @@ class SearchContainer extends React.Component {
       star,
       stars,
     } = this.props;
-
-    if (!results) {
-      return <div>Nothing to show...</div>;
-    }
 
     return (
       <Search
