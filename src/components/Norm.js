@@ -1,22 +1,35 @@
 import React, { PropTypes } from 'react';
+import { IconToggle } from 'react-mdl';
 
 import { slugify } from 'helpers/utils';
 import Html from 'components/Html';
 import './norm.scss';
 
 
-const Norm = ({ data }) => {
+const Norm = ({ data, star, starred }) => {
   const { enumeration, groupkey, title, body, foot } = data;
 
   let heading = enumeration.split('.').length + 1;
   heading = enumeration === '0' ? 1 : (heading > 6 ? 6 : heading);
 
-  const children = heading !== 1 ? title :
-    [<small style={{display: 'block'}} key='key'>({groupkey})</small>, title];
+  let head = null;
+  if (star) {
+    head = (
+      <div className='law-lead'>
+        <IconToggle ripple
+          checked={starred}
+          name={starred ? 'star' : 'star_border'}
+          onChange={() => star(groupkey, !starred)}
+        />
+        <span>{groupkey}</span>
+      </div>
+    );
+  }
 
   return (
     <div className='norm'>
-      {React.createElement('h' + heading, {id: slugify(title), children})}
+      {head}
+      {React.createElement('h' + heading, {id: slugify(title)}, title)}
       <div><Html>{body}</Html></div>
       <div><Html>{foot}</Html></div>
     </div>
@@ -31,6 +44,8 @@ Norm.propTypes = {
     body: PropTypes.string.isRequired,
     foot: PropTypes.string.isRequired,
   }).isRequired,
+  star: PropTypes.func,
+  starred: PropTypes.bool,
 };
 
 
