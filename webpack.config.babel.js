@@ -41,10 +41,14 @@ let config = {
       exclude: /node_modules/
     }, {
       test: /\.css$/,
-      loaders: ['style', 'css', 'postcss']
+      loaders: [ 'style', 'css', 'postcss' ]
     }, {
       test: /\.sss$/,
-      loaders: ['style', 'css', 'postcss?parser=sugarss']
+      loaders: [
+        'style',
+        'css?localIdentName=[name]_[local]',
+        'postcss?parser=sugarss'
+      ]
     }, {
       test: /\.(woff|woff2|eot|ttf)$/,
       loader: 'file-loader?name=[name].[ext]'

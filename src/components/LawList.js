@@ -7,7 +7,7 @@ import {
 } from 'react-mdl';
 
 import Pagination from './Pagination';
-import './lawList.sss';
+import styles from './lawList.sss';
 
 
 const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
@@ -33,7 +33,7 @@ const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
     <div>
       <DataTable
         rows={rows}
-        className='law-list'
+        className={styles.datatable}
       >
         <TableHeader name='star' />
         <TableHeader name='groupkey'>Ab&shy;kür&shy;zung</TableHeader>

@@ -3,7 +3,7 @@ import { IconToggle } from 'react-mdl';
 
 import { slugify } from 'helpers/utils';
 import Html from 'components/Html';
-import './norm.sss';
+import styles from './norm.sss';
 
 
 const Norm = ({ data, star, starred }) => {
@@ -12,10 +12,10 @@ const Norm = ({ data, star, starred }) => {
   let heading = enumeration.split('.').length + 1;
   heading = enumeration === '0' ? 1 : (heading > 6 ? 6 : heading);
 
-  let head = null;
+  let lead = null;
   if (star) {
-    head = (
-      <div className='law-lead'>
+    lead = (
+      <div className={styles.lead}>
         <IconToggle ripple
           checked={starred}
           name={starred ? 'star' : 'star_border'}
@@ -27,8 +27,8 @@ const Norm = ({ data, star, starred }) => {
   }
 
   return (
-    <div className='norm'>
-      {head}
+    <div className={styles.norm}>
+      {lead}
       {React.createElement('h' + heading, {id: slugify(title)}, title)}
       <div><Html>{body}</Html></div>
       <div><Html>{foot}</Html></div>

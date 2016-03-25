@@ -6,8 +6,6 @@ import Header from './Header';
 import Content from './Content';
 import Footer from './Footer';
 
-import './layout.sss';
-
 
 const Layout = ({ title, children, navigation, search, query }) => (
   <MaterialLayout>
