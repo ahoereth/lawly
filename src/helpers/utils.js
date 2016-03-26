@@ -19,8 +19,8 @@ export function isString(val) {
  * @return {Boolean}
  */
 export function isObject(val) {
-  if (val === null) { return false; }
-  return ( (typeof val === 'function') || (typeof val === 'object') );
+  return !Array.isArray(val) &&
+          Object.prototype.toString.call(val) === '[object Object]';
 }
 
 
@@ -66,40 +66,7 @@ export function startsWith(haystack, needle) {
  * @return {boolean}
  */
 export function endsWith(haystack, needle) {
-  return (haystack.indexOf(needle) === (haystack.length - needle.length));
-}
-
-
-/**
- * Parses the header and payload of a JSON webtoken into JavaScript objects.
- *
- * @param  {string} token
- * @return {object}
- */
-export function parseJWT(token) {
-  const [ header, payload/*, signature*/ ] = token.split('.');
-  return {
-    header: JSON.parse(b64decode(header)),
-    payload: JSON.parse(b64decode(payload)),
-  };
-}
-
-
-/**
- * Encodes a JavaScript object into a url query string of key=value pairs
- * delimited with &.
- *
- * @param  {object} obj
- * @return {string}
- */
-export function obj2query(obj = null) {
-  if (!obj) { return ''; }
-  let str = '';
-  for (let key in obj) {
-    if (str !== '') { str += '&'; }
-    str += key + '=' + encodeURIComponent(obj[key]);
-  }
-  return str;
+  return (haystack.lastIndexOf(needle) === (haystack.length - needle.length));
 }
 
 
@@ -132,6 +99,47 @@ export function obj2arr(obj) {
 
 
 /**
+ * Encodes a JavaScript object into a url query string of key=value pairs
+ * delimited with &.
+ *
+ * @param  {object} obj
+ * @return {string}
+ */
+export function obj2query(obj = null) {
+  if (!obj) { return ''; }
+  let str = '';
+  for (let key in obj) {
+    if (str !== '') { str += '&'; }
+    if (typeof obj[key] === 'boolean') {
+      str += encodeURIComponent(key) + (obj[key] === false ? '=0' : '');
+    } else {
+      str += encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]);
+    }
+  }
+  return str;
+}
+
+
+// export function format(haystack/*, ...*/) {
+//   // Second argument is an object of needle/replace-value pairs.
+//   if (isObject(arguments[1])) {
+//     for (let needle in arguments[1]) {
+//       if (!arguments[1].hasOwnProperty(needle)) { continue; }
+//       haystack = haystack.replace(':' + needle, arguments[1][needle]);
+//     }
+//
+//     return haystack;
+//   }
+//
+//   // Second+ arguments are strings to be replaced in order. Haystack should
+//   // contain identifiers in the style of {0}, {1}... to be replaced.
+//   return haystack.replace(/{(\d+)}/g, (match, n) => {
+//     return (typeof arguments[n+1] !== 'undefined') ? arguments[n+1] : match;
+//   });
+// }
+
+
+/**
  * Slugifies a string, converting it to lower case and replacing all special
  * characters (besides umlauts!) and spaces with dashes.
  *
@@ -139,7 +147,7 @@ export function obj2arr(obj) {
  * @return {string}
  */
 export function slugify(str) {
-  return str.toLowerCase().replace(/[^\wüöä]+/ig, '-');
+  return umlauts2digraphs(str).toLowerCase().replace(/[^\wüöä]+/ig, '-');
 }
 
 
@@ -156,24 +164,55 @@ export function slugify(str) {
 export function joinPath(/* parts, trailingSlash = false */) {
   let path = arguments[0];
   let n = arguments.length; n = !isBoolean(arguments[n-1]) ? n : n - 1;
-  let trailingSlash = isBoolean(arguments[n-1]) ? arguments[n-1] : false;
+  const trailingSlash = isBoolean(arguments[n]) ? arguments[n] : false;
 
   for (let i = 1; i < n; i++) {
-    let a = endsWith(path, '/'), b = startsWith(arguments[i], '/');
-         if (a && b) { path = path.slice(0, -1) + arguments[i]; }
-    else if (a || b) { path += arguments[i]; }
-    else             { path += '/' + arguments[i]; }
+    let next = arguments[i];
+
+    // Remove leading/trailing slashes.
+    while (startsWith(next, '/')) { next = next.slice(1); }
+    while (endsWith(path, '/')) { path = path.slice(0, -1); }
+
+    // Append to path.
+    path += '/' + next;
   }
 
+  // Remove all trailing and all but one leading slashes.
+  while (endsWith(path, '/')) { path = path.slice(0, -1); }
+  while (startsWith(path, '//')) { path = path.slice(1); }
+
+  // Add a single trailing slash if requested.
   if ( trailingSlash && !endsWith(path, '/')) { path += '/'; }
-  if (!trailingSlash &&  endsWith(path, '/')) { path  = path.slice(0, -1); }
 
   return path;
 }
 
 
+/**
+ * Parses the header and payload of a JSON webtoken into JavaScript objects.
+ *
+ * @param  {string} token
+ * @return {object}
+ */
+export function parseJWT(token) {
+  const [ header, payload/*, signature*/ ] = token.split('.');
+  return {
+    header: JSON.parse(b64decode(header)),
+    payload: JSON.parse(b64decode(payload)),
+  };
+}
+
+
+// /* global Intl */
+// const { compare } = Intl ? new Intl.Collator('de')
+//                          : { compare: (a, b) => a - b };
+//
+// const UMLAUTS = { 'ä': 'ae', 'ü': 'ue', 'ö': 'oe',
+//                   'Ä': 'AE', 'Ü': 'UE', 'Ö': 'OE',
+//                   'ß': 'ss' };
+
 const UMLAUTS = { '\u00e4': 'ae', '\u00fc': 'ue', '\u00f6': 'oe',
-                  '\u00c4': 'AE', '\u00dc': 'UE', '\u00d6': 'oe',
+                  '\u00c4': 'AE', '\u00dc': 'UE', '\u00d6': 'OE',
                   '\u00df':'ss' };
 
 /**
@@ -183,7 +222,7 @@ const UMLAUTS = { '\u00e4': 'ae', '\u00fc': 'ue', '\u00f6': 'oe',
  * @param  {string} str
  * @return {string}
  */
-export function replaceUmlauts(str) {
+export function umlauts2digraphs(str) {
   return str.replace(/[äöüÄÖÜß]/g, key => UMLAUTS[key]);
 }
 
@@ -198,5 +237,5 @@ export function replaceUmlauts(str) {
  * @return {number} 1 or -1
  */
 export function localeCompare(a, b) {
-  return (replaceUmlauts(a) > replaceUmlauts(b) ? 1 : -1);
+  return umlauts2digraphs(a).toLowerCase() > umlauts2digraphs(b).toLowerCase();
 }
