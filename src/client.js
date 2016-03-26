@@ -8,9 +8,10 @@ import ApiClient from './helpers/ApiClient';
 import createStore from './redux/createStore';
 import routes from './routes';
 
-import 'file?name=material.[ext]!react-mdl/extra/material';
+import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
 import 'material-design-icons/iconfont/material-icons.css';
+
 import './index.sss';
 
 

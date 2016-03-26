@@ -14,65 +14,67 @@ import precss from 'precss';
 // Defaults
 let config = {
   devtool: 'eval',
-  entry: ['./src/client'],
+  target: 'web',
+  entry: {
+    app: './src/client',
+  },
   output: {
     path: path.resolve(__dirname, 'dist', 'assets'),
     publicPath: '/assets/',
-    filename: 'bundle.js'
+    filename: '[name].js'
   },
   resolve: {
     root: path.resolve(__dirname, 'src')
   },
   module: {
-    loaders: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      loader: 'babel',
-      query: {
-        plugins: [
-          'transform-class-properties',
-          'transform-export-extensions',
-          'transform-object-rest-spread'
+    loaders: [
+      {
+        test: /\.js$/,
+        loader: 'babel',
+        exclude: /node_modules/
+      }, {
+        test: /\.js$/,
+        loader: 'eslint-loader',
+        exclude: /node_modules/
+      }, {
+        test: /\.css$/,
+        loaders: [ 'style', 'css', 'postcss' ]
+      }, {
+        test: /\.sss$/,
+        loaders: [
+          'style',
+          'css?localIdentName=[name]_[local]',
+          'postcss?parser=sugarss'
         ]
+      }, {
+        test: /\.(woff|woff2|eot|ttf)$/,
+        loader: 'file-loader?name=[name].[ext]'
       }
-    }, {
-      test: /\.js$/,
-      loader: 'eslint-loader',
-      exclude: /node_modules/
-    }, {
-      test: /\.css$/,
-      loaders: [ 'style', 'css', 'postcss' ]
-    }, {
-      test: /\.sss$/,
-      loaders: [
-        'style',
-        'css?localIdentName=[name]_[local]',
-        'postcss?parser=sugarss'
-      ]
-    }, {
-      test: /\.(woff|woff2|eot|ttf)$/,
-      loader: 'file-loader?name=[name].[ext]'
-    }]
+    ]
   },
-  postcss: function () {
-      return [autoprefixer, precss];
+  postcss: () => {
+    return [autoprefixer, precss];
   },
   plugins: [
     new optimize.OccurenceOrderPlugin()
   ],
   devServer: {
     quiet: false,
-    noInfo: false,
+    noInfo: true,
+    colors: true,
+    host: 'localhost',
+    port: 8080,
     stats: {
-      assets: false,
+      assets: true,
       colors: true,
       version: false,
       hash: false,
-      timings: false,
+      timings: true,
       chunks: false,
       chunkModules: false
     },
     hot: true,
+    inline: true,
     publicPath: '/assets/',
     contentBase: 'dist',
     historyApiFallback: true
@@ -86,19 +88,9 @@ let config = {
 // Development
 if (process.env.NODE_ENV === 'development') {
   config.devtool = '#cheap-module-eval-source-map';
-  config.entry.unshift('webpack-dev-server/client?http://localhost:8080');
-  config.entry.unshift('webpack/hot/dev-server');
-
-  // Configure babel
-  config.module.loaders[0].query.plugins.push(
-    ['react-transform', {
-      transforms: [{
-        transform: 'react-transform-hmr',
-        imports: [ 'react' ],
-        locals: [ 'module' ]
-      }]
-    }]
-  );
+  config.entry.tests = 'mocha!./src/tests.js';
+  config.entry.dev = 'webpack-dev-server/client?http://localhost:8080';
+  config.entry.hot = 'webpack/hot/dev-server';
 
   config.plugins.push(new HotModuleReplacementPlugin());
   config.plugins.push(new NoErrorsPlugin());

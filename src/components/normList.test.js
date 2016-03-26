@@ -1,4 +1,6 @@
-import expect from 'expect';
+import chai from 'chai';
+chai.should();
+
 import React from 'react';
 import { renderToStaticMarkup as staticRender } from 'react-dom/server';
 
@@ -23,10 +25,10 @@ describe('component', () => {
 
     it('correctly nests norms', () => {
       const norm1 = output.props.children[0];
-      expect(norm1.items.length).toBe(2);
+      norm1.items.length.should.equal(2);
 
       const norm12 = norm1.items[1];
-      expect(norm12.items.length).toBe(1);
+      norm12.items.length.should.equal(1);
     });
 
     it('links norms to their slug hashes', () => {
@@ -34,7 +36,7 @@ describe('component', () => {
     });
 
     it('does not list the lead norm', () => {
-      expect(htmlOutput).toNotContain('Lead Norm');
+      htmlOutput.should.not.include('Lead Norm');
     });
   });
 });
