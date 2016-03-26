@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
 
+import reduceActions from 'helpers/reduceActions';
 import { getLawIndex } from './law_index';
 
 
@@ -13,41 +14,27 @@ const SELECT_PAGE = 'search/SELECT_PAGE';
 
 // ******************************************************************
 // REDUCERS
-export default function reducer(
-  state = {
-    page: 1,
-    pageSize: 20,
-    query: '',
-  },
-  action
-) {
-  switch (action.type) {
-    case SEARCH:
-      return {...state,
-        query: action.query,
-      };
-    case SELECT_PAGE:
-      return {...state,
-        page: action.page,
-      };
-    default:
-      return state;
-  }
-}
+export default reduceActions({
+  [SEARCH]: (state, { payload }) => ({...state, query: payload }),
+  [SELECT_PAGE]: (state, { payload }) => ({...state, page: payload }),
+}, {
+  page: 1,
+  pageSize: 20,
+  query: '',
+});
 
 
 
 // ******************************************************************
 // ACTION CREATORS
 export const search = (query = '') => (dispatch) => {
-  dispatch({ type: SEARCH, query });
-  dispatch({ type: SELECT_PAGE, page: 1 });
-  dispatch(push(`/suche/${query}`));
+  dispatch({ type: SEARCH, payload: query || '' });
+  dispatch(selectSearchPage(1));
 };
 
-export const selectSearchPage = (page = '1') => (dispatch, getState) => {
-  const { query } = getState().search;
-  dispatch({ type: SELECT_PAGE, page });
+export const selectSearchPage = (page = 1) => (dispatch, getState) => {
+  const query = getQuery(getState());
+  dispatch({ type: SELECT_PAGE, payload: page || 1 });
   dispatch(push(`/suche/${query}/${page}`));
 };
 
@@ -55,17 +42,17 @@ export const selectSearchPage = (page = '1') => (dispatch, getState) => {
 
 // ******************************************************************
 // SELECTORS
-export const getQuery = (state) => (state.search.query || '').toLowerCase();
+export const getQuery = ({ search }) => search.query.toLowerCase();
 
-export const getPage = (state) => state.search.page || 1;
+export const getPage = ({ search }) => search.page;
 
-export const getPageSize = (state) => state.search.pageSize || 20;
+export const getPageSize = ({ search }) => search.pageSize;
 
 export const getLawsByQuery = createSelector(
   [ getLawIndex, getQuery ],
-  (laws, query) => query ? laws.filter(law => (
-    (law.title.toLowerCase().indexOf(query) > -1) ||
-    (law.groupkey.toLowerCase().indexOf(query) > -1)
+  (laws, query) => query ? laws.filter(({ title, groupkey }) => (
+    (title.toLowerCase().indexOf(query) > -1) ||
+    (groupkey.toLowerCase().indexOf(query) > -1)
   )) : []
 );
 
