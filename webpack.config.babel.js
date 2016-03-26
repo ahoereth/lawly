@@ -1,13 +1,13 @@
-/* global __dirname */
-import process from 'process';
-import path from 'path';
-import {
+/* global __dirname, require, module */
+const process = require('process');
+const path = require('path');
+const {
   HotModuleReplacementPlugin,
   NoErrorsPlugin,
   optimize
-} from 'webpack';
-import autoprefixer from 'autoprefixer';
-import precss from 'precss';
+} = require('webpack');
+const autoprefixer = require('autoprefixer');
+const precss = require('precss');
 
 
 // *****************************************************************************
@@ -24,7 +24,10 @@ let config = {
     filename: '[name].js'
   },
   resolve: {
-    root: path.resolve(__dirname, 'src')
+    modules: [
+      'node_modules',
+      path.resolve(__dirname, 'src'),
+    ],
   },
   module: {
     loaders: [
@@ -55,9 +58,7 @@ let config = {
   postcss: () => {
     return [autoprefixer, precss];
   },
-  plugins: [
-    new optimize.OccurenceOrderPlugin()
-  ],
+  plugins: [],
   devServer: {
     quiet: false,
     noInfo: true,
@@ -65,7 +66,7 @@ let config = {
     host: 'localhost',
     port: 8080,
     stats: {
-      assets: true,
+      assets: false,
       colors: true,
       version: false,
       hash: false,
@@ -116,4 +117,4 @@ if (process.env.NODE_ENV === 'production') {
 // *****************************************************************************
 // Export
 const CONFIG = config;
-export default CONFIG;
+module.exports = CONFIG;
