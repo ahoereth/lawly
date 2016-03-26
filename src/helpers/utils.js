@@ -121,6 +121,17 @@ export function arr2obj(arr, key) {
 
 
 /**
+ * Convert an object to an array. Inverse function of `arr2obj`.
+ *
+ * @param  {object} obj
+ * @return {array}
+ */
+export function obj2arr(obj) {
+  return Object.keys(obj).map(key => obj[key]);
+}
+
+
+/**
  * Slugifies a string, converting it to lower case and replacing all special
  * characters (besides umlauts!) and spaces with dashes.
  *
@@ -158,4 +169,34 @@ export function joinPath(/* parts, trailingSlash = false */) {
   if (!trailingSlash &&  endsWith(path, '/')) { path  = path.slice(0, -1); }
 
   return path;
+}
+
+
+const UMLAUTS = { '\u00e4': 'ae', '\u00fc': 'ue', '\u00f6': 'oe',
+                  '\u00c4': 'AE', '\u00dc': 'UE', '\u00d6': 'oe',
+                  '\u00df':'ss' };
+
+/**
+ * Replace all german umlauts in a given thing with their corresponding
+ * letter combination.
+ *
+ * @param  {string} str
+ * @return {string}
+ */
+export function replaceUmlauts(str) {
+  return str.replace(/[äöüÄÖÜß]/g, key => UMLAUTS[key]);
+}
+
+
+/**
+ * Compares two strings with oneanother while being mindful of German umlauts.
+ *
+ * @see http://jsperf.com/international-string-array-sorting/3
+ *
+ * @param  {string} a
+ * @param  {string} b
+ * @return {number} 1 or -1
+ */
+export function localeCompare(a, b) {
+  return (replaceUmlauts(a) > replaceUmlauts(b) ? 1 : -1);
 }

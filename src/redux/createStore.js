@@ -2,12 +2,17 @@ import { createStore as _createStore, applyMiddleware, compose } from 'redux';
 import { browserHistory } from 'react-router';
 import { routerMiddleware, } from 'react-router-redux';
 
-import fetchMiddleware from './middleware/fetchMiddleware';
+import functionsMiddleware from './middlewares/functionsMiddleware';
+import promiseMiddleware from './middlewares/promiseMiddleware';
+import fetchMiddleware from './middlewares/fetchMiddleware';
 import reducer from './modules/reducer';
+
 
 /* global window */
 export default function createStore(client, data) {
   const middlewares = [
+    functionsMiddleware(),
+    promiseMiddleware(client),
     fetchMiddleware(client),
     routerMiddleware(browserHistory),
   ];

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import {
   getLawsByInitialAndPage,
   fetchLawIndex, selectLawIndexInitial, selectLawIndexPage,
-} from 'redux/modules/laws';
+} from 'redux/modules/law_index';
 import {
   getStars,
   starLaw,
@@ -18,8 +18,8 @@ class LawIndexContainer extends React.Component {
     initials: PropTypes.array.isRequired,
     laws: PropTypes.array.isRequired,
     loading: PropTypes.bool.isRequired,
-    page: PropTypes.number,
-    pageSize: PropTypes.number,
+    page: PropTypes.number.isRequired,
+    pageSize: PropTypes.number.isRequired,
     params: PropTypes.shape({
       initial: PropTypes.string,
     }).isRequired,
@@ -81,22 +81,21 @@ class LawIndexContainer extends React.Component {
 const mapStateToProps = (state) => {
   const {
     initials,
-    indexPage,
-    indexPageSize,
-    loading,
-    selectedInitial,
-  } = state.laws;
+    page,
+    pageSize,
+    initial,
+  } = state.law_index;
 
   const { total, laws } = getLawsByInitialAndPage(state);
   return {
     initials,
     total,
     laws,
-    loading: !!loading,
-    page: indexPage,
-    pageSize: indexPageSize,
-    selectedInitial,
+    page,
+    pageSize,
+    selectedInitial: initial,
     stars: getStars(state),
+    loading: initials.length === 0,
   };
 };
 

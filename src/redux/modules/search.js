@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
 
-import { getLawIndex } from './laws';
+import { getLawIndex } from './law_index';
 
 
 // ******************************************************************
