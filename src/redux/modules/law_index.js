@@ -7,9 +7,9 @@ import reduceActions from 'helpers/reduceActions';
 
 // ******************************************************************
 // ACTIONS
-const FETCH = 'law_index/FETCH';
-const SELECT_INITIAL = 'law_index/SELECT_INITIAL';
-const SELECT_PAGE = 'law_index/SELECT_PAGE';
+export const FETCH = 'law_index/FETCH';
+export const SELECT_INITIAL = 'law_index/SELECT_INITIAL';
+export const SELECT_PAGE = 'law_index/SELECT_PAGE';
 
 
 
@@ -20,8 +20,8 @@ export default reduceActions({
     initials: payload.initials,
     laws: arr2obj(payload.index, 'groupkey'),
   }),
-  [SELECT_INITIAL]: (state, { payload }) => ({...state, initial: payload }),
   [SELECT_PAGE]: (state, { payload }) => ({...state, page: payload }),
+  [SELECT_INITIAL]: (state, { payload }) => ({...state, initial: payload }),
 }, {
   laws: {},
   initials: [],
@@ -40,16 +40,16 @@ export const fetchLawIndex = () => ({
   promise: api => api.get({ name: 'laws' })
 });
 
-export const selectLawIndexInitial = (initial = 'a') => (dispatch) => {
-  dispatch({ type: SELECT_INITIAL, payload: initial.toLowerCase() });
-  dispatch(selectLawIndexPage(1));
-};
-
 export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
   const initial = getInitial(getState());
   const pagePath = page > 1 ? '/' + page : '';
-  dispatch(push(`/gesetze/${initial}${pagePath}`));
   dispatch({ type: SELECT_PAGE, payload: page });
+  dispatch(push(`/gesetze/${initial}${pagePath}`));
+};
+
+export const selectLawIndexInitial = (initial = 'a') => (dispatch) => {
+  dispatch({ type: SELECT_INITIAL, payload: initial.toLowerCase() });
+  dispatch(selectLawIndexPage(1));
 };
 
 
@@ -58,11 +58,11 @@ export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
 // SELECTORS
 export const getLawIndexRaw = ({ law_index }) => law_index.laws;
 
-export const getInitial = ({ law_index }) => law_index.initial;
-
 export const getPageSize = ({ law_index }) => law_index.pageSize;
 
 export const getPage = ({ law_index }) => law_index.page;
+
+export const getInitial = ({ law_index }) => law_index.initial;
 
 export const getLawIndex = createSelector(
   [ getLawIndexRaw ],
