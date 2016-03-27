@@ -22,7 +22,7 @@ SearchInput.propTypes = {
 };
 
 SearchInput.defaultProps = {
-  search: '',
+  query: '',
   expandable: false,
 };
 

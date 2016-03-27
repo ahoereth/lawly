@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Grid, Cell, Button, Icon } from 'react-mdl';
+import { Button, Icon } from 'react-mdl';
 
 
 const iconAdjust = { marginBottom: '3px' };
