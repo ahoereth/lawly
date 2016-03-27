@@ -3,7 +3,7 @@ import reduceActions from 'helpers/reduceActions';
 
 // ******************************************************************
 // ACTIONS
-const FETCH_SINGLE = 'laws/FETCH_SINGLE';
+export const FETCH_SINGLE = 'laws/FETCH_SINGLE';
 
 
 
@@ -23,7 +23,7 @@ export default reduceActions({
 // ******************************************************************
 // ACTION CREATORS
 export const fetchLaw = (groupkey) => ({
-  types: FETCH_SINGLE,
+  type: FETCH_SINGLE,
   promise: api => api.get({ name: 'law', groupkey })
 });
 
