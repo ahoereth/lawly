@@ -18,25 +18,23 @@ const props = {
 };
 
 
-describe('component', () => {
-  describe('NormList', () => {
-    const output = shallowRender(<NormList {...props} />);
-    const htmlOutput = staticRender(output);
+describe('NormList', () => {
+  const output = shallowRender(<NormList {...props} />);
+  const htmlOutput = staticRender(output);
 
-    it('correctly nests norms', () => {
-      const norm1 = output.props.children[0];
-      norm1.items.length.should.equal(2);
+  it('correctly nests norms', () => {
+    const norm1 = output.props.children[0];
+    norm1.items.length.should.equal(2);
 
-      const norm12 = norm1.items[1];
-      norm12.items.length.should.equal(1);
-    });
+    const norm12 = norm1.items[1];
+    norm12.items.length.should.equal(1);
+  });
 
-    it('links norms to their slug hashes', () => {
-      // TODO
-    });
+  it('links norms to their slug hashes', () => {
+    // TODO
+  });
 
-    it('does not list the lead norm', () => {
-      htmlOutput.should.not.include('Lead Norm');
-    });
+  it('does not list the lead norm', () => {
+    htmlOutput.should.not.include('Lead Norm');
   });
 });

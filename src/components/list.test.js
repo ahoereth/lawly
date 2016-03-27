@@ -51,18 +51,16 @@ function testListLevel(ul) {
 }
 
 
-describe('component', () => {
-  describe('List', () => {
-    const output = shallowRender(<List {...props}>{children}</List>);
+describe('List', () => {
+  const output = shallowRender(<List {...props}>{children}</List>);
 
-    it('should render a unordered list and pass props down', () => {
-      output.type.should.equal('ul');
-      output.props.className.should.equal('list');
-    });
+  it('should render a unordered list and pass props down', () => {
+    output.type.should.equal('ul');
+    output.props.className.should.equal('list');
+  });
 
-    it('should create a nested list', () => {
-      output.props.children.length.should.equal(4);
-      testListLevel(output);
-    });
+  it('should create a nested list', () => {
+    output.props.children.length.should.equal(4);
+    testListLevel(output);
   });
 });
