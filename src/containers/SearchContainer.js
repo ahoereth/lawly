@@ -1,10 +1,11 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { connect } from 'react-redux';
 
-import { fetchLawIndex } from 'redux/modules/laws';
+import { fetchLawIndex, getLawIndex } from 'redux/modules/law_index';
 import {
   search,
-  getLawsByQueryAndPage,
+  getLawsByQueryAndPage, getPage, getQuery, getPageSize,
   selectSearchPage,
 } from 'redux/modules/search';
 import {
@@ -24,7 +25,7 @@ class SearchContainer extends React.Component {
       query: PropTypes.string,
     }).isRequired,
     query: PropTypes.string,
-    results: PropTypes.array.isRequired,
+    results: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
     search: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     star: PropTypes.func.isRequired,
@@ -33,9 +34,10 @@ class SearchContainer extends React.Component {
   };
 
   componentDidMount() {
-    const { fetched, fetch, params, query, search  } = this.props;
-    fetched || fetch(); // Initialize law data.
+    const { fetched, search, params, query, selectPage, page  } = this.props;
+    fetched || this.props.fetch(); // Initialize law data.
     search(params.query || query); // Initialize search.
+    selectPage(params.page ? parseInt(params.page, 10) : page); // Init page.
   }
 
   render() {
@@ -68,20 +70,14 @@ class SearchContainer extends React.Component {
 }
 
 
-const mapStateToProps = (state) => {
-  const { page, pageSize, query } = state.search;
-  const { results, total } = getLawsByQueryAndPage(state);
-
-  return {
-    page,
-    pageSize,
-    query,
-    results,
-    total,
-    fetched: state.laws.index.length > 0,
-    stars: getStars(state),
-  };
-};
+const mapStateToProps = (state) => ({
+  page: getPage(state),
+  pageSize: getPageSize(state),
+  query: getQuery(state),
+  ...getLawsByQueryAndPage(state), // results, total
+  fetched: !getLawIndex(state).isEmpty(),
+  stars: getStars(state),
+});
 
 const mapDispatchToProps = {
   fetch: fetchLawIndex,
