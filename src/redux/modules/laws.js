@@ -31,4 +31,4 @@ export const fetchLaw = (groupkey) => ({
 
 // ******************************************************************
 // SELECTORS
-export const getLaws = ({ laws }) => laws.laws;
+export const getLaws = (state) => state.get('laws').laws;

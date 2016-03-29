@@ -79,9 +79,9 @@ export function endsWith(haystack, needle) {
  * @param  {string} key
  * @return {object}
  */
-export function arr2obj(arr, key) {
+export function arr2obj(arr, key, constructor = i => i) {
   return arr.reduce((agg, obj) => {
-    agg[obj[key]] = obj;
+    agg[obj[key]] = constructor(obj);
     return agg;
   }, {});
 }

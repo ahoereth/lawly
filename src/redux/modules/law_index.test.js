@@ -1,7 +1,11 @@
 import chai, { expect } from 'chai';
 import spies from 'chai-spies';
+import chaiImmutable from 'chai-immutable';
 import configureMockStore from 'redux-mock-store';
 chai.use(spies);
+chai.use(chaiImmutable);
+
+import { List, OrderedMap, Map } from 'immutable';
 
 import { arr2obj } from 'helpers/utils';
 import promiseMiddleware from '../middlewares/promiseMiddleware';
@@ -13,10 +17,10 @@ import reducer, {
   fetchLawIndex,
   selectLawIndexInitial,
   selectLawIndexPage,
-  getLawIndexRaw,
   getPageSize,
   getPage,
   getInitial,
+  getInitials,
   getLawIndex,
   getLawsByInitial,
   getLawsByInitialAndPage,
@@ -31,20 +35,21 @@ const mockStore = configureMockStore([
 
 
 describe('law_index', () => {
-  const initialState = { law_index: {
-    laws: {},
-    initials: [],
-    initial: 'a',
-    page: 1,
-    pageSize: 20,
-    error: undefined,
-  }};
+  const initialState = Map({
+    law_index: Map({
+      laws: OrderedMap(),
+      initials: List(),
+      initial: 'a',
+      page: 1,
+      pageSize: 20,
+      error: undefined,
+    }),
+  });
 
   describe('reducer', () => {
     it('should return the initial state', () => {
       const state = reducer(undefined, {});
-      expect(state).to.have.all.keys(Object.keys(initialState.law_index));
-      expect(state).to.deep.equal(initialState.law_index);
+      expect(state).to.equal(initialState.get('law_index'));
     });
 
     it('should handle fetching the law index', () => {
@@ -52,22 +57,24 @@ describe('law_index', () => {
       const index = [ { groupkey: 'a' }, { groupkey: 'b' } ];
       const action = { type: FETCH, payload: { index, initials } };
       const state = reducer(initialState.law_index, action);
-      expect(state.laws).to.deep.equal(arr2obj(index, 'groupkey'));
-      expect(state.initials).to.deep.equal(initials);
+
+      const expectedIndex = OrderedMap(arr2obj(index, 'groupkey', Map));
+      expect(state.get('laws')).to.equal(expectedIndex);
+      expect(state.get('initials')).to.equal(List(initials));
     });
 
     it('should handle selecting a page', () => {
       const page = 12;
       const action = { type: SELECT_PAGE, payload: page };
       const state = reducer(initialState.law_index, action);
-      expect(state.page).to.equal(page);
+      expect(state.get('page')).to.equal(page);
     });
 
     it('should handle selecting an initial', () => {
       const initial = 'z';
       const action = { type: SELECT_INITIAL, payload: initial };
       const state = reducer(initialState.law_index, action);
-      expect(state.initial).to.equal(initial);
+      expect(state.get('initial')).to.equal(initial);
     });
   });
 
@@ -113,47 +120,57 @@ describe('law_index', () => {
 
   describe('selectors', () => {
     it('should provide a selector to get the index object', () => {
-      const laws = { a: { groupkey: 'a' } };
-      const store = mockStore({ law_index: { laws } });
-      expect(getLawIndexRaw(store.getState())).to.deep.equal(laws);
+      const laws = OrderedMap({ a: Map({ groupkey: 'a' }) });
+      const state = Map({ law_index: Map({ laws }) });
+      expect(getLawIndex(state)).to.equal(laws);
     });
 
     it('should provide a selector to get the page size', () => {
       const pageSize = 12;
-      const store = mockStore({ law_index: { pageSize } });
-      expect(getPageSize(store.getState())).to.deep.equal(pageSize);
+      const state = Map({ law_index: Map({ pageSize }) });
+      expect(getPageSize(state)).to.equal(pageSize);
     });
 
     it('should provide a selector to get the current page', () => {
       const page = 7;
-      const store = mockStore({ law_index: { page } });
-      expect(getPage(store.getState())).to.deep.equal(page);
+      const state = Map({ law_index: Map({ page }) });
+      expect(getPage(state)).to.equal(page);
     });
 
     it('should provide a selector to get the initial', () => {
       const initial = 'z';
-      const store = mockStore({ law_index: { initial } });
-      expect(getInitial(store.getState())).to.deep.equal(initial);
+      const state = Map({ law_index: Map({ initial }) });
+      expect(getInitial(state)).to.equal(initial);
     });
 
-    it('should provide a selector to get the law index as array', () => {
-      const laws = { a: {groupkey: 'a'} };
-      const store = mockStore({ law_index: { laws } });
-      expect(getLawIndex(store.getState())).to.deep.equal([ {groupkey: 'a'} ]);
+    it('should provide a selector to get the list of initials', () => {
+      const initials = List(['a', 'b', 'c']);
+      const state = Map({ law_index: Map({ initials }) });
+      expect(getInitials(state)).to.equal(initials);
     });
 
     it('should provide a selector to get by initial', () => {
-      const laws = { a: {groupkey: 'a'}, z: {groupkey: 'z'} };
-      const store = mockStore({ law_index: { laws, initial: 'z' } });
-      const state = store.getState();
-      expect(getLawsByInitial(state)).to.deep.equal([ {groupkey: 'z'} ]);
+      const laws = OrderedMap({
+        a: Map({ groupkey: 'a' }),
+        z: Map({ groupkey: 'z' }),
+      });
+      const state = Map({ law_index: Map({ laws, initial: 'z' }) });
+      const expectedSlice = OrderedMap({z: Map({groupkey: 'z'})});
+      expect(getLawsByInitial(state)).to.equal(expectedSlice);
     });
 
     it('should provide a selector to get by initial and page', () => {
-      const laws = { aa: {groupkey: 'a'}, ab: {groupkey: 'ab'} };
-      const state = { law_index: { laws, initial: 'a', page: 2, pageSize: 1 } };
-      const selected = { total: 2, laws: [ {groupkey: 'ab'} ] };
-      expect(getLawsByInitialAndPage(state)).to.deep.equal(selected);
+      const srcLaws = OrderedMap({
+        aa: Map({ groupkey: 'a' }),
+        ab: Map({ groupkey: 'ab' }),
+        z: Map({ groupkey: 'z' }),
+      });
+      const state = Map({ law_index: Map({
+        laws: srcLaws, initial: 'a', page: 2, pageSize: 1
+      })});
+      const { total, laws } = getLawsByInitialAndPage(state);
+      expect(laws).to.equal(OrderedMap({ab: Map({groupkey: 'ab'})}));
+      expect(total).to.equal(2);
     });
   });
 });

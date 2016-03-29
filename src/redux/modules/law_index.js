@@ -1,8 +1,9 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
+import { List, OrderedMap, Map } from 'immutable';
 
-import { arr2obj, obj2arr, localeCompare } from 'helpers/utils';
-import reduceActions from 'helpers/reduceActions';
+import { arr2obj } from 'helpers/utils';
+import createReducer from '../createReducer';
 
 
 // ******************************************************************
@@ -15,20 +16,20 @@ export const SELECT_PAGE = 'law_index/SELECT_PAGE';
 
 // ******************************************************************
 // REDUCERS
-export default reduceActions({
-  [FETCH]: (state, { payload }) => ({...state,
-    initials: payload.initials,
-    laws: arr2obj(payload.index, 'groupkey'),
-  }),
-  [SELECT_PAGE]: (state, { payload }) => ({...state, page: payload }),
-  [SELECT_INITIAL]: (state, { payload }) => ({...state, initial: payload }),
-}, {
-  laws: {},
-  initials: [],
+export default createReducer(Map({
+  laws: OrderedMap(),
+  initials: List(),
   initial: 'a',
   page: 1,
   pageSize: 20,
   error: undefined,
+}), {
+  [FETCH]: (state, { payload }) =>
+    state
+      .set('initials', List(payload.initials))
+      .set('laws', OrderedMap(arr2obj(payload.index, 'groupkey', Map))),
+  [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
+  [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),
 });
 
 
@@ -56,28 +57,25 @@ export const selectLawIndexInitial = (initial = 'a') => (dispatch) => {
 
 // ******************************************************************
 // SELECTORS
-export const getLawIndexRaw = ({ law_index }) => law_index.laws;
+export const getLawIndex = (state) => state.getIn(['law_index', 'laws']);
 
-export const getPageSize = ({ law_index }) => law_index.pageSize;
+export const getPageSize = (state) => state.getIn(['law_index', 'pageSize']);
 
-export const getPage = ({ law_index }) => law_index.page;
+export const getPage = (state) => state.getIn(['law_index', 'page']);
 
-export const getInitial = ({ law_index }) => law_index.initial;
+export const getInitials = (state) => state.getIn(['law_index', 'initials']);
 
-export const getLawIndex = createSelector(
-  [ getLawIndexRaw ],
-  (laws) => obj2arr(laws).sort((a, b) => localeCompare(a.groupkey, b.groupkey))
-);
+export const getInitial = (state) => state.getIn(['law_index', 'initial']);
 
 export const getLawsByInitial = createSelector(
   [ getLawIndex, getInitial ],
-  (laws, char) => laws.filter(law => (law.groupkey[0].toLowerCase() == char))
+  (laws, char) => laws.filter((law, key) => (key[0].toLowerCase() == char))
 );
 
 export const getLawsByInitialAndPage = createSelector(
   [ getLawsByInitial, getPage, getPageSize ],
   (laws, page, size) => ({
-    total: laws.length,
+    total: laws.size,
     laws: laws.slice(size * (page-1), size * page)
   })
 );

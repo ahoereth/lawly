@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from 'redux-immutablejs';
 import { routerReducer } from 'react-router-redux';
 
 import law_index from './law_index';

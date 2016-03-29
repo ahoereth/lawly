@@ -24,7 +24,9 @@ export default reduceActions({
     loggedin: false, email: undefined, error: undefined
   }),
   [STAR]: (state, { payload }) => ({...state,
-    [payload.groupkey]: payload,
+    laws: {...state.laws,
+      [payload.groupkey]: payload,
+    }
   }),
 }, {
   loggedin: false,
@@ -58,9 +60,9 @@ export const starLaw = (groupkey, state = true) => ({
 
 // ******************************************************************
 // SELECTORS
-export const getUserLaws = ({user}) => {
-  return user.laws;
-};
+export const getUser = (state) => state.get('user');
+
+export const getUserLaws = (state) => state.get('user').laws;
 
 export const getStars = createSelector(
   [ getUserLaws ],

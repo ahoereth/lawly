@@ -3,6 +3,8 @@ import spies from 'chai-spies';
 import configureMockStore from 'redux-mock-store';
 chai.use(spies);
 
+import { Map } from 'immutable';
+
 import promiseMiddleware from '../middlewares/promiseMiddleware';
 import reducer, {
   FETCH_SINGLE,
@@ -53,7 +55,7 @@ describe('laws', () => {
   describe('selectors', () => {
     it('should provide a selector to get all laws in an object', () => {
       const laws = { BGB: { groupkey: 'BGB' } };
-      const store = mockStore({ laws: { laws } });
+      const store = mockStore(Map({ laws: { laws } }));
       expect(getLaws(store.getState())).to.deep.equal(laws);
     });
   });

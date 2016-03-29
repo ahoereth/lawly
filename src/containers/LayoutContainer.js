@@ -48,14 +48,13 @@ class LayoutContainer extends React.Component {
 }
 
 
-function mapStateToProps(state = {
-  title: 'Lawly'
-}, ownProps) {
+function mapStateToProps(state, ownProps) {
+  const { search } = state.toObject();
   const { routes } = ownProps;
   const title = routes[routes.length - 1].title;
 
   return {
-    query: state.search.query,
+    query: search.query,
     title,
     htmltitle: title + ' | Lawly'
   };

@@ -19,7 +19,9 @@ const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
 const target = document.getElementById('app'); /* global document */
 const store = createStore(client, window.__state); /* global window */
-const history = syncHistoryWithStore(browserHistory, store);
+const history = syncHistoryWithStore(browserHistory, store, {
+  selectLocationState: state => state.get('routing'),
+});
 
 // Hacky scroll to top on route change. TODO.
 history.listen(location => {

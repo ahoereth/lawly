@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { login, logout } from 'redux/modules/user';
+import { login, logout, getUser } from 'redux/modules/user';
 import { Home } from '../components';
 
 
@@ -19,6 +19,6 @@ class HomeContainer extends React.Component {
 
 
 export default connect(
-  ({ user }) => ({ user }),
+  (state) => ({ user: getUser(state) }),
   { login, logout }
 )(HomeContainer);

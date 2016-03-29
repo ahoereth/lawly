@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { Link } from 'react-router';
 import {
   DataTable, TableHeader,
@@ -11,23 +12,24 @@ import styles from './lawList.sss';
 
 
 const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
-  const rows = laws.map(law => ({...law,
-    key: law.groupkey,
+  const rows = laws.map((law, key) => law.merge({
+    key,
     star: (
       <IconToggle ripple
-        checked={!!stars[law.groupkey]}
-        name={stars[law.groupkey] ? 'star' : 'star_border'}
-        onChange={() => star(law.groupkey, !stars[law.groupkey])}
+        checked={!!stars[key]}
+        name={stars[key] ? 'star' : 'star_border'}
+        onChange={() => star(key, !stars[key])}
       />
     ),
     action: (
-      <Link to={'/gesetz/' + law.groupkey}>
+      <Link to={'/gesetz/' + key}>
         <FABButton mini>
           <Icon name='launch' />
         </FABButton>
       </Link>
     )
-  }));
+  })).toList().toJS();
+  // ^ Conversion needed because react-mdl does not like immutable objects.
 
   return (
     <div>
@@ -51,7 +53,7 @@ const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
 };
 
 LawList.propTypes = {
-  laws: PropTypes.array.isRequired,
+  laws: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
   page: PropTypes.number,
   pageSize: PropTypes.number,
   selectPage: PropTypes.func.isRequired,

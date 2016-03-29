@@ -1,29 +1,16 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { Grid, Cell, Button } from 'react-mdl';
 
-
-// Square single letter buttons.
-const buttonStyle = {
-  minWidth: 'auto',
-  width: '36px',
-  height: '36px',
-  padding: 0,
-  margin: '0 auto',
-};
-
-// Centered buttons.
-const cellStyle = {
-  marginBottom: '.5em',
-  textAlign: 'center'
-};
+import styles from './lawInitialChooser.sss';
 
 const LawInitialChooser = ({ initials, selected, onSelect }) => (
   <Grid noSpacing>
     {initials.map(initial => (
-      <Cell key={initial} col={12} tablet={8} phone={1} style={cellStyle}>
+      <Cell key={initial} col={12} tablet={8} phone={1} className={styles.cell}>
         <Button
           ripple raised
-          style={buttonStyle}
+          className={styles.button}
           disabled={selected == initial.toLowerCase()}
           onClick={() => onSelect(initial)}
         >
@@ -35,7 +22,7 @@ const LawInitialChooser = ({ initials, selected, onSelect }) => (
 );
 
 LawInitialChooser.propTypes = {
-  initials: PropTypes.array.isRequired,
+  initials: PropTypes.instanceOf(Immutable.List).isRequired,
   onSelect: PropTypes.func.isRequired,
   selected: PropTypes.string,
 };

@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { connect } from 'react-redux';
 
 import {
-  getLawsByInitialAndPage,
+  getLawsByInitialAndPage, getInitial, getInitials, getPage, getPageSize,
   fetchLawIndex, selectLawIndexInitial, selectLawIndexPage,
 } from 'redux/modules/law_index';
 import {
@@ -15,9 +16,8 @@ import { LawIndex } from 'components';
 class LawIndexContainer extends React.Component {
   static propTypes = {
     fetchIndex: PropTypes.func.isRequired,
-    initials: PropTypes.array.isRequired,
-    laws: PropTypes.array.isRequired,
-    loading: PropTypes.bool.isRequired,
+    initials: PropTypes.instanceOf(Immutable.List).isRequired,
+    laws: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
     page: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
     params: PropTypes.shape({
@@ -42,7 +42,7 @@ class LawIndexContainer extends React.Component {
       selectedInitial,
     } = this.props;
 
-    laws.length > 0 || fetchIndex();
+    laws.size > 0 || fetchIndex();
     selectInitial(params.initial || selectedInitial);
     selectPage(params.page ? parseInt(params.page, 10) : page);
   }
@@ -51,7 +51,6 @@ class LawIndexContainer extends React.Component {
     const {
       initials,
       laws,
-      loading,
       page,
       pageSize,
       selectedInitial,
@@ -62,7 +61,7 @@ class LawIndexContainer extends React.Component {
       total,
     } = this.props;
 
-    if (loading) {
+    if (laws.size === 0) {
       return <div>Loading...</div>;
     }
 
@@ -78,26 +77,14 @@ class LawIndexContainer extends React.Component {
 }
 
 
-const mapStateToProps = (state) => {
-  const {
-    initials,
-    page,
-    pageSize,
-    initial,
-  } = state.law_index;
-
-  const { total, laws } = getLawsByInitialAndPage(state);
-  return {
-    initials,
-    total,
-    laws,
-    page,
-    pageSize,
-    selectedInitial: initial,
-    stars: getStars(state),
-    loading: initials.length === 0,
-  };
-};
+const mapStateToProps = (state) => ({
+  ...getLawsByInitialAndPage(state), // total, laws
+  initials: getInitials(state),
+  page: getPage(state),
+  pageSize: getPageSize(state),
+  selectedInitial: getInitial(state),
+  stars: getStars(state),
+});
 
 const mapDispatchToProps = {
   fetchIndex: fetchLawIndex,
