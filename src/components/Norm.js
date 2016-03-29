@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { IconToggle } from 'react-mdl';
 
 import { slugify } from 'helpers/utils';
@@ -7,7 +8,7 @@ import styles from './norm.sss';
 
 
 const Norm = ({ data, star, starred }) => {
-  const { enumeration, groupkey, title, body, foot } = data;
+  const { enumeration, groupkey, title, body, foot } = data.toObject();
 
   let heading = enumeration.split('.').length + 1;
   heading = enumeration === '0' ? 1 : (heading > 6 ? 6 : heading);
@@ -37,13 +38,14 @@ const Norm = ({ data, star, starred }) => {
 };
 
 Norm.propTypes = {
-  data: PropTypes.shape({
-    enumeration: PropTypes.string.isRequired,
-    groupkey: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    body: PropTypes.string.isRequired,
-    foot: PropTypes.string.isRequired,
-  }).isRequired,
+  data: PropTypes.instanceOf(Immutable.Map),
+  // data: PropTypes.shape({
+  //   enumeration: PropTypes.string.isRequired,
+  //   groupkey: PropTypes.string.isRequired,
+  //   title: PropTypes.string.isRequired,
+  //   body: PropTypes.string.isRequired,
+  //   foot: PropTypes.string.isRequired,
+  // }).isRequired,
   star: PropTypes.func,
   starred: PropTypes.bool,
 };

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { Grid, Cell } from 'react-mdl';
 
 import { Norm, NormList } from 'components';
@@ -7,7 +8,7 @@ import { Norm, NormList } from 'components';
 const Law = ({ norms, star, starred }) => (
   <Grid>
     <Cell col={8} className='law'>
-      {<Norm key={-1} data={norms[0]} star={star} starred={starred} />}
+      {<Norm key={-1} data={norms.first()} star={star} starred={starred} />}
       {norms.slice(1).map((norm, i) => <Norm key={i} data={norm} />)}
     </Cell>
     <Cell col={4} className='law-sidebar'>
@@ -17,7 +18,7 @@ const Law = ({ norms, star, starred }) => (
 );
 
 Law.propTypes = {
-  norms: PropTypes.array.isRequired,
+  norms: PropTypes.instanceOf(Immutable.List).isRequired,
   star: PropTypes.func.isRequired,
   starred: PropTypes.bool.isRequired,
 };

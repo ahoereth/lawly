@@ -3,7 +3,7 @@ import spies from 'chai-spies';
 import configureMockStore from 'redux-mock-store';
 chai.use(spies);
 
-import { Map } from 'immutable';
+import { Map, List } from 'immutable';
 
 import promiseMiddleware from '../middlewares/promiseMiddleware';
 import reducer, {
@@ -18,20 +18,18 @@ const mockStore = configureMockStore([ promiseMiddleware(mockApi) ]);
 
 
 describe('laws', () => {
-  const initialState = { laws: {}, error: undefined };
+  const initialState = Map({ laws: Map(), error: undefined });
 
   describe('reducer', () => {
     it('should return the initial state', () => {
       const state = reducer(undefined, {});
-      expect(state).to.have.all.keys(Object.keys(initialState));
-      expect(state).to.deep.equal(initialState);
+      expect(state).to.equal(initialState);
     });
 
     it('should handle fetching a law', () => {
-      const groupkey = 'BGB';
-      const norms = [ { groupkey, n: 1 }, { groupkey, n: 2 } ];
-      const state = reducer({}, { type: FETCH_SINGLE, payload: norms });
-      expect(state.laws[groupkey]).to.deep.equal(norms);
+      const a = { groupkey: 'a', n: 1 }, b = { groupkey: 'a', n: 2 };
+      const state = reducer({}, { type: FETCH_SINGLE, payload: [ a, b ] });
+      expect(state.get('laws')).to.equal(Map({ a: List([ Map(a), Map(b) ]) }));
     });
   });
 
@@ -54,9 +52,9 @@ describe('laws', () => {
 
   describe('selectors', () => {
     it('should provide a selector to get all laws in an object', () => {
-      const laws = { BGB: { groupkey: 'BGB' } };
-      const store = mockStore(Map({ laws: { laws } }));
-      expect(getLaws(store.getState())).to.deep.equal(laws);
+      const laws = Map({ BGB: Map({ groupkey: 'BGB' }) });
+      const state = Map({ laws: Map({ laws }) });
+      expect(getLaws(state)).to.equal(laws);
     });
   });
 });

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import { connect } from 'react-redux';
 
 import { fetchLaw, getLaws } from 'redux/modules/laws';
@@ -6,10 +7,10 @@ import { getStars, starLaw } from 'redux/modules/user';
 import { Law } from 'components';
 
 
-class GesetzContainer extends React.Component {
+class LawContainer extends React.Component {
   static propTypes = {
     fetch: PropTypes.func.isRequired,
-    norms: PropTypes.array,
+    norms: PropTypes.instanceOf(Immutable.List),
     params: PropTypes.shape({
       groupkey: PropTypes.string.isRequired
     }).isRequired,
@@ -25,7 +26,7 @@ class GesetzContainer extends React.Component {
   render() {
     const { norms, starred, star } = this.props;
 
-    if (!norms || norms.length === 0) {
+    if (!norms || norms.size === 0) {
       return <div>Loading...</div>;
     }
 
@@ -37,7 +38,7 @@ class GesetzContainer extends React.Component {
 const mapStateToProps = (state, props) => {
   const { groupkey } = props.params;
   return {
-    norms: getLaws(state)[groupkey],
+    norms: getLaws(state).get(groupkey),
     starred: !!getStars(state)[groupkey],
   };
 };
@@ -48,4 +49,4 @@ const mapDispatchToProps = {
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(GesetzContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(LawContainer);

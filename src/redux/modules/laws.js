@@ -1,4 +1,6 @@
-import reduceActions from 'helpers/reduceActions';
+import { Map, fromJS } from 'immutable';
+
+import createReducer from '../createReducer';
 
 
 // ******************************************************************
@@ -9,13 +11,12 @@ export const FETCH_SINGLE = 'laws/FETCH_SINGLE';
 
 // ******************************************************************
 // REDUCERS
-export default reduceActions({
-  [FETCH_SINGLE]: (state, { payload }) => ({...state, laws: {...state.laws,
-    [payload[0].groupkey]: payload,
-  }})
-}, {
-  laws: {},
+export default createReducer(Map({
+  laws: Map(), // Map of Lists of Maps
   error: undefined,
+}), {
+  [FETCH_SINGLE]: (state, { payload }) =>
+    state.setIn(['laws', payload[0].groupkey], fromJS(payload))
 });
 
 
@@ -31,4 +32,4 @@ export const fetchLaw = (groupkey) => ({
 
 // ******************************************************************
 // SELECTORS
-export const getLaws = (state) => state.get('laws').laws;
+export const getLaws = (state) => state.getIn(['laws', 'laws']);

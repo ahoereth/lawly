@@ -2,19 +2,20 @@ import chai from 'chai';
 chai.should();
 
 import React from 'react';
+import { List, Map } from 'immutable';
 import { renderToStaticMarkup as staticRender } from 'react-dom/server';
 
 import { shallowRender } from 'helpers/testUtils';
 import NormList from './NormList';
 
 const props = {
-  norms: [
-    { enumeration: '0', title: 'Lead Norm' },
-    { enumeration: '1', title: 'Norm 1' },
-    { enumeration: '1.1', title: 'Norm 1.1' },
-    { enumeration: '1.2', title: 'Norm 1.2' },
-    { enumeration: '1.2.1', title: 'Norm 1.2.1' },
-  ],
+  norms: List([
+    Map({ enumeration: '0', title: 'Lead Norm' }),
+    Map({ enumeration: '1', title: 'Norm 1' }),
+    Map({ enumeration: '1.1', title: 'Norm 1.1' }),
+    Map({ enumeration: '1.2', title: 'Norm 1.2' }),
+    Map({ enumeration: '1.2.1', title: 'Norm 1.2.1' }),
+  ]),
 };
 
 

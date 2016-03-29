@@ -15,7 +15,11 @@ import Immutable from 'immutable';
  * @param  {object} initialState
  * @return {Reducer}
  */
-export default function createReducer(initialState, handlers, constructor) {
+export default function createReducer(
+  initialState,
+  handlers,
+  constructor = (state) => Immutable.fromJS(state)
+) {
   return (state = initialState, action) => {
     if (!Immutable.Iterable.isIterable(state)) {
       state = constructor(state);

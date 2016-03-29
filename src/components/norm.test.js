@@ -4,6 +4,7 @@ const should = chai.should();
 chai.use(spies);
 
 import React from 'react';
+import { Map } from 'immutable';
 import { renderToStaticMarkup } from 'react-dom/server';
 
 import { shallowRender } from 'helpers/testUtils';
@@ -13,7 +14,7 @@ import Norm from './Norm';
 
 const normOptions = {
   props: {
-    data: {
+    data: Map({
       enumeration: '1.1.4',
       title: 'Heading 3',
       groupkey: 'KEY_H3',
@@ -26,7 +27,7 @@ const normOptions = {
         <ol><li>The</li><li>Footer</li></ol>
         <pre><code>With some preformatted text.</code></pre>
       `,
-    },
+    }),
   },
   patterns: {
     body: /.*?<p>.*?<\/p>\s*<ul>.*?<\/ul>.*?/,
@@ -36,13 +37,13 @@ const normOptions = {
 
 const leadOptions = {
   props: {
-    data: {
+    data: Map({
       enumeration: '0',
       title: 'Heading 1',
       groupkey: 'KEY_H1',
       body: '',
       foot: '',
-    },
+    }),
     star: chai.spy(() => {}),
     starred: true,
   },
@@ -64,8 +65,8 @@ describe('Norm', () => {
     head.type.should.equal('h4');
 
     const { id, children: title } = head.props;
-    id.should.equal(slugify(normOptions.props.data.title));
-    title.should.equal(normOptions.props.data.title);
+    id.should.equal(slugify(normOptions.props.data.get('title')));
+    title.should.equal(normOptions.props.data.get('title'));
   });
 
   it('renders raw html in body and foot', () => {
@@ -89,10 +90,10 @@ describe('Norm', () => {
     const [ toggle, groupkey ] = lead.props.children;
 
     title.type.should.equal('h1');
-    title.props.children.should.equal(ref.data.title);
-    title.props.id.should.equal(slugify(ref.data.title));
+    title.props.children.should.equal(ref.data.get('title'));
+    title.props.id.should.equal(slugify(ref.data.get('title')));
     groupkey.type.should.equal('span');
-    groupkey.props.children.should.equal(ref.data.groupkey);
+    groupkey.props.children.should.equal(ref.data.get('groupkey'));
 
     toggle.type.name.should.equal('IconToggle');
     toggle.props.checked.should.equal(ref.starred);
