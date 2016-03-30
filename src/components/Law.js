@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Grid, Cell } from 'react-mdl';
 
 import { Norm, NormList } from 'components';
@@ -18,7 +18,7 @@ const Law = ({ norms, star, starred }) => (
 );
 
 Law.propTypes = {
-  norms: PropTypes.instanceOf(Immutable.List).isRequired,
+  norms: ImmutablePropTypes.list.isRequired,
   star: PropTypes.func.isRequired,
   starred: PropTypes.bool.isRequired,
 };

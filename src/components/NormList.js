@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 
 import { slugify } from 'helpers/utils';
 import { List } from 'components';
@@ -28,11 +28,10 @@ const NormList = ({ norms }) => {
 };
 
 NormList.propTypes = {
-  norms: PropTypes.instanceOf(Immutable.List).isRequired,
-  // norms: PropTypes.arrayOf(PropTypes.shape({
-  //   title: PropTypes.string.isRequired,
-  //   enumeration: PropTypes.string.isRequired,
-  // })).isRequired,
+  norms: ImmutablePropTypes.listOf(ImmutablePropTypes.mapContains({
+    title: PropTypes.string.isRequired,
+    enumeration: PropTypes.string.isRequired,
+  })).isRequired,
 };
 
 

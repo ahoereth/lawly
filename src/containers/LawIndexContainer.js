@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
 import {
@@ -16,8 +16,8 @@ import { LawIndex } from 'components';
 class LawIndexContainer extends React.Component {
   static propTypes = {
     fetchIndex: PropTypes.func.isRequired,
-    initials: PropTypes.instanceOf(Immutable.List).isRequired,
-    laws: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+    initials: ImmutablePropTypes.list.isRequired,
+    laws: ImmutablePropTypes.orderedMap.isRequired,
     page: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
     params: PropTypes.shape({

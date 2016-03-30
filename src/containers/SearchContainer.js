@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
 import { fetchLawIndex, getLawIndex } from 'redux/modules/law_index';
@@ -25,7 +25,10 @@ class SearchContainer extends React.Component {
       query: PropTypes.string,
     }).isRequired,
     query: PropTypes.string,
-    results: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+    results: ImmutablePropTypes.orderedMapOf(ImmutablePropTypes.mapContains({
+      groupkey: PropTypes.string,
+      title: PropTypes.string,
+    })).isRequired,
     search: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     star: PropTypes.func.isRequired,

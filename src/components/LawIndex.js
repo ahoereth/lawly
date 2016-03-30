@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Grid, Cell } from 'react-mdl';
 
 import LawList from './LawList';
@@ -40,8 +40,8 @@ const LawIndex = ({
 );
 
 LawIndex.propTypes = {
-  initials: PropTypes.instanceOf(Immutable.List).isRequired,
-  laws: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+  initials: ImmutablePropTypes.listOf(PropTypes.string).isRequired,
+  laws: ImmutablePropTypes.orderedMap.isRequired,
   page: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   selectInitial: PropTypes.func.isRequired,

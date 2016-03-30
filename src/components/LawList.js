@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import {
   DataTable, TableHeader,
@@ -53,7 +53,10 @@ const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
 };
 
 LawList.propTypes = {
-  laws: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+  laws: ImmutablePropTypes.orderedMapOf(ImmutablePropTypes.mapContains({
+    groupkey: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+  })).isRequired,
   page: PropTypes.number,
   pageSize: PropTypes.number,
   selectPage: PropTypes.func.isRequired,

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Grid, Cell } from 'react-mdl';
 
 import LawList from './LawList';
@@ -43,7 +43,7 @@ Search.propTypes = {
   page: PropTypes.number,
   pageSize: PropTypes.number,
   query: PropTypes.string,
-  results: PropTypes.instanceOf(Immutable.OrderedMap).isRequired,
+  results: ImmutablePropTypes.orderedMap.isRequired,
   search: PropTypes.func.isRequired,
   selectPage: PropTypes.func.isRequired,
   star: PropTypes.func.isRequired,

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { IconToggle } from 'react-mdl';
 
 import { slugify } from 'helpers/utils';
@@ -38,14 +38,13 @@ const Norm = ({ data, star, starred }) => {
 };
 
 Norm.propTypes = {
-  data: PropTypes.instanceOf(Immutable.Map),
-  // data: PropTypes.shape({
-  //   enumeration: PropTypes.string.isRequired,
-  //   groupkey: PropTypes.string.isRequired,
-  //   title: PropTypes.string.isRequired,
-  //   body: PropTypes.string.isRequired,
-  //   foot: PropTypes.string.isRequired,
-  // }).isRequired,
+  data: ImmutablePropTypes.mapContains({
+    enumeration: PropTypes.string.isRequired,
+    groupkey: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    body: PropTypes.string.isRequired,
+    foot: PropTypes.string.isRequired,
+  }).isRequired,
   star: PropTypes.func,
   starred: PropTypes.bool,
 };

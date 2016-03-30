@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import Immutable from 'immutable';
+import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
 import { fetchLaw, getLaws } from 'redux/modules/laws';
@@ -10,7 +10,7 @@ import { Law } from 'components';
 class LawContainer extends React.Component {
   static propTypes = {
     fetch: PropTypes.func.isRequired,
-    norms: PropTypes.instanceOf(Immutable.List),
+    norms: ImmutablePropTypes.list,
     params: PropTypes.shape({
       groupkey: PropTypes.string.isRequired
     }).isRequired,
