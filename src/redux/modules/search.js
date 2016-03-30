@@ -8,8 +8,8 @@ import { getLawIndex } from './law_index';
 
 // ******************************************************************
 // ACTIONS
-const SEARCH = 'search/SEARCH';
-const SELECT_PAGE = 'search/SELECT_PAGE';
+export const SEARCH = 'search/SEARCH';
+export const SELECT_PAGE = 'search/SELECT_PAGE';
 
 
 
