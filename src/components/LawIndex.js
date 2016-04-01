@@ -48,7 +48,7 @@ LawIndex.propTypes = {
   selectPage: PropTypes.func.isRequired,
   selectedInitial: PropTypes.string.isRequired,
   star: PropTypes.func.isRequired,
-  stars: PropTypes.objectOf(PropTypes.bool).isRequired,
+  stars: ImmutablePropTypes.setOf(PropTypes.string).isRequired,
   total: PropTypes.number.isRequired,
 };
 

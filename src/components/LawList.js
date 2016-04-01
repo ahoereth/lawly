@@ -16,9 +16,9 @@ const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
     key,
     star: (
       <IconToggle ripple
-        checked={!!stars[key]}
-        name={stars[key] ? 'star' : 'star_border'}
-        onChange={() => star(key, !stars[key])}
+        checked={!!stars.get(key)}
+        name={stars.get(key) ? 'star' : 'star_border'}
+        onChange={() => star(key, !stars.get(key))}
       />
     ),
     action: (
@@ -61,7 +61,7 @@ LawList.propTypes = {
   pageSize: PropTypes.number,
   selectPage: PropTypes.func.isRequired,
   star: PropTypes.func.isRequired,
-  stars: PropTypes.objectOf(PropTypes.bool).isRequired,
+  stars: ImmutablePropTypes.setOf(PropTypes.string).isRequired,
   total: PropTypes.number.isRequired,
 };
 

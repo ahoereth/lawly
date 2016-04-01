@@ -1,0 +1,138 @@
+import chai, { expect } from 'chai';
+import spies from 'chai-spies';
+import configureMockStore from 'redux-mock-store';
+chai.use(spies);
+
+import { Map, Set } from 'immutable';
+
+import promiseMiddleware from '../middlewares/promiseMiddleware';
+import functionsMiddleware from '../middlewares/functionsMiddleware';
+import reducer, {
+  LOGIN,
+  LOGOUT,
+  STAR,
+  login,
+  logout,
+  starLaw,
+  getUser,
+  getUserLaws,
+  getStars,
+} from './user';
+
+
+const mockApi = {};
+const mockStore = configureMockStore([
+  promiseMiddleware(mockApi),
+  functionsMiddleware(),
+]);
+
+
+describe('user', () => {
+  const initialState = Map({
+    loggedin: false,
+    email: undefined,
+    laws: Map(),
+    error: false,
+  });
+
+  describe('reducer', () => {
+    it('should return the initial state', () => {
+      const state = reducer(undefined, {});
+      expect(state).to.equal(initialState);
+    });
+
+    it('should handle `LOGIN`', () => {
+      const state = reducer(undefined, {
+        type: LOGIN, payload: {
+          email: 'mail',
+          laws: [ { groupkey: 'a' } ],
+        }
+      });
+      expect(state.get('email')).to.equal('mail');
+      expect(state.get('laws')).to.equal(Map({ a: Map({groupkey: 'a'})}));
+    });
+
+    it('should handle `LOGOUT`', () => {
+      const state = reducer(
+        { loggedin: true, email: 'mail', laws: Map({a: 'a'}) },
+        { type: LOGOUT, payload: null }
+      );
+      expect(state.get('loggedin')).to.be.false;
+      expect(state.get('email')).to.be.undefined;
+      expect(state.get('laws')).to.equal(Map());
+    });
+
+    it('should handle `STAR`', () => {
+      const state = reducer(undefined,
+        { type: STAR, payload: { groupkey: 'a', starred: true } }
+      );
+      expect(state.getIn(['laws', 'a', 'starred'])).to.be.true;
+    });
+  });
+
+
+  describe('actions', () => {
+    it('should create an action `login`', (done) => {
+      const expectedAction = {
+        type: LOGIN, payload: {
+          email: 'mail',
+          laws: [ { groupkey: 'a' } ],
+        }
+      };
+      const store = mockStore(initialState);
+      mockApi.auth = chai.spy(() => Promise.resolve(expectedAction.payload));
+      store.dispatch(login('mail', 'pw')).then(action => {
+        expect(action).to.deep.equal(expectedAction);
+        expect(mockApi.auth).to.be.called.once;
+      }).then(done).catch(done);
+    });
+
+    it('should create an action `logout`', (done) => {
+      const expectedAction = { type: LOGOUT, payload: undefined };
+      const store = mockStore(initialState);
+      mockApi.unauth = chai.spy(() => Promise.resolve());
+      store.dispatch(logout('mail')).then(action => {
+        expect(action).to.deep.equal(expectedAction);
+        expect(mockApi.unauth).to.be.called.once;
+      }).then(done).catch(done);
+    });
+
+    it('should create an action `starLaw`', (done) => {
+      const expectedAction = {
+        type: STAR,
+        payload: { groupkey: 'a', starred: true }
+      };
+      const store = mockStore(initialState);
+      mockApi.put = chai.spy(() => Promise.resolve(expectedAction.payload));
+      store.dispatch(starLaw('groupkey')).then(action => {
+        expect(action).to.deep.equal(expectedAction);
+        expect(mockApi.put).to.be.called.once;
+      }).then(done).catch(done);
+    });
+  });
+
+
+  describe('selectors', () => {
+    it('should provide `getUser` selector', () => {
+      const state = Map({ user: Map({ email: 'mail' }) });
+      expect(getUser(state)).to.equal(state.get('user'));
+    });
+
+    it('should provide `getUserLaws` selector', () => {
+      const state = Map({ user: Map({ laws: Map({
+        'a': Map({ groupkey: 'a' }),
+        'b': Map({ groupkey: 'b' }),
+      }) }) });
+      expect(getUserLaws(state)).to.equal(state.getIn(['user', 'laws']));
+    });
+
+    it('should provide `getStars` selector', () => {
+      const state = Map({ user: Map({ laws: Map({
+        'a': Map({ groupkey: 'a', starred: true }),
+        'b': Map({ groupkey: 'b', starred: false }),
+        'c': Map({ groupkey: 'c', starred: true }),
+      }) }) });
+      expect(getStars(state)).to.equal(Set(['a', 'c']));
+    });
+  });
+});

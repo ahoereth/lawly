@@ -1,38 +1,36 @@
 import { createSelector } from 'reselect';
+import { Map, Set } from 'immutable';
 
-import reduceActions from 'helpers/reduceActions';
+import createReducer from '../createReducer';
 import { arr2obj } from 'helpers/utils';
 
 
 // ******************************************************************
 // ACTIONS
-const LOGIN = 'user/LOGIN';
-const LOGOUT = 'user/LOGOUT';
-const STAR = 'user/STAR';
+export const LOGIN = 'user/LOGIN';
+export const LOGOUT = 'user/LOGOUT';
+export const STAR = 'user/STAR';
 
 
 
 // ******************************************************************
 // REDUCERS
-export default reduceActions({
-  [LOGIN]: (state, { payload }) => ({...state,
-      loggedin: true,
-      email: payload.email,
-      laws: arr2obj(payload.laws, 'groupkey'),
-  }),
-  [LOGOUT]: (state/*, { payload }*/) => ({...state,
-    loggedin: false, email: undefined, error: undefined
-  }),
-  [STAR]: (state, { payload }) => ({...state,
-    laws: {...state.laws,
-      [payload.groupkey]: payload,
-    }
-  }),
-}, {
+export default createReducer(Map({
   loggedin: false,
   email: undefined,
-  laws: {},
+  laws: Map(),
   error: false,
+}), {
+  [LOGIN]: (state, { payload }) => state.merge({
+    loggedin: true,
+    email: payload.email,
+    laws: Map(arr2obj(payload.laws, 'groupkey', Map)),
+  }),
+  [LOGOUT]: (state/*, { payload }*/) => state.merge({
+    loggedin: false, email: undefined, laws: Map(), error: undefined
+  }),
+  [STAR]: (state, { payload }) =>
+    state.setIn(['laws', payload.groupkey], Map(payload))
 });
 
 
@@ -62,12 +60,9 @@ export const starLaw = (groupkey, state = true) => ({
 // SELECTORS
 export const getUser = (state) => state.get('user');
 
-export const getUserLaws = (state) => state.get('user').laws;
+export const getUserLaws = (state) => state.getIn(['user', 'laws']);
 
 export const getStars = createSelector(
   [ getUserLaws ],
-  (userLaws) => Object.keys(userLaws).reduce((laws, key) => {
-    if (userLaws[key].starred) { laws[key] = true; }
-    return laws;
-  }, {})
+  (userLaws) => Set.fromKeys(userLaws.filter(law => law.get('starred')))
 );
