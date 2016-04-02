@@ -6,12 +6,13 @@ import {
   IconButton
 } from 'react-mdl';
 
+import PureComponent from 'components/PureComponent';
 import { slugify } from 'helpers/utils';
 import Html from 'components/Html';
 import styles from './norm.sss';
 
 
-export default class Norm extends React.Component {
+export default class Norm extends PureComponent {
   static propTypes = {
     annotations: ImmutablePropTypes.mapContains({
       starred: PropTypes.bool,
