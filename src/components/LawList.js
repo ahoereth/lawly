@@ -3,7 +3,7 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import {
   DataTable, TableHeader,
-  IconToggle, Icon,
+  IconButton, Icon,
   FABButton,
 } from 'react-mdl';
 
@@ -15,10 +15,11 @@ const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
   const rows = laws.map((law, key) => law.merge({
     key,
     star: (
-      <IconToggle ripple
-        checked={!!stars.get(key)}
+      <IconButton
+        ripple
+        colored={!!stars.get(key)}
         name={stars.get(key) ? 'star' : 'star_border'}
-        onChange={() => star(key, !stars.get(key))}
+        onClick={() => star(key, !stars.get(key))}
       />
     ),
     action: (

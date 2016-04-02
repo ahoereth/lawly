@@ -3,7 +3,7 @@ import spies from 'chai-spies';
 import configureMockStore from 'redux-mock-store';
 chai.use(spies);
 
-import { Map, Set } from 'immutable';
+import { Map, Set, fromJS } from 'immutable';
 
 import promiseMiddleware from '../middlewares/promiseMiddleware';
 import functionsMiddleware from '../middlewares/functionsMiddleware';
@@ -13,10 +13,10 @@ import reducer, {
   STAR,
   login,
   logout,
-  starLaw,
+  star,
   getUser,
   getUserLaws,
-  getStars,
+  getIndexStars,
 } from './user';
 
 
@@ -42,14 +42,13 @@ describe('user', () => {
     });
 
     it('should handle `LOGIN`', () => {
-      const state = reducer(undefined, {
-        type: LOGIN, payload: {
-          email: 'mail',
-          laws: [ { groupkey: 'a' } ],
-        }
-      });
+      const payload = {
+        email: 'mail',
+        laws: { a: { '0': { starred: true } } },
+      };
+      const state = reducer(undefined, { type: LOGIN, payload });
       expect(state.get('email')).to.equal('mail');
-      expect(state.get('laws')).to.equal(Map({ a: Map({groupkey: 'a'})}));
+      expect(state.get('laws')).to.equal(fromJS(payload.laws));
     });
 
     it('should handle `LOGOUT`', () => {
@@ -63,10 +62,11 @@ describe('user', () => {
     });
 
     it('should handle `STAR`', () => {
-      const state = reducer(undefined,
-        { type: STAR, payload: { groupkey: 'a', starred: true } }
-      );
-      expect(state.getIn(['laws', 'a', 'starred'])).to.be.true;
+      const state = reducer(undefined, {
+        type: STAR,
+        payload: { groupkey: 'a', enumeration: '0', starred: true }
+      });
+      expect(state.getIn(['laws', 'a', '0', 'starred'])).to.be.true;
     });
   });
 
@@ -97,14 +97,14 @@ describe('user', () => {
       }).then(done).catch(done);
     });
 
-    it('should create an action `starLaw`', (done) => {
+    it('should create an action `star`', (done) => {
       const expectedAction = {
         type: STAR,
-        payload: { groupkey: 'a', starred: true }
+        payload: { groupkey: 'a', enumeration: '0', starred: true }
       };
       const store = mockStore(initialState);
       mockApi.put = chai.spy(() => Promise.resolve(expectedAction.payload));
-      store.dispatch(starLaw('groupkey')).then(action => {
+      store.dispatch(star('groupkey', '0')).then(action => {
         expect(action).to.deep.equal(expectedAction);
         expect(mockApi.put).to.be.called.once;
       }).then(done).catch(done);
@@ -126,13 +126,14 @@ describe('user', () => {
       expect(getUserLaws(state)).to.equal(state.getIn(['user', 'laws']));
     });
 
-    it('should provide `getStars` selector', () => {
+    it('should provide `getIndexStars` selector', () => {
       const state = Map({ user: Map({ laws: Map({
-        'a': Map({ groupkey: 'a', starred: true }),
-        'b': Map({ groupkey: 'b', starred: false }),
-        'c': Map({ groupkey: 'c', starred: true }),
+        'a': Map({ '0': Map({ starred: true }) }),
+        'b': Map({ '0': Map({ starred: false }) }),
+        'c': Map({ '0': Map({ starred: true }) }),
+        'd': Map({ '1': Map({ starred: true }) }),
       }) }) });
-      expect(getStars(state)).to.equal(Set(['a', 'c']));
+      expect(getIndexStars(state)).to.equal(Set(['a', 'c']));
     });
   });
 });

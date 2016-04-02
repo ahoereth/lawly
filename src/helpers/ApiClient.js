@@ -18,7 +18,7 @@ export default class ApiClient {
     'law': '/laws/:groupkey',
     'users': '/users',
     'user_sessions': '/users/:email/sessions',
-    'user_law': '/users/:email/laws/:groupkey',
+    'user_law': '/users/:email/laws/:groupkey/:enumeration',
   };
 
   static defaultParams = {

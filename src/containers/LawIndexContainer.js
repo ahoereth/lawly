@@ -7,8 +7,8 @@ import {
   fetchLawIndex, selectLawIndexInitial, selectLawIndexPage,
 } from 'redux/modules/law_index';
 import {
-  getStars,
-  starLaw,
+  getIndexStars,
+  star,
 } from 'redux/modules/user';
 import { LawIndex } from 'components';
 
@@ -27,7 +27,7 @@ class LawIndexContainer extends React.Component {
     selectPage: PropTypes.func.isRequired,
     selectedInitial: PropTypes.string,
     star: PropTypes.func.isRequired,
-    stars: PropTypes.objectOf(PropTypes.bool).isRequired,
+    stars: ImmutablePropTypes.setOf(PropTypes.string).isRequired,
     total: PropTypes.number.isRequired,
   };
 
@@ -83,14 +83,14 @@ const mapStateToProps = (state) => ({
   page: getPage(state),
   pageSize: getPageSize(state),
   selectedInitial: getInitial(state),
-  stars: getStars(state),
+  stars: getIndexStars(state),
 });
 
 const mapDispatchToProps = {
   fetchIndex: fetchLawIndex,
   selectInitial: selectLawIndexInitial,
   selectPage: selectLawIndexPage,
-  star: starLaw,
+  star,
 };
 
 

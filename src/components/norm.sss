@@ -1,31 +1,21 @@
-:local(.norm)
+:local(.norm) //.mdl-class
+  min-height: auto
+  width: 100%
+  transition: all 500ms ease // animate hover
+
   pre
     overflow: auto
 
   br+br // Hide consecutive linebreaks.
     display: none
 
-:local(.lead)
-  font-size: 5em
-  line-height: 1em
+  .mdl-card__title
+    h1, h2, h3, h4, h5, h6
+      margin: 0
+    small, span
+      opacity: .6
+      display: block
 
-  >span
-    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif
-    opacity: .65
-
-  .mdl-icon-toggle
-    height: 1em
-    width: 1em
-    vertical-align: top
-    text-align: center
-
-    .material-icons
-      font-size: 1em
-      line-height: 1em
-
-    span
-      height: 100%
-      width: 100%
-
-  &+h1
-    margin-top: 0
+  .mdl-card__supporting-text
+    padding-top: 0
+    padding-bottom: 0

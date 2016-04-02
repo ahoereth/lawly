@@ -5,11 +5,17 @@ import { Grid, Cell } from 'react-mdl';
 import { Norm, NormList } from 'components';
 
 
-const Law = ({ norms, star, starred }) => (
+const Law = ({ annotations, norms, star }) => (
   <Grid>
     <Cell col={8} className='law'>
-      {<Norm key={-1} data={norms.first()} star={star} starred={starred} />}
-      {norms.slice(1).map((norm, i) => <Norm key={i} data={norm} />)}
+      {norms.map(norm => (
+        <Norm
+          key={norm.get('enumeration')}
+          data={norm}
+          star={star}
+          annotations={annotations.get(norm.get('enumeration'))}
+        />
+      ))}
     </Cell>
     <Cell col={4} className='law-sidebar'>
       <NormList norms={norms} />
@@ -18,9 +24,9 @@ const Law = ({ norms, star, starred }) => (
 );
 
 Law.propTypes = {
+  annotations: ImmutablePropTypes.mapOf(ImmutablePropTypes.map).isRequired,
   norms: ImmutablePropTypes.list.isRequired,
   star: PropTypes.func.isRequired,
-  starred: PropTypes.bool.isRequired,
 };
 
 

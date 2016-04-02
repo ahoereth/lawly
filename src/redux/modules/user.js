@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
-import { Map, Set } from 'immutable';
+import Immutable, { Map, Set } from 'immutable';
 
 import createReducer from '../createReducer';
-import { arr2obj } from 'helpers/utils';
+import { isString, omit } from 'helpers/utils';
 
 
 // ******************************************************************
@@ -18,19 +18,28 @@ export const STAR = 'user/STAR';
 export default createReducer(Map({
   loggedin: false,
   email: undefined,
-  laws: Map(),
+  laws: Map(/*{
+    groupkey: {
+      enumeration: {
+        starred: bool,
+      },
+    },
+  }*/),
   error: false,
 }), {
   [LOGIN]: (state, { payload }) => state.merge({
     loggedin: true,
     email: payload.email,
-    laws: Map(arr2obj(payload.laws, 'groupkey', Map)),
+    laws: Immutable.fromJS(payload.laws),
   }),
   [LOGOUT]: (state/*, { payload }*/) => state.merge({
     loggedin: false, email: undefined, laws: Map(), error: undefined
   }),
   [STAR]: (state, { payload }) =>
-    state.setIn(['laws', payload.groupkey], Map(payload))
+    state.setIn(
+      ['laws', payload.groupkey, payload.enumeration],
+      Map(omit(payload, 'groupkey', 'enumeration'))
+    )
 });
 
 
@@ -47,12 +56,25 @@ export const logout = (email) => ({
   promise: client => client.unauth(email)
 });
 
-export const starLaw = (groupkey, state = true) => ({
-  type: STAR,
-  promise: client => client.put({ name: 'user_law', groupkey }, {
-    starred: state
-  })
-});
+export const star = (law, state = true) => {
+  let groupkey, enumeration;
+  if (Map.isMap(law)) {
+    groupkey = law.get('groupkey');
+    enumeration = law.get('enumeration');
+  } else if (isString(law)) {
+    groupkey = law;
+  }
+
+  return {
+    type: STAR,
+    promise: client => client.put({
+      name: 'user_law',
+      groupkey,
+      enumeration,
+      starred: state,
+    })
+  };
+};
 
 
 
@@ -62,7 +84,7 @@ export const getUser = (state) => state.get('user');
 
 export const getUserLaws = (state) => state.getIn(['user', 'laws']);
 
-export const getStars = createSelector(
+export const getIndexStars = createSelector(
   [ getUserLaws ],
-  (userLaws) => Set.fromKeys(userLaws.filter(law => law.get('starred')))
+  (laws) => Set.fromKeys(laws.filter(law => law.getIn(['0', 'starred'])))
 );

@@ -1,51 +1,58 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
 import { fetchLaw, getLaws } from 'redux/modules/laws';
-import { getStars, starLaw } from 'redux/modules/user';
+import { getUserLaws, star } from 'redux/modules/user';
 import { Law } from 'components';
 
 
 class LawContainer extends React.Component {
   static propTypes = {
+    annotations: ImmutablePropTypes.map.isRequired,
     fetch: PropTypes.func.isRequired,
-    norms: ImmutablePropTypes.list,
+    norms: ImmutablePropTypes.list.isRequired,
     params: PropTypes.shape({
       groupkey: PropTypes.string.isRequired
     }).isRequired,
     star: PropTypes.func.isRequired,
-    starred: PropTypes.bool.isRequired,
+  };
+
+  static defaultProps = {
+    annotations: Immutable.Map(),
+    norms: Immutable.List(),
   };
 
   componentWillMount() {
     const { fetch, params, norms } = this.props;
-    norms || fetch(params.groupkey);
+    norms.isEmpty() && fetch(params.groupkey);
   }
 
   render() {
-    const { norms, starred, star } = this.props;
+    const { norms, star, annotations } = this.props;
 
-    if (!norms || norms.size === 0) {
+    if (norms.isEmpty()) {
       return <div>Loading...</div>;
     }
 
-    return <Law norms={norms} starred={starred} star={star} />;
+    return <Law norms={norms} annotations={annotations} star={star} />;
   }
 }
 
 
 const mapStateToProps = (state, props) => {
   const { groupkey } = props.params;
+
   return {
     norms: getLaws(state).get(groupkey),
-    starred: !!getStars(state)[groupkey],
+    annotations: getUserLaws(state).get(groupkey),
   };
 };
 
 const mapDispatchToProps = {
   fetch: fetchLaw,
-  star: starLaw,
+  star,
 };
 
 

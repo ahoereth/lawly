@@ -1,53 +1,84 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
-import { IconToggle } from 'react-mdl';
+import {
+  Card, CardTitle, CardMenu, CardText,
+  IconButton
+} from 'react-mdl';
 
 import { slugify } from 'helpers/utils';
 import Html from 'components/Html';
 import styles from './norm.sss';
 
 
-const Norm = ({ data, star, starred }) => {
-  const { enumeration, groupkey, title, body, foot } = data.toObject();
+export default class Norm extends React.Component {
+  static propTypes = {
+    annotations: ImmutablePropTypes.mapContains({
+      starred: PropTypes.bool,
+    }).isRequired,
+    data: ImmutablePropTypes.mapContains({
+      enumeration: PropTypes.string.isRequired,
+      groupkey: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      body: PropTypes.string.isRequired,
+      foot: PropTypes.string.isRequired,
+    }).isRequired,
+    star: PropTypes.func,
+  };
 
-  let heading = enumeration.split('.').length + 1;
-  heading = enumeration === '0' ? 1 : (heading > 6 ? 6 : heading);
+  static defaultProps = {
+    annotations: Immutable.Map(),
+  };
 
-  let lead = null;
-  if (star) {
-    lead = (
-      <div className={styles.lead}>
-        <IconToggle ripple
-          checked={starred}
-          name={starred ? 'star' : 'star_border'}
-          onChange={() => star(groupkey, !starred)}
-        />
-        <span>{groupkey}</span>
-      </div>
-    );
+  constructor(props) {
+    super(props);
+    this.state = {
+      focus: false,
+    };
   }
 
-  return (
-    <div className={styles.norm}>
-      {lead}
-      {React.createElement('h' + heading, {id: slugify(title)}, title)}
-      <div><Html>{body}</Html></div>
-      <div><Html>{foot}</Html></div>
-    </div>
-  );
-};
+  focus(state) {
+    this.setState({ focus: !!state });
+  }
 
-Norm.propTypes = {
-  data: ImmutablePropTypes.mapContains({
-    enumeration: PropTypes.string.isRequired,
-    groupkey: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    body: PropTypes.string.isRequired,
-    foot: PropTypes.string.isRequired,
-  }).isRequired,
-  star: PropTypes.func,
-  starred: PropTypes.bool,
-};
+  render() {
+    const { annotations, data, star } = this.props;
+    const { focus } = this.state;
 
+    const starred = annotations.get('starred');
+    const lead = data.get('enumeration') === '0';
 
-export default Norm;
+    let heading = data.get('enumeration').split('.').length + 1;
+    heading = lead ? 1 : (heading > 6 ? 6 : heading);
+
+    const title = !lead ? data.get('title') :
+      [<span key='key'>{data.get('groupkey')}</span>, data.get('title')];
+
+    const slug = slugify(data.get('title'));
+    return (
+      <Card
+        className={styles.norm}
+        id={slug}
+        shadow={focus ? 1 : undefined}
+        onMouseEnter={() => this.focus(true)}
+        onMouseLeave={() => this.focus(false)}
+      >
+        <CardTitle>
+          {React.createElement('h' + heading, null, title)}
+        </CardTitle>
+        <CardMenu>
+          <IconButton
+            ripple
+            colored={starred}
+            name={starred ? 'star' : 'star_border'}
+            onClick={() => star(data, !starred)}
+          />
+        </CardMenu>
+        <CardText>
+          <Html>{data.get('body')}</Html>
+          <Html>{data.get('foot')}</Html>
+        </CardText>
+      </Card>
+    );
+  }
+}
