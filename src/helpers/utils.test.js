@@ -9,6 +9,7 @@ import {
   arr2obj,
   obj2arr,
   obj2query,
+  omit,
   slugify,
   joinPath,
   parseJWT,
@@ -111,6 +112,27 @@ describe('utils', () => {
 
     it('handles boolean values correctly', () => {
       obj2query({ a: true, b: false }).should.equal('a&b=0');
+    });
+  });
+
+  describe('omit', () => {
+    it('removes object values as expected by key', () => {
+      omit({ a: 1, b: 2, c: 3 }, 'c', 'b').should.have.keys('a');
+      omit({ a: 1, b: 2 }, 'd', 'b').should.have.keys('a');
+    });
+
+    it('does not alter the source object', () => {
+      let obj = { a: 1, b: 2 };
+      omit(obj, 'b').should.deep.equal({ a: 1 });
+      obj.should.deep.equal({ a: 1, b: 2 });
+    });
+
+    it('removes array values as expected by value', () => {
+      omit(['some value'], 'some value').should.deep.equal([]);
+      omit(['some value'], 'woop').should.deep.equal(['some value']);
+      omit([1, 2], 2).should.deep.equal([1]);
+      omit([1, 2], 4, 1).should.deep.equal([2]);
+      omit([1, 2, 3], 1, 2).should.deep.equal([3]);
     });
   });
 

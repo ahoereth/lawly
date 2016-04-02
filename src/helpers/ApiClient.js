@@ -3,7 +3,7 @@ import fetch from 'isomorphic-fetch';
 import { login } from 'redux/modules/user';
 import {
   isUndefined, isObject, startsWith,
-  joinPath, parseJWT, obj2query
+  joinPath, parseJWT, obj2query, omit,
 } from './utils';
 
 
@@ -62,7 +62,7 @@ export default class ApiClient {
       const params = {...ApiClient.defaultParams, ...resource};
       path = pattern.replace(/:(\w+)/g, (match, key) => {
         return !isUndefined(params[key]) ? encodeURIComponent(params[key])
-                                         : match;
+                                         : '';
       });
     }
 
@@ -70,6 +70,21 @@ export default class ApiClient {
     if (query && path.indexOf('?') === '-1') { path += '?'; }
     return path + obj2query(query);
   }
+
+
+  /**
+   * Creates the request JSON body from the resource and (optional) data object.
+   *
+   * @param  {object} resource
+   * @param  {object} data
+   * @return {string}
+   */
+  createBody(resource, data) {
+    const body = isObject(resource) ? {...omit(resource, 'name'), ...data}
+                                    : data;
+    return JSON.stringify(body);
+  }
+
 
   /**
    * Sets the authorization header used in all future requests and saves the
@@ -167,7 +182,7 @@ export default class ApiClient {
     return this.fetch(resource, {
       method: 'post',
       headers: { ...ApiClient.jsonHeaders, ...this.headers },
-      body: JSON.stringify(data)
+      body: this.createBody(resource, data),
     });
   }
 
@@ -182,7 +197,7 @@ export default class ApiClient {
     return this.fetch(resource, {
       method: 'delete',
       headers: { ...ApiClient.jsonHeaders, ...this.headers },
-      body: JSON.stringify(data)
+      body: this.createBody(resource, data),
     });
   }
 
@@ -197,7 +212,7 @@ export default class ApiClient {
     return this.fetch(resource, {
       method: 'put',
       headers: { ...ApiClient.jsonHeaders, ...this.headers },
-      body: JSON.stringify(data)
+      body: this.createBody(resource, data),
     });
   }
 

@@ -120,23 +120,28 @@ export function obj2query(obj = null) {
 }
 
 
-// export function format(haystack/*, ...*/) {
-//   // Second argument is an object of needle/replace-value pairs.
-//   if (isObject(arguments[1])) {
-//     for (let needle in arguments[1]) {
-//       if (!arguments[1].hasOwnProperty(needle)) { continue; }
-//       haystack = haystack.replace(':' + needle, arguments[1][needle]);
-//     }
-//
-//     return haystack;
-//   }
-//
-//   // Second+ arguments are strings to be replaced in order. Haystack should
-//   // contain identifiers in the style of {0}, {1}... to be replaced.
-//   return haystack.replace(/{(\d+)}/g, (match, n) => {
-//     return (typeof arguments[n+1] !== 'undefined') ? arguments[n+1] : match;
-//   });
-// }
+/**
+ * Returns a copy of the haystack..
+ * ..object stripped from the specified properties.
+ * ..array stripped from the specified values.
+ *
+ * @param  {object/array} haystack
+ * @param  {string} needles...
+ * @return {object/array}
+ */
+export function omit(haystack/*, needles... */) {
+  const needles = Array.prototype.slice.call(arguments, 1);
+  if (isObject(haystack)) {
+    // Omit object properties by keys. Generate a list of keys to keep, and
+    // then create a new object based on them.
+    const keep = Object.keys(haystack).filter(k => (needles.indexOf(k) === -1));
+    return keep.reduce((r, k) => ({...r, [k]: haystack[k] }), {});
+  } else if (Array.isArray(haystack)) {
+    // Omit array values by value. Filter array by checking if values are
+    // included in the needles.
+    return haystack.filter(v => (needles.indexOf(v) === -1));
+  }
+}
 
 
 /**
