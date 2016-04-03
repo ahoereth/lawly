@@ -12,18 +12,18 @@ import styles from './lawList.sss';
 
 
 const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
-  const rows = laws.map((law, key) => law.merge({
-    key,
+  const rows = laws.map((title, groupkey) => ({
+    title, groupkey,
     star: (
       <IconButton
         ripple
-        colored={!!stars.get(key)}
-        name={stars.get(key) ? 'star' : 'star_border'}
-        onClick={() => star(key, !stars.get(key))}
+        colored={!!stars.get(groupkey)}
+        name={stars.get(groupkey) ? 'star' : 'star_border'}
+        onClick={() => star(groupkey, !stars.get(groupkey))}
       />
     ),
     action: (
-      <Link to={'/gesetz/' + key}>
+      <Link to={'/gesetz/' + groupkey}>
         <FABButton mini>
           <Icon name='launch' />
         </FABButton>
@@ -34,10 +34,7 @@ const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
 
   return (
     <div>
-      <DataTable
-        rows={rows}
-        className={styles.datatable}
-      >
+      <DataTable rows={rows} className={styles.datatable}>
         <TableHeader name='star' />
         <TableHeader name='groupkey'>Ab&shy;kür&shy;zung</TableHeader>
         <TableHeader name='title'>Be&shy;zeich&shy;nung</TableHeader>
@@ -45,8 +42,7 @@ const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
       </DataTable>
       <Pagination
         page={page}
-        hasNext={total > (pageSize*page)}
-        hasPrev={page > 1}
+        pages={Math.ceil(total/pageSize)}
         selectPage={selectPage}
       />
     </div>
@@ -54,10 +50,7 @@ const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
 };
 
 LawList.propTypes = {
-  laws: ImmutablePropTypes.orderedMapOf(ImmutablePropTypes.mapContains({
-    groupkey: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-  })).isRequired,
+  laws: ImmutablePropTypes.orderedMapOf(PropTypes.string).isRequired,
   page: PropTypes.number,
   pageSize: PropTypes.number,
   selectPage: PropTypes.func.isRequired,

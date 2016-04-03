@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
 import { List, OrderedMap, Map } from 'immutable';
 
-import { arr2obj } from 'helpers/utils';
 import createReducer from '../createReducer';
 
 
@@ -24,10 +23,10 @@ export default createReducer(Map({
   pageSize: 20,
   error: undefined,
 }), {
-  [FETCH]: (state, { payload }) =>
-    state
-      .set('initials', List(payload.initials))
-      .set('laws', OrderedMap(arr2obj(payload.index, 'groupkey', Map))),
+  [FETCH]: (state, { payload }) => state.merge({
+    initials: List(payload.initials),
+    laws: OrderedMap(payload.index),
+  }),
   [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
   [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),
 });
