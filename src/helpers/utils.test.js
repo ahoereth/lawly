@@ -148,6 +148,10 @@ describe('utils', () => {
     it('converts everything to lower case', () => {
       slugify('ABÄ').should.equal('abae');
     });
+
+    it('Takes of dashes from the beginning and end', () => {
+      slugify('$ 123 Some Paragraph--').should.equal('123-some-paragraph');
+    });
   });
 
   describe('joinPath', () => {

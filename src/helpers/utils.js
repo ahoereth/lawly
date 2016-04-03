@@ -152,7 +152,10 @@ export function omit(haystack/*, needles... */) {
  * @return {string}
  */
 export function slugify(str) {
-  return umlauts2digraphs(str).toLowerCase().replace(/[^\wüöä]+/ig, '-');
+  return umlauts2digraphs(str)
+    .toLowerCase()
+    .replace(/[^\w]+/ig, '-') // Get rid of none word characters.
+    .replace(/^-+|-+$/g, ''); // Get rid of dashes at the beginning and end.
 }
 
 
