@@ -13,7 +13,7 @@ const precss = require('precss');
 // *****************************************************************************
 // Defaults
 let config = {
-  devtool: 'eval',
+  devtool: '#cheap-module-eval-source-map',
   target: 'web',
   entry: {
     app: './src/client',
@@ -57,8 +57,9 @@ let config = {
   },
   externals: {
     'cheerio': 'window',
+    'react/addons': true,
     'react/lib/ExecutionEnvironment': true,
-    'react/lib/ReactContext': true
+    'react/lib/ReactContext': true,
   },
   postcss: () => {
     return [autoprefixer, precss];
@@ -93,7 +94,6 @@ let config = {
 // *****************************************************************************
 // Development
 if (process.env.NODE_ENV === 'development') {
-  config.devtool = '#cheap-module-eval-source-map';
   config.entry.tests = 'mocha!./src/tests.js';
   config.entry.dev = 'webpack-dev-server/client?http://localhost:8080';
   config.entry.hot = 'webpack/hot/dev-server';
@@ -108,12 +108,16 @@ if (process.env.NODE_ENV === 'development') {
 // *****************************************************************************
 // Production
 if (process.env.NODE_ENV === 'production') {
+  config.devtool = 'source-map';
+
+  config.plugins.push(new optimize.DedupePlugin());
   config.plugins.push(new optimize.UglifyJsPlugin({
     mangle: true,
-    compress: true,
+    compress: {
+      warnings: false,
+    },
     comments: () => false
   }));
-  // OfflinePlugin https://github.com/NekR/offline-plugin
 }
 
 
