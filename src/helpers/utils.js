@@ -145,6 +145,23 @@ export function omit(haystack/*, needles... */) {
 
 
 /**
+ * Returns an object with the specified properties copied over from the
+ * provided haystack object.
+ *
+ * @param  {object} haystack
+ * @param  {string} needles...
+ * @return {object}
+ */
+export function pick(haystack/*, needles... */) {
+  const needles = Array.prototype.slice.call(arguments, 1);
+  return needles.reduce((r, k) => {
+    if (isUndefined(haystack[k])) return r;
+    return ({...r, [k]: haystack[k] });
+  }, {});
+}
+
+
+/**
  * Slugifies a string, converting it to lower case and replacing all special
  * characters (besides umlauts!) and spaces with dashes.
  *

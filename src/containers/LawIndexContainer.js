@@ -3,8 +3,9 @@ import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
 import {
-  getLawsByInitialAndPage, getInitial, getInitials, getPage, getPageSize,
-  fetchLawIndex, selectLawIndexInitial, selectLawIndexPage,
+  getLawsByInitialFilterAndPage, getInitial, getInitials, getPage, getPageSize,
+  getFilters,
+  fetchLawIndex, selectLawIndexInitial, selectLawIndexPage, filterLawIndex,
 } from 'redux/modules/law_index';
 import {
   getIndexStars,
@@ -16,6 +17,8 @@ import { LawIndex } from 'components';
 class LawIndexContainer extends React.Component {
   static propTypes = {
     fetchIndex: PropTypes.func.isRequired,
+    filter: PropTypes.func.isRequired,
+    filters: ImmutablePropTypes.map,
     initials: ImmutablePropTypes.list.isRequired,
     laws: ImmutablePropTypes.orderedMap.isRequired,
     page: PropTypes.number.isRequired,
@@ -49,6 +52,8 @@ class LawIndexContainer extends React.Component {
 
   render() {
     const {
+      filter,
+      filters,
       initials,
       laws,
       page,
@@ -70,7 +75,8 @@ class LawIndexContainer extends React.Component {
         initials, laws, total,
         page, pageSize,
         selectedInitial, selectInitial, selectPage,
-        star, stars
+        star, stars,
+        filter, filters,
       }} />
     );
   }
@@ -78,18 +84,20 @@ class LawIndexContainer extends React.Component {
 
 
 const mapStateToProps = (state) => ({
-  ...getLawsByInitialAndPage(state), // total, laws
+  ...getLawsByInitialFilterAndPage(state), // total, laws
   initials: getInitials(state),
   page: getPage(state),
   pageSize: getPageSize(state),
   selectedInitial: getInitial(state),
   stars: getIndexStars(state),
+  filters: getFilters(state),
 });
 
 const mapDispatchToProps = {
   fetchIndex: fetchLawIndex,
   selectInitial: selectLawIndexInitial,
   selectPage: selectLawIndexPage,
+  filter: filterLawIndex,
   star,
 };
 

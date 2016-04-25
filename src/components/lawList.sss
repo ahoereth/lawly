@@ -1,19 +1,26 @@
 :local(.datatable)
-  white-space: normal
-  word-wrap: break-word
   width: 100%
   table-layout: fixed
 
   th
-    &:first-child
+    &:first-child:not(.mdl-data-table__cell--non-numeric)
       min-width: 50px
       max-width: 50px
       width: 50px
+      text-align: center
+      padding-left: 0
+      padding-right: 0
 
+    &.mdl-data-table__cell--non-numeric:first-child,
     &:nth-child(2)
       min-width: 15%
       max-width: 20%
       width: 20%
+
+    &:nth-last-child(2)
+      min-width: 60%
+      max-width: 60%
+      width: 60%
 
     &:last-child
       min-width: 50px
@@ -22,9 +29,16 @@
 
   td
     padding-bottom: 12px
+    white-space: normal
+    word-wrap: break-word
 
-    &:first-child,
+    &:first-child:not(.mdl-data-table__cell--non-numeric),
     &:last-child
       text-align: center
       padding-left: 0
       padding-right: 0
+
+  .mdl-textfield
+    margin: 0 0 -20px 0
+    width: 100%
+    display: block

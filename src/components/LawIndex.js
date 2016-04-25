@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutableTypes from 'react-immutable-proptypes';
 import { Grid, Cell } from 'react-mdl';
 
 import LawList from './LawList';
@@ -7,6 +7,8 @@ import LawInitialChooser from './LawInitialChooser';
 
 
 const LawIndex = ({
+  filter,
+  filters,
   initials,
   laws,
   page,
@@ -34,21 +36,33 @@ const LawIndex = ({
           {page*pageSize > total ? 'erste' : 'nächste'} Seite
         </i>.
       </p>
-      <LawList {...{laws, page, pageSize, total, selectPage, star, stars}} />
+      <LawList
+        laws={laws}
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        selectPage={selectPage}
+        star={star}
+        stars={stars}
+        filter={filter}
+        filters={filters}
+      />
     </Cell>
   </Grid>
 );
 
 LawIndex.propTypes = {
-  initials: ImmutablePropTypes.listOf(PropTypes.string).isRequired,
-  laws: ImmutablePropTypes.orderedMap.isRequired,
+  filter: PropTypes.func,
+  filters: ImmutableTypes.map,
+  initials: ImmutableTypes.listOf(PropTypes.string).isRequired,
+  laws: ImmutableTypes.orderedMap.isRequired,
   page: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   selectInitial: PropTypes.func.isRequired,
   selectPage: PropTypes.func.isRequired,
   selectedInitial: PropTypes.string.isRequired,
   star: PropTypes.func.isRequired,
-  stars: ImmutablePropTypes.setOf(PropTypes.string).isRequired,
+  stars: ImmutableTypes.setOf(PropTypes.string).isRequired,
   total: PropTypes.number.isRequired,
 };
 

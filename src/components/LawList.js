@@ -1,20 +1,28 @@
 import React, { PropTypes } from 'react';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutableTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import {
   DataTable, TableHeader,
   IconButton, Icon,
   FABButton,
+  Textfield,
 } from 'react-mdl';
 
 import Pagination from './Pagination';
 import styles from './lawList.sss';
 
 
-const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
+const LawList = ({
+  filter, filters,
+  laws, total,
+  page, pageSize, selectPage,
+  star, stars,
+}) => {
+  total = total || laws.size;
+
   const rows = laws.map((title, groupkey) => ({
     title, groupkey,
-    star: (
+    star: !star ? null : (
       <IconButton
         ripple
         colored={!!stars.get(groupkey)}
@@ -34,29 +42,64 @@ const LawList = ({ laws, page, pageSize, selectPage, star, stars, total }) => {
 
   return (
     <div>
-      <DataTable rows={rows} className={styles.datatable}>
-        <TableHeader name='star' />
-        <TableHeader name='groupkey'>Ab&shy;kür&shy;zung</TableHeader>
-        <TableHeader name='title'>Be&shy;zeich&shy;nung</TableHeader>
-        <TableHeader name='action' />
+      <DataTable
+        rows={rows}
+        className={styles.datatable}
+        rowKeyColumn='groupkey'
+      >
+        {!star ? null :
+          <TableHeader name='star' numeric tooltip='Zeige nur gemerkte Normen'>
+            {!filter || !filters ? null :
+              <IconButton
+                ripple
+                name='stars'
+                colored={filters.get('starred')}
+                onClick={() => filter({ starred: !filters.get('starred') })}
+              />
+            }
+          </TableHeader>
+        }
+        <TableHeader name='groupkey'>
+          {!filter || !filters ? 'Ab&shy;kür&shy;zung' :
+            <Textfield
+              onChange={({ target }) => filter({ groupkey: target.value })}
+              value={filters.get('groupkey', '')}
+              label='Abkürzung'
+            />
+          }
+        </TableHeader>
+        <TableHeader name='title'>
+          {!filter || !filters ? 'Be&shy;zeich&shy;nung' :
+            <Textfield
+              onChange={({ target }) => filter({ title: target.value })}
+              value={filters.get('title', '')}
+              label='Bezeichnung'
+            />
+          }
+        </TableHeader>
+        <TableHeader name='action' numeric />
       </DataTable>
-      <Pagination
-        page={page}
-        pages={Math.ceil(total/pageSize)}
-        selectPage={selectPage}
-      />
+      {!selectPage ? null :
+        <Pagination
+          page={page}
+          pages={Math.ceil(total/pageSize)}
+          selectPage={selectPage}
+        />
+      }
     </div>
   );
 };
 
 LawList.propTypes = {
-  laws: ImmutablePropTypes.orderedMapOf(PropTypes.string).isRequired,
+  filter: PropTypes.func,
+  filters: ImmutableTypes.map,
+  laws: ImmutableTypes.orderedMapOf(PropTypes.string).isRequired,
   page: PropTypes.number,
   pageSize: PropTypes.number,
-  selectPage: PropTypes.func.isRequired,
-  star: PropTypes.func.isRequired,
-  stars: ImmutablePropTypes.setOf(PropTypes.string).isRequired,
-  total: PropTypes.number.isRequired,
+  selectPage: PropTypes.func,
+  star: PropTypes.func,
+  stars: ImmutableTypes.setOf(PropTypes.string),
+  total: PropTypes.number,
 };
 
 LawList.defaultProps = {
