@@ -1,8 +1,9 @@
 import { createSelector } from 'reselect';
-import Immutable, { Map, Set } from 'immutable';
+import Immutable, { OrderedMap, Map, Set } from 'immutable';
 
 import createReducer from '../createReducer';
-import { isString, omit } from 'helpers/utils';
+import { isString } from 'helpers/utils';
+import semverCompare from 'helpers/semverCompare';
 
 
 // ******************************************************************
@@ -18,27 +19,25 @@ export const STAR = 'user/STAR';
 export default createReducer(Map({
   loggedin: false,
   email: undefined,
-  laws: Map(/*{
-    groupkey: {
-      enumeration: {
-        starred: bool,
-      },
-    },
-  }*/),
+  laws: OrderedMap(), // { groupkey: { enumeration: { ...norm } } }
   error: false,
 }), {
   [LOGIN]: (state, { payload }) => state.merge({
     loggedin: true,
     email: payload.email,
-    laws: Immutable.fromJS(payload.laws),
+    laws: Immutable.fromJS(payload.laws || {}).toSeq().map(
+      norms => (norms.sortBy((norm, enumeration) => enumeration, semverCompare))
+    ).sortBy((norms, groupkey) => groupkey).toOrderedMap(),
   }),
   [LOGOUT]: (state/*, { payload }*/) => state.merge({
     loggedin: false, email: undefined, laws: Map(), error: undefined
   }),
-  [STAR]: (state, { payload }) =>
-    state.setIn(
-      ['laws', payload.groupkey, payload.enumeration],
-      Map(omit(payload, 'groupkey', 'enumeration'))
+  [STAR]: (state, { payload: { groupkey, enumeration, ...data } }) =>
+    state.update('laws', OrderedMap(), laws =>
+      laws.update(groupkey, OrderedMap(), norms =>
+        norms.set(enumeration, Map(data))
+             .sortBy((norm, enumeration) => enumeration, semverCompare)
+      ).sortBy((norms, groupkey) => groupkey)
     )
 });
 

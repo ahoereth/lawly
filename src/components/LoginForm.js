@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import ImmutableTypes from 'react-immutable-proptypes';
 import {
   Card, CardTitle, CardText, CardActions,
   Textfield, Button
@@ -9,9 +10,9 @@ class LoginForm extends React.Component {
   static propTypes = {
     login: PropTypes.func.isRequired,
     shadow: PropTypes.number,
-    user: PropTypes.shape({
-      loggedin: PropTypes.bool.isRequired,
+    user: ImmutableTypes.mapContains({
       email: PropTypes.string,
+      loggedin: PropTypes.bool.isRequired,
     }).isRequired,
   };
 
@@ -52,7 +53,7 @@ class LoginForm extends React.Component {
 
     return (
       <form onSubmit={this.submit}>
-        <Card shadow={shadow} style={{width: '100%'}} {...otherProps}>
+        <Card shadow={shadow} {...otherProps}>
           <CardTitle>Login</CardTitle>
           <CardText>
               <Textfield

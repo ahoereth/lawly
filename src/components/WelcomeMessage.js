@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import ImmutableTypes from 'react-immutable-proptypes';
 import {
   Card, CardTitle, CardText, CardActions,
   /*Textfield,*/ Button
@@ -6,7 +7,7 @@ import {
 
 
 const WelcomeMessage = ({ shadow, logout, user, ...otherProps }) => (
-  <Card shadow={shadow} style={{width: '100%'}} {...otherProps}>
+  <Card shadow={shadow} {...otherProps}>
     <CardTitle>Willkommen bei Lawly!</CardTitle>
     <CardText>
       <p>Das hier ist deine persönliche Startseite, hier findest du deine gespeicherten Gesetze und Normen, persönlichen Markierungen, einen kurzen Verlauf deiner letzten Aktionen in der App und Neuigkeiten von deinem Team.</p>
@@ -15,10 +16,10 @@ const WelcomeMessage = ({ shadow, logout, user, ...otherProps }) => (
     </CardText>
     <CardActions>
       <Button>Schreib uns was du denkst</Button>
-      {!user.loggedin ? null :
+      {!user.get('loggedin') ? null :
         <Button
           ripple raised
-          onClick={() => logout(user.email)}
+          onClick={() => logout(user.get('email'))}
           style={{float: 'right'}}
         >
           Logout
@@ -31,9 +32,9 @@ const WelcomeMessage = ({ shadow, logout, user, ...otherProps }) => (
 WelcomeMessage.propTypes = {
   logout: PropTypes.func.isRequired,
   shadow: PropTypes.number,
-  user: PropTypes.shape({
-    loggedin: PropTypes.bool.isRequired,
+  user: ImmutableTypes.mapContains({
     email: PropTypes.string,
+    loggedin: PropTypes.bool.isRequired,
   }).isRequired,
 };
 
