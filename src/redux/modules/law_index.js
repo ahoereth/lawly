@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
-import { List, OrderedMap, Map } from 'immutable';
+import Immutable, { List, Map } from 'immutable';
 
 import { pick } from 'helpers/utils';
 import createReducer from '../createReducer';
@@ -19,7 +19,7 @@ export const FILTER = 'law_index/FILTER';
 // ******************************************************************
 // REDUCERS
 export default createReducer(Map({
-  laws: OrderedMap(),
+  laws: List(),
   initials: List(),
   initial: 'a',
   page: 1,
@@ -29,7 +29,7 @@ export default createReducer(Map({
 }), {
   [FETCH]: (state, { payload }) => state.merge({
     initials: List(payload.initials),
-    laws: OrderedMap(payload.index),
+    laws: Immutable.fromJS(payload.index),
   }),
   [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
   [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),
@@ -79,36 +79,62 @@ export const getInitial = (state) => state.getIn(['law_index', 'initial']);
 
 export const getFilters = (state) => state.getIn(['law_index', 'filters']);
 
-export const getLawsByInitial = createSelector(
+const getLawsByInitial = createSelector(
   [ getLawIndex, getInitial ],
-  (laws, char) => laws.filter((law, key) => (key[0].toLowerCase() == char))
+  (laws, char) => laws.filter(law =>
+    law.get('groupkey')[0].toLowerCase() == char
+  )
 );
 
-export const getLawsByInitialAndFilter = createSelector(
+// Filter laws of the specified initial by starred if requested.
+// Wrapped in its own selector to utilize memorization.
+const getStarFilteredLawsByInitial = createSelector(
   [ getLawsByInitial, getFilters, getIndexStars ],
   (laws, filters, stars) => {
     if (filters.get('starred')) {
-      laws = OrderedMap(stars.toArray().map(key => [key, laws.get(key)]));
+      laws = stars.map(key => laws.get(key));
     }
 
-    laws = laws.toSeq();
-
-    if (filters.get('title')) {
-      const needle = filters.get('title').toLowerCase();
-      laws = laws.filter(hay => hay.toLowerCase().indexOf(needle) > -1);
-    }
-
-    if (filters.get('groupkey')) {
-      const needle = filters.get('groupkey').toLowerCase();
-      laws = laws.filter((_, hay) => hay.toLowerCase().indexOf(needle) > -1);
-    }
-
-    return laws.toOrderedMap();
+    return laws;
   }
 );
 
-export const getLawsByInitialFilterAndPage = createSelector(
-  [ getLawsByInitialAndFilter, getPage, getPageSize ],
+// Filter laws of the specified initial probably already filtered by starred
+// further more by groupkey if requested.
+// Wrapped in its own selector to utilize memorization.
+const getStarAndKeyFilteredLawsByInitial = createSelector(
+  [ getStarFilteredLawsByInitial, getFilters ],
+  (laws, filters) => {
+    if (filters.get('groupkey')) {
+      const needle = filters.get('groupkey', '').toLowerCase();
+      laws = laws.filter(law =>
+        law.get('groupkey').toLowerCase().indexOf(needle) > -1
+      );
+    }
+
+    return laws;
+  }
+);
+
+// Filter laws of the specified initial probably already filtered by starred
+// and groupkey further more by title if requested.
+// Wrapped in its own selector to utilize memorization.
+const getFilteredLaws = createSelector(
+  [ getStarAndKeyFilteredLawsByInitial, getFilters ],
+  (laws, filters) => {
+    if (filters.get('title')) {
+      const needle = filters.get('title', '').toLowerCase();
+      laws = laws.filter(law =>
+        law.get('title').toLowerCase().indexOf(needle) > -1
+      );
+    }
+
+    return laws;
+  }
+);
+
+export const getFilteredLawsByPage = createSelector(
+  [ getFilteredLaws, getPage, getPageSize ],
   (laws, page, size) => ({
     total: laws.size,
     laws: laws.slice(size * (page-1), size * page)

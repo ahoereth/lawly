@@ -55,7 +55,7 @@ LawIndex.propTypes = {
   filter: PropTypes.func,
   filters: ImmutableTypes.map,
   initials: ImmutableTypes.listOf(PropTypes.string).isRequired,
-  laws: ImmutableTypes.orderedMap.isRequired,
+  laws: ImmutableTypes.list.isRequired,
   page: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   selectInitial: PropTypes.func.isRequired,

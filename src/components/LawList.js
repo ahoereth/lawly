@@ -20,24 +20,27 @@ const LawList = ({
 }) => {
   total = total || laws.size;
 
-  const rows = laws.map((title, groupkey) => ({
-    title, groupkey,
-    star: !star ? null : (
-      <IconButton
-        ripple
-        colored={!!stars.get(groupkey)}
-        name={stars.get(groupkey) ? 'star' : 'star_border'}
-        onClick={() => star(groupkey, !stars.get(groupkey))}
-      />
-    ),
-    action: (
-      <Link to={'/gesetz/' + groupkey}>
-        <FABButton mini>
-          <Icon name='launch' />
-        </FABButton>
-      </Link>
-    )
-  })).toList().toJS();
+  const rows = laws.map(law => {
+    const { groupkey, title } = law.toJS();
+    return {
+      title, groupkey,
+      star: !star ? null : (
+        <IconButton
+          ripple
+          colored={!!stars.get(groupkey)}
+          name={stars.get(groupkey) ? 'star' : 'star_border'}
+          onClick={() => star(groupkey, !stars.get(groupkey))}
+        />
+      ),
+      action: (
+        <Link to={'/gesetz/' + groupkey}>
+          <FABButton mini>
+            <Icon name='launch' />
+          </FABButton>
+        </Link>
+      )
+    };
+  }).toList().toJS();
   // ^ Conversion needed because react-mdl does not like immutable objects.
 
   return (
@@ -49,7 +52,7 @@ const LawList = ({
       >
         {!star ? null :
           <TableHeader name='star' numeric tooltip='Zeige nur gemerkte Normen'>
-            {!filter || !filters ? null :
+            {!filter || !filters ? <span/> :
               <IconButton
                 ripple
                 name='stars'
@@ -60,7 +63,7 @@ const LawList = ({
           </TableHeader>
         }
         <TableHeader name='groupkey'>
-          {!filter || !filters ? 'Ab&shy;kür&shy;zung' :
+          {!filter || !filters ? 'Abkürzung' :
             <Textfield
               onChange={({ target }) => filter({ groupkey: target.value })}
               value={filters.get('groupkey', '')}
@@ -69,7 +72,7 @@ const LawList = ({
           }
         </TableHeader>
         <TableHeader name='title'>
-          {!filter || !filters ? 'Be&shy;zeich&shy;nung' :
+          {!filter || !filters ? 'Bezeichnung' :
             <Textfield
               onChange={({ target }) => filter({ title: target.value })}
               value={filters.get('title', '')}
@@ -93,7 +96,10 @@ const LawList = ({
 LawList.propTypes = {
   filter: PropTypes.func,
   filters: ImmutableTypes.map,
-  laws: ImmutableTypes.orderedMapOf(PropTypes.string).isRequired,
+  laws: ImmutableTypes.listOf(ImmutableTypes.mapContains({
+    groupkey: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+  })).isRequired,
   page: PropTypes.number,
   pageSize: PropTypes.number,
   selectPage: PropTypes.func,
