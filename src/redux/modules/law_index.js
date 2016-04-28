@@ -86,13 +86,15 @@ const getLawsByInitial = createSelector(
   )
 );
 
+export const getLawsByInitialCount = (state) => getLawsByInitial(state).size;
+
 // Filter laws of the specified initial by starred if requested.
 // Wrapped in its own selector to utilize memorization.
 const getStarFilteredLawsByInitial = createSelector(
   [ getLawsByInitial, getFilters, getIndexStars ],
   (laws, filters, stars) => {
     if (filters.get('starred')) {
-      laws = stars.map(key => laws.get(key));
+      laws = laws.filter(law => stars.contains(law.get('groupkey')));
     }
 
     return laws;
@@ -135,8 +137,5 @@ const getFilteredLaws = createSelector(
 
 export const getFilteredLawsByPage = createSelector(
   [ getFilteredLaws, getPage, getPageSize ],
-  (laws, page, size) => ({
-    total: laws.size,
-    laws: laws.slice(size * (page-1), size * page)
-  })
+  (laws, page, size) => laws.slice(size * (page-1), size * page)
 );

@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
-import Immutable, { OrderedMap, Map, Set } from 'immutable';
+import Immutable, { List, Map, Set } from 'immutable';
 
 import createReducer from '../createReducer';
-import { isString } from 'helpers/utils';
+import { isString, localeCompare } from 'helpers/utils';
 import semverCompare from 'helpers/semverCompare';
 
 
@@ -19,25 +19,31 @@ export const STAR = 'user/STAR';
 export default createReducer(Map({
   loggedin: false,
   email: undefined,
-  laws: OrderedMap(), // { groupkey: { enumeration: { ...norm } } }
+  laws: List(), // { groupkey: { enumeration: { ...norm } } }
   error: false,
 }), {
   [LOGIN]: (state, { payload }) => state.merge({
     loggedin: true,
     email: payload.email,
-    laws: Immutable.fromJS(payload.laws || {}).toSeq().map(
-      norms => (norms.sortBy((norm, enumeration) => enumeration, semverCompare))
-    ).sortBy((norms, groupkey) => groupkey).toOrderedMap(),
+    laws: Immutable.fromJS(payload.laws),
   }),
   [LOGOUT]: (state/*, { payload }*/) => state.merge({
     loggedin: false, email: undefined, laws: Map(), error: undefined
   }),
-  [STAR]: (state, { payload: { groupkey, enumeration, ...data } }) =>
-    state.update('laws', OrderedMap(), laws =>
-      laws.update(groupkey, OrderedMap(), norms =>
-        norms.set(enumeration, Map(data))
-             .sortBy((norm, enumeration) => enumeration, semverCompare)
-      ).sortBy((norms, groupkey) => groupkey)
+  [STAR]: (state, { payload: { groupkey, enumeration, ...data } }) => state
+    .update('laws', laws => laws
+      .delete(laws.find(law =>
+        law.get('groupkey') == groupkey &&
+        law.get('enumeration') == enumeration
+      ))
+      .push(Map({ groupkey, enumeration, ...data }))
+      .sort((a, b) => {
+        if (a.get('groupkey') === b.get('groupkey')) {
+          return semverCompare(a.get('enumeration'), b.get('enumeration'));
+        } else {
+          return localeCompare(a.get('groupkey'), b.get('groupkey'));
+        }
+      })
     )
 });
 
@@ -85,5 +91,5 @@ export const getUserLaws = (state) => state.getIn(['user', 'laws']);
 
 export const getIndexStars = createSelector(
   [ getUserLaws ],
-  (laws) => Set.fromKeys(laws.filter(law => law.getIn(['0', 'starred'])))
+  (laws) => Set(laws.map(law => law.get('groupkey')))
 );

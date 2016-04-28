@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import {
   getFilteredLawsByPage, getInitial, getInitials, getPage, getPageSize,
-  getFilters,
+  getFilters, getLawsByInitialCount,
   fetchLawIndex, selectLawIndexInitial, selectLawIndexPage, filterLawIndex,
 } from 'redux/modules/law_index';
 import {
@@ -66,10 +66,6 @@ class LawIndexContainer extends React.Component {
       total,
     } = this.props;
 
-    if (laws.size === 0) {
-      return <div>Loading...</div>;
-    }
-
     return (
       <LawIndex {...{
         initials, laws, total,
@@ -84,7 +80,8 @@ class LawIndexContainer extends React.Component {
 
 
 const mapStateToProps = (state) => ({
-  ...getFilteredLawsByPage(state), // total, laws
+  total: getLawsByInitialCount(state),
+  laws: getFilteredLawsByPage(state), // total, laws
   initials: getInitials(state),
   page: getPage(state),
   pageSize: getPageSize(state),

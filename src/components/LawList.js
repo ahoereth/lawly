@@ -40,7 +40,7 @@ const LawList = ({
         </Link>
       )
     };
-  }).toList().toJS();
+  }).toJS();
   // ^ Conversion needed because react-mdl does not like immutable objects.
 
   return (

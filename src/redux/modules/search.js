@@ -62,7 +62,6 @@ export const getResults = state => state.getIn(['search', 'results'], List());
 export const getResultsByPage = createSelector(
   [ getResults, getPage, getPageSize ],
   (laws, page, size) => {
-    console.log(laws);
     return ({
       total: laws.size,
       results: laws.slice(size * (page-1), size * page)
