@@ -1,14 +1,14 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
-import { Map, OrderedMap } from 'immutable';
+import { fromJS, List, Map } from 'immutable';
 
 import createReducer from '../createReducer';
-import { getLawIndex } from './law_index';
 
 
 // ******************************************************************
 // ACTIONS
 export const SEARCH = 'search/SEARCH';
+export const SEARCH_QUERY = 'search/SEARCH_QUERY';
 export const SELECT_PAGE = 'search/SELECT_PAGE';
 
 
@@ -19,8 +19,10 @@ export default createReducer(Map({
   page: 1,
   pageSize: 20,
   query: '',
+  results: List()
 }), {
-  [SEARCH]: (state, { payload }) => state.set('query', payload),
+  [SEARCH]: (state, { payload }) => state.set('results', fromJS(payload)),
+  [SEARCH_QUERY]: (state, { payload }) => state.set('query', payload),
   [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
 });
 
@@ -36,8 +38,13 @@ export const selectSearchPage = (page = 1) => (dispatch, getState) => {
 };
 
 export const search = (query = '') => (dispatch) => {
-  dispatch({ type: SEARCH, payload: query || '' });
+  dispatch({ type: SEARCH_QUERY, payload: query });
   dispatch(selectSearchPage(1));
+  dispatch({
+    type: SEARCH,
+    meta: { debounce: { time: 500 } },
+    promise: api => api.get({ name: 'laws', search: query })
+  });
 };
 
 
@@ -50,21 +57,15 @@ export const getPage = state => state.getIn(['search', 'page']);
 
 export const getPageSize = state => state.getIn(['search', 'pageSize']);
 
-export const getLawsByQuery = createSelector(
-  [ getLawIndex, getQuery ],
-  (laws, query) => {
-    query = query.toLowerCase();
-    return query ? laws.filter((law, key) => (
-      (law.get('title').toLowerCase().indexOf(query) > -1) ||
-      (key.toLowerCase().indexOf(query) > -1)
-    )) : OrderedMap();
-  }
-);
+export const getResults = state => state.getIn(['search', 'results'], List());
 
-export const getLawsByQueryAndPage = createSelector(
-  [ getLawsByQuery, getPage, getPageSize ],
-  (laws, page, size) => ({
-    total: laws.size,
-    results: laws.slice(size * (page-1), size * page)
-  })
+export const getResultsByPage = createSelector(
+  [ getResults, getPage, getPageSize ],
+  (laws, page, size) => {
+    console.log(laws);
+    return ({
+      total: laws.size,
+      results: laws.slice(size * (page-1), size * page)
+    });
+  }
 );

@@ -55,19 +55,23 @@ export default class ApiClient {
    * @param  {object}        query (optional)
    * @return {string}
    */
-  getRequestUrl(resource, query = null) {
+  getRequestUrl(resource, query = {}) {
     let path = resource;
     if (isObject(resource)) {
       const pattern = ApiClient.resources[resource.name];
       const params = {...ApiClient.defaultParams, ...resource};
+      let parts = [];
       path = pattern.replace(/:(\w+)/g, (match, key) => {
+        parts.push(key);
         return !isUndefined(params[key]) ? encodeURIComponent(params[key])
                                          : '';
       });
+
+      query = {...query, ...omit(resource, 'name', ...parts)};
     }
 
     path = joinPath(this.apiurl, path);
-    if (query && path.indexOf('?') === '-1') { path += '?'; }
+    if (query && path.indexOf('?') === -1) { path += '?'; }
     return path + obj2query(query);
   }
 

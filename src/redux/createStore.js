@@ -2,6 +2,7 @@ import { createStore as _createStore, applyMiddleware, compose } from 'redux';
 import { browserHistory } from 'react-router';
 import { routerMiddleware, } from 'react-router-redux';
 import Immutable from 'immutable';
+import createDebounce from 'redux-debounced';
 
 import functionsMiddleware from './middlewares/functionsMiddleware';
 import promiseMiddleware from './middlewares/promiseMiddleware';
@@ -12,6 +13,7 @@ import reducer from './modules/reducer';
 /* global window */
 export default function createStore(client, data = {}) {
   const middlewares = [
+    createDebounce(),
     functionsMiddleware(),
     promiseMiddleware(client),
     fetchMiddleware(client),
