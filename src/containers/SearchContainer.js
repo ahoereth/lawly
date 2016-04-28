@@ -2,43 +2,40 @@ import React, { PropTypes } from 'react';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
-import { fetchLawIndex, getLawIndex } from 'redux/modules/law_index';
 import {
   search,
-  getLawsByQueryAndPage, getPage, getQuery, getPageSize,
+  getResultsByPage, getPage, getQuery, getPageSize,
   selectSearchPage,
 } from 'redux/modules/search';
 import {
-  getStars,
-  starLaw,
+  getIndexStars,
+  star,
 } from 'redux/modules/user';
 import { Search } from 'components';
 
 
 class SearchContainer extends React.Component {
   static propTypes = {
-    fetch: PropTypes.func.isRequired,
-    fetched: PropTypes.bool.isRequired,
     page: PropTypes.number,
     pageSize: PropTypes.number,
     params: PropTypes.shape({
       query: PropTypes.string,
     }).isRequired,
     query: PropTypes.string,
-    results: ImmutablePropTypes.orderedMapOf(ImmutablePropTypes.mapContains({
-      groupkey: PropTypes.string,
-      title: PropTypes.string,
+    results: ImmutablePropTypes.listOf(ImmutablePropTypes.mapContains({
+      groupkey: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      enumeration: PropTypes.string,
     })).isRequired,
     search: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     star: PropTypes.func.isRequired,
-    stars: PropTypes.objectOf(PropTypes.bool).isRequired,
+    stars: ImmutablePropTypes.setOf(PropTypes.string).isRequired,
     total: PropTypes.number.isRequired,
   };
 
   componentDidMount() {
-    const { fetched, search, params, query, selectPage, page  } = this.props;
-    fetched || this.props.fetch(); // Initialize law data.
+    const { search, params, query, selectPage, page  } = this.props;
     search(params.query || query); // Initialize search.
     selectPage(params.page ? parseInt(params.page, 10) : page); // Init page.
   }
@@ -74,19 +71,17 @@ class SearchContainer extends React.Component {
 
 
 const mapStateToProps = (state) => ({
+  ...getResultsByPage(state), // results, total
   page: getPage(state),
   pageSize: getPageSize(state),
   query: getQuery(state),
-  ...getLawsByQueryAndPage(state), // results, total
-  fetched: !getLawIndex(state).isEmpty(),
-  stars: getStars(state),
+  stars: getIndexStars(state),
 });
 
 const mapDispatchToProps = {
-  fetch: fetchLawIndex,
   search,
+  star,
   selectPage: selectSearchPage,
-  star: starLaw,
 };
 
 

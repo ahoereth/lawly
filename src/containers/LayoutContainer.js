@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { search } from 'redux/modules/search';
+import { search, getQuery } from 'redux/modules/search';
 import { Layout } from '../components';
 
 
@@ -49,12 +49,11 @@ class LayoutContainer extends React.Component {
 
 
 function mapStateToProps(state, ownProps) {
-  const { search } = state.toObject();
   const { routes } = ownProps;
   const title = routes[routes.length - 1].title;
 
   return {
-    query: search.query,
+    query: getQuery(state),
     title,
     htmltitle: title + ' | Lawly'
   };
