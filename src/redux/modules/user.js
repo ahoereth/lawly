@@ -87,7 +87,7 @@ export const star = (law, state = true) => {
 // SELECTORS
 export const getUser = (state) => state.get('user');
 
-export const getUserLaws = (state) => state.getIn(['user', 'laws']);
+export const getUserLaws = (state) => state.getIn(['user', 'laws']).filter(norm => norm.get('starred'));
 
 export const getIndexStars = createSelector(
   [ getUserLaws ],

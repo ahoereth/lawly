@@ -7,7 +7,7 @@ import LoginForm from './LoginForm';
 import LawList from './LawList';
 
 
-const Home = ({ user, login, logout }) => (
+const Home = ({ user, laws, login, logout }) => (
   <Grid>
     <Cell col={4}>
       <WelcomeMessage {...{user, logout}} />
@@ -19,19 +19,19 @@ const Home = ({ user, login, logout }) => (
     }
     {!user.get('loggedin') ? null :
       <Cell col={8}>
-        <LawList laws={user.get('laws')} />
+        <LawList laws={laws} />
       </Cell>
     }
   </Grid>
 );
 
 Home.propTypes = {
+  laws: ImmutableTypes.list.isRequired,
   login: PropTypes.func.isRequired,
   logout: PropTypes.func.isRequired,
   user: ImmutableTypes.mapContains({
     email: PropTypes.string,
     loggedin: PropTypes.bool.isRequired,
-    laws: ImmutableTypes.list,
   }).isRequired,
 };
 
