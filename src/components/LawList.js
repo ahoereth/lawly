@@ -22,7 +22,7 @@ const LawList = ({
 
   const rows = laws.map(law => {
     const { groupkey, title } = law.toJS();
-    const state = stars.get(groupkey, -2);
+    const state = stars ? stars.get(groupkey, -2) : null;
     return {
       title, groupkey,
       star: !star ? null : (
