@@ -46,7 +46,9 @@ const mapStateToProps = (state, props) => {
 
   return {
     norms: getLaws(state).get(groupkey),
-    annotations: getUserLaws(state).get(groupkey),
+    annotations: Immutable.Map(getUserLaws(state).filter(law =>
+      law.get('groupkey') === groupkey
+    ).map(norm => [norm.get('enumeration'), norm]))
   };
 };
 

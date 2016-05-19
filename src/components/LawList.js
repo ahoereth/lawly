@@ -3,7 +3,7 @@ import ImmutableTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import {
   DataTable, TableHeader,
-  IconButton, Icon,
+  IconButton, Icon, Tooltip,
   FABButton,
   Textfield,
 } from 'react-mdl';
@@ -22,15 +22,27 @@ const LawList = ({
 
   const rows = laws.map(law => {
     const { groupkey, title } = law.toJS();
+    const state = stars.get(groupkey, -2);
     return {
       title, groupkey,
       star: !star ? null : (
-        <IconButton
-          ripple
-          colored={!!stars.get(groupkey)}
-          name={stars.get(groupkey) ? 'star' : 'star_border'}
-          onClick={() => star(groupkey, !stars.get(groupkey))}
-        />
+        <Tooltip label={
+          state === -2
+            ? 'Tippen zum Speichern'
+            : state === -1
+              ? 'Beinhaltet markierte Normen, klicken zum Speichern'
+              : state === 0
+                ? 'Tippen zum Löschen'
+                : //state === 1
+                  'Beinhaltet markierte Normen, tippen zum Löschen'
+        }>
+          <IconButton
+            ripple
+            colored={state >= 0}
+            name={Math.abs(state) === 1 ? 'collections_bookmark' : 'book'}
+            onClick={() => star(groupkey, state < 0)}
+          />
+        </Tooltip>
       ),
       action: (
         <Link to={'/gesetz/' + groupkey}>
@@ -115,7 +127,7 @@ LawList.propTypes = {
   pageSize: PropTypes.number,
   selectPage: PropTypes.func,
   star: PropTypes.func,
-  stars: ImmutableTypes.setOf(PropTypes.string),
+  stars: ImmutableTypes.mapOf(PropTypes.number),
   total: PropTypes.number,
 };
 

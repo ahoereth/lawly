@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
-import Immutable, { List, Map, Set } from 'immutable';
+import Immutable, { List, Map } from 'immutable';
 
 import createReducer from '../createReducer';
-import { isString, localeCompare } from 'helpers/utils';
+import { localeCompare } from 'helpers/utils';
 import semverCompare from 'helpers/semverCompare';
 
 
@@ -25,26 +25,32 @@ export default createReducer(Map({
   [LOGIN]: (state, { payload }) => state.merge({
     loggedin: true,
     email: payload.email,
-    laws: Immutable.fromJS(payload.laws),
+    laws: Immutable.fromJS(payload.laws) || List(),
   }),
   [LOGOUT]: (state/*, { payload }*/) => state.merge({
     loggedin: false, email: undefined, laws: Map(), error: undefined
   }),
-  [STAR]: (state, { payload: { groupkey, enumeration, ...data } }) => state
-    .update('laws', laws => laws
-      .delete(laws.find(law =>
-        law.get('groupkey') == groupkey &&
-        law.get('enumeration') == enumeration
-      ))
-      .push(Map({ groupkey, enumeration, ...data }))
-      .sort((a, b) => {
-        if (a.get('groupkey') === b.get('groupkey')) {
-          return semverCompare(a.get('enumeration'), b.get('enumeration'));
-        } else {
-          return localeCompare(a.get('groupkey'), b.get('groupkey'));
-        }
-      })
-    )
+  [STAR]: (state, { payload }) => {
+    return state.update('laws', laws => {
+      const { groupkey, enumeration } = payload;
+      const key = laws.findKey(norm =>
+        norm.get('groupkey') === groupkey &&
+        norm.get('enumeration') === enumeration
+      );
+
+      if (key >= 0) {
+        // Update existing.
+        return laws.set(key, Map(payload));
+      } else {
+        // Add new and resort.
+        return laws.push(Map(payload)).sortBy(
+          n => [n.get('groupkey'), n.get('enumeration')],
+          ([k1, e1], [k2, e2]) => k1 !== k2 ? localeCompare(k1, k2)
+                                            : semverCompare(e1, e2)
+        );
+      }
+    });
+  }
 });
 
 
@@ -62,12 +68,10 @@ export const logout = (email) => ({
 });
 
 export const star = (law, state = true) => {
-  let groupkey, enumeration;
+  let groupkey = law, enumeration = '0';
   if (Map.isMap(law)) {
     groupkey = law.get('groupkey');
     enumeration = law.get('enumeration');
-  } else if (isString(law)) {
-    groupkey = law;
   }
 
   return {
@@ -87,9 +91,23 @@ export const star = (law, state = true) => {
 // SELECTORS
 export const getUser = (state) => state.get('user');
 
-export const getUserLaws = (state) => state.getIn(['user', 'laws']).filter(norm => norm.get('starred'));
+export const getUserLaws = (state) => state.getIn(['user', 'laws'])
+                                           .filter(norm => norm.get('starred'));
 
 export const getIndexStars = createSelector(
   [ getUserLaws ],
-  (laws) => Set(laws.map(law => law.get('groupkey')))
+  (laws) => laws.reduce((map, norm) => {
+    const key = norm.get('groupkey');
+    const child = norm.get('enumeration') !== '0';
+    const state = map.get(key, null);
+    if (state === null) { // Not in map yet.
+      // Either add as "children only" or "root only".
+      return map.set(key, child ? -1 : 0);
+    } else if ((state === 0 && child) || (state === -1 && !child)) {
+      // Set to "root and children".
+      return map.set(key, 1);
+    } else {
+      return map;
+    }
+  }, Map({}))
 );

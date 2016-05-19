@@ -51,6 +51,7 @@ export default class Norm extends PureComponent {
 
     let heading = data.get('enumeration').split('.').length + 1;
     heading = lead ? 1 : (heading > 6 ? 6 : heading);
+    const icons = lead ? ['book', 'book'] : ['bookmark', 'bookmark_border'];
 
     const title = !lead ? data.get('title') :
       [<span key='key'>{data.get('groupkey')}</span>, data.get('title')];
@@ -71,7 +72,7 @@ export default class Norm extends PureComponent {
           <IconButton
             ripple
             colored={starred}
-            name={starred ? 'star' : 'star_border'}
+            name={starred ? icons[0] : icons[1]}
             onClick={() => star(data, !starred)}
           />
         </CardMenu>
