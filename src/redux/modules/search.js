@@ -21,7 +21,7 @@ export default createReducer(Map({
   query: '',
   results: List()
 }), {
-  [SEARCH]: (state, { payload }) => state.set('results', fromJS(payload)),
+  [SEARCH]: (state, { payload }) => state.set('results', fromJS(payload.results)),
   [SEARCH_QUERY]: (state, { payload }) => state.set('query', payload),
   [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
 });
