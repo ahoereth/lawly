@@ -16,7 +16,7 @@ export default class ApiClient {
   static resources = {
     'laws': '/laws',
     'law': '/laws/:groupkey',
-    'users': '/users',
+    'users': '/users/:email',
     'user_sessions': '/users/:email/sessions',
     'user_law': '/users/:email/laws/:groupkey/:enumeration',
   };
@@ -229,9 +229,7 @@ export default class ApiClient {
    * @return {Promise}
    */
   auth(email, password = undefined, signup = false) {
-    const resource = signup ? { name: 'users' }
-                            : { name: 'user_sessions', email };
-    return this.post(resource, { email, password });
+    return this.post({ name: 'users', email }, { email, password, signup });
   }
 
   /**
