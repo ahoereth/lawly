@@ -33,7 +33,7 @@ export default createReducer(Map({
   }),
   [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
   [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),
-  [FILTER]: (state, { payload }) => state.set('filters', Map(payload)),
+  [FILTER]: (state, { payload }) => state.mergeIn(['filters'], Map(payload)),
 });
 
 
@@ -86,8 +86,6 @@ const getLawsByInitial = createSelector(
   )
 );
 
-export const getLawsByInitialCount = (state) => getLawsByInitial(state).size;
-
 // Filter laws of the specified initial by starred if requested.
 // Wrapped in its own selector to utilize memorization.
 const getStarFilteredLawsByInitial = createSelector(
@@ -134,6 +132,8 @@ const getFilteredLaws = createSelector(
     return laws;
   }
 );
+
+export const getFilteredLawsCount = (state) => getFilteredLaws(state).size;
 
 export const getFilteredLawsByPage = createSelector(
   [ getFilteredLaws, getPage, getPageSize ],

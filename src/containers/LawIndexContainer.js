@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import {
   getFilteredLawsByPage, getInitial, getInitials, getPage, getPageSize,
-  getFilters, getLawsByInitialCount,
+  getFilters, getFilteredLawsCount,
   fetchLawIndex, selectLawIndexInitial, selectLawIndexPage, filterLawIndex,
 } from 'redux/modules/law_index';
 import {
@@ -80,7 +80,7 @@ class LawIndexContainer extends React.Component {
 
 
 const mapStateToProps = (state) => ({
-  total: getLawsByInitialCount(state),
+  total: getFilteredLawsCount(state),
   laws: getFilteredLawsByPage(state), // total, laws
   initials: getInitials(state),
   page: getPage(state),

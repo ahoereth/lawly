@@ -51,8 +51,11 @@ const LawList = ({
         rowKeyColumn='groupkey'
       >
         {!star ? null :
-          <TableHeader name='star' numeric tooltip='Zeige nur gemerkte Normen'>
-            {!filter || !filters ? <span/> :
+          <TableHeader
+            name='star' numeric
+            tooltip={!filter ? undefined : 'Zeige nur gemerkte Normen'}
+          >
+            {!filter ? <span/> :
               <IconButton
                 ripple
                 name='stars'
@@ -62,21 +65,29 @@ const LawList = ({
             }
           </TableHeader>
         }
-        <TableHeader name='groupkey'>
+        <TableHeader
+          name='groupkey'
+          tooltip={!filter ? undefined : 'Nach Abkürzung filtern'}
+        >
           {!filter || !filters ? 'Abkürzung' :
             <Textfield
               onChange={({ target }) => filter({ groupkey: target.value })}
               value={filters.get('groupkey', '')}
               label='Abkürzung'
+              floatingLabel
             />
           }
         </TableHeader>
-        <TableHeader name='title'>
+        <TableHeader
+          name='title'
+          tooltip={!filter ? undefined : 'Nach Bezeichnung filtern'}
+        >
           {!filter || !filters ? 'Bezeichnung' :
             <Textfield
               onChange={({ target }) => filter({ title: target.value })}
               value={filters.get('title', '')}
               label='Bezeichnung'
+              floatingLabel
             />
           }
         </TableHeader>
