@@ -4,10 +4,13 @@ const path = require('path');
 const {
   HotModuleReplacementPlugin,
   NoErrorsPlugin,
-  optimize
+  optimize,
+  DefinePlugin,
 } = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const precss = require('precss');
+const OfflinePlugin = require('offline-plugin');
 
 
 // *****************************************************************************
@@ -19,8 +22,8 @@ let config = {
     app: './src/client',
   },
   output: {
-    path: path.resolve(__dirname, 'dist', 'assets'),
-    publicPath: '/assets/',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
     filename: '[name].js'
   },
   resolve: {
@@ -64,7 +67,17 @@ let config = {
   postcss: () => {
     return [autoprefixer, precss];
   },
-  plugins: [],
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'src/client.ejs',
+      title: 'Lawly',
+      chunks: [ 'app' ],
+    }),
+    new OfflinePlugin({
+      relativePaths: false,
+      publicPath: '/',
+    }),
+  ],
   devServer: {
     quiet: false,
     noInfo: true,
@@ -82,7 +95,7 @@ let config = {
     },
     hot: true,
     inline: true,
-    publicPath: '/assets/',
+    publicPath: '/',
     contentBase: 'dist',
     historyApiFallback: true
   }
@@ -98,8 +111,17 @@ if (process.env.NODE_ENV === 'development') {
   config.entry.dev = 'webpack-dev-server/client?http://localhost:8080';
   config.entry.hot = 'webpack/hot/dev-server';
 
+  config.plugins.push(new HtmlWebpackPlugin({
+    filename: 'tests.html',
+    title: 'Lawly Tests',
+    template: 'src/client.ejs',
+    chunks: [ 'tests' ],
+  }));
   config.plugins.push(new HotModuleReplacementPlugin());
   config.plugins.push(new NoErrorsPlugin());
+  config.plugins.push(new DefinePlugin({
+    'process.env.NODE_ENV': JSON.stringify('development'),
+  }));
 }
 
 
@@ -117,6 +139,9 @@ if (process.env.NODE_ENV === 'production') {
       warnings: false,
     },
     comments: () => false
+  }));
+  config.plugins.push(new DefinePlugin({
+    'process.env.NODE_ENV': JSON.stringify('production'),
   }));
 }
 
