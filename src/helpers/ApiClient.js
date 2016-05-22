@@ -36,16 +36,13 @@ export default class ApiClient {
   init(store) {
     this.store = store;
 
-    /* global window */
-    if (window && window.localStorage) {
-      // Recover authentication from last session.
-      const token = window.localStorage.getItem('auth');
-      if (token) {
-        this.setAuthToken(token);
-        const { payload } = parseJWT(token);
-        this.store.dispatch(login(payload.email));
-      }
-    }
+    // Initialize authentication.
+    this.storage.auth().then(token => {
+      if (!token) { return; }
+      this.setAuthToken(token);
+      const { payload } = parseJWT(token);
+      this.store.dispatch(login(payload.email));
+    });
   }
 
   isConnected(status = null) {
@@ -111,17 +108,7 @@ export default class ApiClient {
    */
   setAuthToken(token) {
     this.headers.authorization = token ? `JWT ${token}` : undefined;
-
-    /* global window */
-    if (window && window.localStorage) {
-      if (token) {
-        // Save token to local storage for future sessions.
-        window.localStorage.setItem('auth', token);
-      } else {
-        // Remove token from local storage.
-        window.localStorage.removeItem('auth');
-      }
-    }
+    this.storage.auth(token ? token : null);
   }
 
   /**

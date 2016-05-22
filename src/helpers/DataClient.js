@@ -1,5 +1,6 @@
 import localforage from 'localforage/src/localforage';
 
+
 export default class DataClient {
   static options = {
     name: 'lawly',
@@ -9,6 +10,16 @@ export default class DataClient {
 
   constructor() {
     this.forage = localforage.createInstance(DataClient.options);
+  }
+
+  auth(token = undefined) {
+    if (token === null) { // Unset token.
+      return this.forage.removeItem('auth');
+    } else if (typeof token !== 'undefined') { // Set token.
+      return this.forage.setItem('auth', token);
+    } else { // Get token.
+      return this.forage.getItem('auth');
+    }
   }
 
   stashRequest(request) {
