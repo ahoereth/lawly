@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-fetch';
 
+import DataClient from './DataClient';
 import { login } from 'redux/modules/user';
 import {
   isUndefined, startsWith,
@@ -29,7 +30,7 @@ export default class ApiClient {
     this.headers = {};
     this.apiurl = apiurl;
     this.online = false;
-    this.outstanding = [];
+    this.storage = new DataClient();
   }
 
   init(store) {
@@ -56,9 +57,9 @@ export default class ApiClient {
 
         // Refire the earliest failed request if any. This triggers a loop
         // which will fire off all outstanding one by one.
-        if (this.outstanding.length) {
-          this.fetch(this.outstanding.shift());
-        }
+        this.storage.popRequest().then(request => {
+          if (request) { this.fetch(request); }
+        });
       } else {
         // TODO: Start testing network connection frequently.
       }
@@ -175,11 +176,16 @@ export default class ApiClient {
       headers: {...ApiClient.jsonHeaders, ...this.headers, ...options.headers },
     })
       .then(res => { // Server responded.
-        this.isConnected(true);
+        if (!this.isConnected()) {
+          // TODO: Here not only the connection status is updated, but
+          // additionally the current triggering request performed again.
+          // Reasoning is, that one of the previously stashed requests
+          // might undo the triggering one which is undesired behavior.
+          this.storage.stashRequest(options).then(() => this.isConnected(true));
+        }
         return this.parseResponse(res);
       }, (/* err */) => { // Network error.
         this.isConnected(false);
-        this.outstanding.push(options);
         throw 'break';
       });
 
