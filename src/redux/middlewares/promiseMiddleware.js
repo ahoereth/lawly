@@ -6,23 +6,17 @@
  * @param  {ApiClient} client
  * @return {Function} Redux Middleware
  */
-export default function apiMiddleware(client) {
-  return (/*store*/) => {
-    return next => action => {
-      if (
-        !action.promise ||
-        !action.type ||
-        typeof action.promise !== 'function'
-      ) {
-        return next(action);
-      }
+export default function promiseMiddleware(client) {
+  return (/*store*/) => next => action => {
+    const { promise, type } = action;
+    if (!type || !promise || typeof promise !== 'function') {
+      return next(action);
+    }
 
-      const { promise, type } = action;
-      return promise(client)
-        .then(result => next({ type, payload: result }))
-        .catch(err => next({ type, error: true,
-          payload: err instanceof Error ? err.toString() : err
-        }));
-    };
+    return promise(client)
+      .then(result => next({ type, payload: result }))
+      .catch(err => next({ type, error: true,
+        payload: err instanceof Error ? err.toString() : err
+      }));
   };
 }

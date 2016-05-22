@@ -22,11 +22,13 @@ export default createReducer(Map({
   laws: List(), // { groupkey: { enumeration: { ...norm } } }
   error: false,
 }), {
-  [LOGIN]: (state, { payload }) => state.merge({
-    loggedin: true,
-    email: payload.email,
-    laws: Immutable.fromJS(payload.laws) || List(),
-  }),
+  [LOGIN]: (state, { payload }) => {
+    return state.merge({
+      loggedin: true,
+      email: payload.email,
+      laws: Immutable.fromJS(payload.laws || []),
+    });
+  },
   [LOGOUT]: (state/*, { payload }*/) => state.merge({
     loggedin: false, email: undefined, laws: Map(), error: undefined
   }),
@@ -40,7 +42,7 @@ export default createReducer(Map({
 
       if (key >= 0) {
         // Update existing.
-        return laws.set(key, Map(payload));
+        return laws.mergeIn([key], Map(payload));
       } else {
         // Add new and resort.
         return laws.push(Map(payload)).sortBy(
@@ -67,23 +69,16 @@ export const logout = (email) => ({
   promise: client => client.unauth(email)
 });
 
-export const star = (law, state = true) => {
-  let groupkey = law, enumeration = '0';
-  if (Map.isMap(law)) {
-    groupkey = law.get('groupkey');
-    enumeration = law.get('enumeration');
-  }
-
-  return {
-    type: STAR,
-    promise: client => client.put({
-      name: 'user_law',
-      groupkey,
-      enumeration,
-      starred: state,
-    })
-  };
-};
+export const star = (law, state = true) => ({
+  type: STAR,
+  payload: {
+    title: law.get('title'),
+    groupkey: law.get('groupkey'),
+    enumeration: law.get('enumeration', '0'),
+    starred: state
+  },
+  api: { method: 'put', name: 'user_law' },
+});
 
 
 

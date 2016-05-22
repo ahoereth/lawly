@@ -5,6 +5,7 @@ import Immutable from 'immutable';
 import createDebounce from 'redux-debounced';
 
 import functionsMiddleware from './middlewares/functionsMiddleware';
+import apiMiddleware from './middlewares/apiMiddleware';
 import promiseMiddleware from './middlewares/promiseMiddleware';
 import fetchMiddleware from './middlewares/fetchMiddleware';
 import reducer from './modules/reducer';
@@ -15,6 +16,7 @@ export default function createStore(client, data = {}) {
   const middlewares = [
     createDebounce(),
     functionsMiddleware(),
+    apiMiddleware(client),
     promiseMiddleware(client),
     fetchMiddleware(client),
     routerMiddleware(browserHistory),

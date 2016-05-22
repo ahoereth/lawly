@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch';
 
 import { login } from 'redux/modules/user';
 import {
-  isUndefined, isObject, startsWith,
+  isUndefined, startsWith,
   joinPath, parseJWT, obj2query, omit,
 } from './utils';
 
@@ -28,6 +28,8 @@ export default class ApiClient {
   constructor(apiurl) {
     this.headers = {};
     this.apiurl = apiurl;
+    this.online = false;
+    this.outstanding = [];
   }
 
   init(store) {
@@ -45,6 +47,26 @@ export default class ApiClient {
     }
   }
 
+  isConnected(status = null) {
+    if (status !== null) { // status change
+      this.online = status; // set
+
+      if (this.online) {
+        // TODO: Stop testing network frequently.
+
+        // Refire the earliest failed request if any. This triggers a loop
+        // which will fire off all outstanding one by one.
+        if (this.outstanding.length) {
+          this.fetch(this.outstanding.shift());
+        }
+      } else {
+        // TODO: Start testing network connection frequently.
+      }
+    }
+
+    return this.online; // get
+  }
+
   /**
    * Compiles an API url required for firing off a request.
    *
@@ -55,38 +77,27 @@ export default class ApiClient {
    * @param  {object}        query (optional)
    * @return {string}
    */
-  getRequestUrl(resource, query = {}) {
-    let path = resource;
-    if (isObject(resource)) {
-      const pattern = ApiClient.resources[resource.name];
-      const params = {...ApiClient.defaultParams, ...resource};
-      let parts = [];
-      path = pattern.replace(/:(\w+)/g, (match, key) => {
-        parts.push(key);
-        return !isUndefined(params[key]) ? encodeURIComponent(params[key])
-                                         : '';
-      });
+  parseFetchOptions(options) {
+    const { method, name, action, ...payload } = options;
 
-      query = {...query, ...omit(resource, 'name', ...parts)};
+    const skeleton = ApiClient.resources[name];
+    const values = { ...ApiClient.defaultParams, ...payload };
+    let params = [];
+    let path = skeleton.replace(/:(\w+)/g, (match, key) => {
+      params.push(match);
+      return !isUndefined(values[key]) ? encodeURIComponent(values[key]) : '';
+    });
+
+    const body = omit(payload, ...params);
+    if ((method || '').toLowerCase() === 'get') {
+      path = path + obj2query(body);
     }
 
-    path = joinPath(this.apiurl, path);
-    if (query && path.indexOf('?') === -1) { path += '?'; }
-    return path + obj2query(query);
-  }
-
-
-  /**
-   * Creates the request JSON body from the resource and (optional) data object.
-   *
-   * @param  {object} resource
-   * @param  {object} data
-   * @return {string}
-   */
-  createBody(resource, data) {
-    const body = isObject(resource) ? {...omit(resource, 'name'), ...data}
-                                    : data;
-    return JSON.stringify(body);
+    return {
+      method: method, action: action,
+      url: joinPath(this.apiurl, path),
+      body: method !== 'get' ? body : undefined,
+    };
   }
 
 
@@ -141,9 +152,8 @@ export default class ApiClient {
       // Handle response accordingly to status.
       switch (status) {
         case 'error':
-          throw (message || response.statusText);
         case 'fail':
-          throw message;
+          throw (message || response.statusText);
         case 'success':
           return data;
       }
@@ -157,9 +167,40 @@ export default class ApiClient {
    * @param  {object} options (optional)
    * @return {Promise}
    */
-  fetch(resource, options = {}) {
-    return fetch(this.getRequestUrl(resource), options)
-      .then(res => this.parseResponse(res));
+  fetch(options) {
+    const { url, body, method, action } = this.parseFetchOptions(options);
+    const request = fetch(url, {
+      method: method,
+      body: JSON.stringify(body),
+      headers: {...ApiClient.jsonHeaders, ...this.headers, ...options.headers },
+    })
+      .then(res => { // Server responded.
+        this.isConnected(true);
+        return this.parseResponse(res);
+      }, (/* err */) => { // Network error.
+        this.isConnected(false);
+        this.outstanding.push(options);
+        throw 'break';
+      });
+
+    // If the request has an action type attached dispatch that action here.
+    if (action) {
+      return request
+        .then(result => this.store.dispatch({
+          type: action,
+          payload: result,
+        }))
+        .catch(err => {
+          if (err === 'break') { return; }
+          this.store.dispatch({
+            type: action,
+            error: true,
+            payload: err instanceof Error ? err.toString() : err,
+          });
+        });
+    } else {
+      return request;
+    }
   }
 
   /**
@@ -169,10 +210,7 @@ export default class ApiClient {
    * @return {Promise}
    */
   get(resource) {
-    return this.fetch(resource, {
-      method: 'get',
-      headers: this.headers,
-    });
+    return this.fetch({ ...resource, method: 'get' });
   }
 
   /**
@@ -182,12 +220,8 @@ export default class ApiClient {
    * @param  {object} data
    * @return {Promise}
    */
-  post(resource, data) {
-    return this.fetch(resource, {
-      method: 'post',
-      headers: { ...ApiClient.jsonHeaders, ...this.headers },
-      body: this.createBody(resource, data),
-    });
+  post(resource) {
+    return this.fetch({ ...resource, method: 'post' });
   }
 
   /**
@@ -197,12 +231,8 @@ export default class ApiClient {
    * @param  {object} data
    * @return {Promise}
    */
-  remove(resource, data) {
-    return this.fetch(resource, {
-      method: 'delete',
-      headers: { ...ApiClient.jsonHeaders, ...this.headers },
-      body: this.createBody(resource, data),
-    });
+  remove(resource) {
+    return this.fetch({ ...resource, method: 'delete' });
   }
 
   /**
@@ -212,12 +242,8 @@ export default class ApiClient {
    * @param  {object} data
    * @return {Promise}
    */
-  put(resource, data) {
-    return this.fetch(resource, {
-      method: 'put',
-      headers: { ...ApiClient.jsonHeaders, ...this.headers },
-      body: this.createBody(resource, data),
-    });
+  put(resource) {
+    return this.fetch({ ...resource, method: 'put' });
   }
 
   /**
@@ -229,7 +255,7 @@ export default class ApiClient {
    * @return {Promise}
    */
   auth(email, password = undefined, signup = false) {
-    return this.post({ name: 'users', email }, { email, password, signup });
+    return this.post({ name: 'users', email, password, signup });
   }
 
   /**
@@ -241,6 +267,9 @@ export default class ApiClient {
    */
   unauth(email) {
     return this.remove({ name: 'user_sessions', email })
-      .then(() => this.setAuthToken());
+      .then(response => {
+        this.setAuthToken();
+        return response;
+      });
   }
 }

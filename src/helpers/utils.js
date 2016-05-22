@@ -105,7 +105,7 @@ export function obj2arr(obj) {
  * @param  {object} obj
  * @return {string}
  */
-export function obj2query(obj = null) {
+export function obj2query(obj = null, seperator = false) {
   if (!obj) { return ''; }
   let str = '';
   for (let key in obj) {
@@ -116,6 +116,11 @@ export function obj2query(obj = null) {
       str += encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]);
     }
   }
+
+  if (seperator & str.indexOf('?') === -1) {
+    str = '?' + str;
+  }
+
   return str;
 }
 
