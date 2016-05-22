@@ -79,8 +79,11 @@ let config = {
       relativePaths: false,
       publicPath: '/',
       caches: {
-        main: [ 'index.html', ':rest:' ], // Ensure index.html is main[0].
+        main: [ 'index.html',  ':rest:' ],
       },
+      externals: [
+        'index.html',
+      ],
       ServiceWorker: {
         output: 'sw.js',
         entry: 'sw-entry.js',

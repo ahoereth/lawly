@@ -5,15 +5,17 @@
  * and handle routing from there.
  */
 self.addEventListener('fetch', (e) => {
-  const { url, mode } = e.request;
+  const { url, mode, method } = e.request;
 
   // Only hijack navigate events.
-  if (mode !== 'navigate') { return; }
+  if (mode !== 'navigate' || method !== 'GET') { return; }
 
   // Only hijack navigate events which do not go to seemingly valid file urls.
   const ext = ['js', 'html', 'eot', 'ttf', 'woff2?', 'jpg', 'png', 'gif'];
   if (!url.match(new RegExp(`\.(${ext.join('|')})\s*$`))) {
-    e.request.url = self.__wpo.assets.main[0];
+    /* global fetch, caches */
+    const origin = self.location.origin;
+    e.respondWith(fetch(origin).catch(() => caches.match(origin)));
   }
 
   return;
