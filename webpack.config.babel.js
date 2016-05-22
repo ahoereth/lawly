@@ -20,6 +20,7 @@ let config = {
   target: 'web',
   entry: {
     app: './src/client',
+    'sw-entry': './src/sw-entry',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -72,10 +73,23 @@ let config = {
       template: 'src/client.ejs',
       title: 'Lawly',
       chunks: [ 'app' ],
+      minify: { collapseWhitespace: true, }
     }),
     new OfflinePlugin({
       relativePaths: false,
       publicPath: '/',
+      caches: {
+        main: [ 'index.html', ':rest:' ], // Ensure index.html is main[0].
+      },
+      ServiceWorker: {
+        output: 'sw.js',
+        entry: 'sw-entry.js',
+      },
+      AppCache: {
+        FALLBACK: {
+          '/': '/',
+        },
+      },
     }),
   ],
   devServer: {
