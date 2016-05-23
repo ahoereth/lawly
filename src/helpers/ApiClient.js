@@ -76,7 +76,7 @@ export default class ApiClient {
    * @return {string}
    */
   parseFetchOptions(options) {
-    const { method, name, action, ...payload } = options;
+    const { method, name, action, cachable, ...payload } = options;
 
     const skeleton = ApiClient.resources[name];
     const values = { ...ApiClient.defaultParams, ...payload };
@@ -88,11 +88,11 @@ export default class ApiClient {
 
     const body = omit(payload, ...params);
     if ((method || '').toLowerCase() === 'get') {
-      path = path + obj2query(body);
+      path = path + obj2query(body, true);
     }
 
     return {
-      method: method, action: action,
+      method, action, cachable,
       url: joinPath(this.apiurl, path),
       body: method !== 'get' ? body : undefined,
     };
@@ -156,41 +156,62 @@ export default class ApiClient {
    * @return {Promise}
    */
   fetch(options) {
-    const { url, body, method, action } = this.parseFetchOptions(options);
-    const request = fetch(url, {
+    const {
+      url, body, method, action, cachable
+    } = this.parseFetchOptions(options);
+
+    let request = fetch(url, {
       method: method,
       body: JSON.stringify(body),
       headers: {...ApiClient.jsonHeaders, ...this.headers, ...options.headers },
-    })
-      .then(res => { // Server responded.
-        if (!this.isConnected()) {
-          // TODO: Here not only the connection status is updated, but
-          // additionally the current triggering request performed again.
-          // Reasoning is, that one of the previously stashed requests
-          // might undo the triggering one which is undesired behavior.
-          this.storage.stashRequest(options).then(() => this.isConnected(true));
-        }
-        return this.parseResponse(res);
-      }, (/* err */) => { // Network error.
-        this.isConnected(false);
-        throw 'break';
+    });
+
+    // Network error.
+    request = request.catch(() => {
+      this.storage.stashRequest(options).then(() =>  this.isConnected(false));
+      if (!cachable) { throw 'break'; }
+      return this.storage.get(url);
+    });
+
+    // Server responded.
+    request = request.then(res => {
+      if (!this.isConnected()) {
+        // TODO: Here not only the connection status is updated, but
+        // additionally the current triggering request performed again.
+        // Reasoning is, that one of the previously stashed requests
+        // might undo the triggering one which is undesired behavior.
+        this.storage.stashRequest(options).then(() => this.isConnected(true));
+      }
+
+      // Got raw data, probably from cache.
+      if (!res.headers || !res.headers.get('content-type')) {
+        return res;
+      }
+
+      // Fresh response, need to parse it.
+      return this.parseResponse(res).then(result => {
+        if (cachable) { this.storage.stash(url, result); }
+        return result;
       });
+    });
 
     // If the request has an action type attached dispatch that action here.
     if (action) {
-      return request
-        .then(result => this.store.dispatch({
-          type: action,
-          payload: result,
-        }))
-        .catch(err => {
+      return request.then(
+        result => {
+          return this.store.dispatch({
+            type: action,
+            payload: result,
+          });
+        }, err => {
           if (err === 'break') { return; }
-          this.store.dispatch({
+          return this.store.dispatch({
             type: action,
             error: true,
             payload: err instanceof Error ? err.toString() : err,
           });
-        });
+        }
+      );
     } else {
       return request;
     }

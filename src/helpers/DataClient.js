@@ -12,6 +12,14 @@ export default class DataClient {
     this.forage = localforage.createInstance(DataClient.options);
   }
 
+  stash(key, data) {
+    return this.forage.setItem(JSON.stringify(key), data);
+  }
+
+  get(key) {
+    return this.forage.getItem(JSON.stringify(key));
+  }
+
   auth(token = undefined) {
     if (token === null) { // Unset token.
       return this.forage.removeItem('auth');

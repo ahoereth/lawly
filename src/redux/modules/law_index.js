@@ -42,7 +42,7 @@ export default createReducer(Map({
 // ACTION CREATORS
 export const fetchLawIndex = () => ({
   type: FETCH,
-  promise: api => api.get({ name: 'laws' })
+  promise: api => api.get({ name: 'laws', cachable: true })
 });
 
 export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
