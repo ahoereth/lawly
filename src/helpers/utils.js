@@ -117,7 +117,7 @@ export function obj2query(obj = null, seperator = false) {
     }
   }
 
-  if (seperator & str.indexOf('?') === -1) {
+  if (seperator && str.length && str.indexOf('?') === -1) {
     str = '?' + str;
   }
 
