@@ -82,19 +82,19 @@ export default class ApiClient {
 
     const skeleton = ApiClient.resources[name];
     const values = { ...ApiClient.defaultParams, ...payload };
-    let params = [];
+    let params = {};
     let path = skeleton.replace(/:(\w+)/g, (match, key) => {
-      params.push(match);
+      params[key] = values[key];
       return !isUndefined(values[key]) ? encodeURIComponent(values[key]) : '';
     });
 
-    const body = omit(payload, ...params);
+    const body = omit(payload, ...Object.keys(params));
     if ((method || '').toLowerCase() === 'get') {
       path = path + obj2query(body, true);
     }
 
     return {
-      method, action, cachable,
+      method, name, action, cachable, params,
       url: joinPath(this.apiurl, path),
       body: method !== 'get' ? body : undefined,
     };
@@ -159,7 +159,7 @@ export default class ApiClient {
    */
   fetch(options) {
     const {
-      url, body, method, action, cachable
+      url, body, name, params, method, action, cachable,
     } = this.parseFetchOptions(options);
 
     let request = fetch(url, {
@@ -172,7 +172,7 @@ export default class ApiClient {
     request = request.catch(() => {
       this.storage.stashRequest(options).then(() =>  this.isConnected(false));
       if (!cachable) { throw ApiClient.NO_CONNECTION_NO_CACHE; }
-      return this.storage.get(url);
+      return this.storage.get({ name, method, ...params });
     });
 
     // Server responded.
@@ -194,7 +194,9 @@ export default class ApiClient {
 
       // Fresh response, need to parse it.
       return this.parseResponse(res).then(result => {
-        if (cachable) { this.storage.stash(url, result); }
+        if (cachable) {
+          this.storage.stash({ name, method, ...params }, result);
+        }
         return result;
       });
     });

@@ -1,4 +1,5 @@
 import localforage from 'localforage/src/localforage';
+import stringify from 'json-stable-stringify';
 
 
 export default class DataClient {
@@ -13,11 +14,11 @@ export default class DataClient {
   }
 
   stash(key, data) {
-    return this.forage.setItem(JSON.stringify(key), data);
+    return this.forage.setItem(stringify(key), data);
   }
 
   get(key) {
-    return this.forage.getItem(JSON.stringify(key));
+    return this.forage.getItem(stringify(key));
   }
 
   auth(token = undefined) {
@@ -32,8 +33,8 @@ export default class DataClient {
 
   stashRequest(request) {
     return this.forage.getItem('requests').then(requests => {
-      const reqStr = JSON.stringify(request);
-      requests = (requests || []).filter(req => JSON.stringify(req) === reqStr)
+      const reqStr = stringify(request);
+      requests = (requests || []).filter(req => stringify(req) === reqStr)
                                  .concat([request]);
 
       return this.forage.setItem('requests', requests);
