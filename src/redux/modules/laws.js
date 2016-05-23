@@ -25,7 +25,7 @@ export default createReducer(Map({
 // ACTION CREATORS
 export const fetchLaw = (groupkey) => ({
   type: FETCH_SINGLE,
-  promise: api => api.get({ name: 'law', groupkey })
+  promise: api => api.get({ name: 'law', groupkey, cachable: true })
 });
 
 
