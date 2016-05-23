@@ -2,6 +2,7 @@ import fetch from 'isomorphic-fetch';
 
 import DataClient from './DataClient';
 import { login } from 'redux/modules/user';
+import { fetchLaw } from 'redux/modules/laws';
 import {
   isUndefined, startsWith,
   joinPath, parseJWT, obj2query, omit,
@@ -280,6 +281,10 @@ export default class ApiClient {
       .catch(err => {
         if (err !== ApiClient.NO_CONNECTION_NO_CACHE) { throw err; }
         return this.storage.get(email);
+      })
+      .then(result => {
+        result.laws.forEach(l => this.store.dispatch(fetchLaw(l.groupkey)));
+        return result;
       });
   }
 
