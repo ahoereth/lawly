@@ -92,7 +92,7 @@ const getStarFilteredLawsByInitial = createSelector(
   [ getLawsByInitial, getFilters, getIndexStars ],
   (laws, filters, stars) => {
     if (filters.get('starred')) {
-      laws = laws.filter(law => stars.contains(law.get('groupkey')));
+      laws = laws.filter(law => stars.has(law.get('groupkey')));
     }
 
     return laws;
