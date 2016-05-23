@@ -9,6 +9,8 @@ import {
 
 
 export default class ApiClient {
+  static NO_CONNECTION_NO_CACHE = 'NO_CONNECTION_NO_CACHE';
+
   static jsonHeaders = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
@@ -29,7 +31,7 @@ export default class ApiClient {
   constructor(apiurl) {
     this.headers = {};
     this.apiurl = apiurl;
-    this.online = false;
+    this.online = true;
     this.storage = new DataClient();
   }
 
@@ -46,7 +48,7 @@ export default class ApiClient {
   }
 
   isConnected(status = null) {
-    if (status !== null) { // status change
+    if (status !== null) {
       this.online = status; // set
 
       if (this.online) {
@@ -169,7 +171,7 @@ export default class ApiClient {
     // Network error.
     request = request.catch(() => {
       this.storage.stashRequest(options).then(() =>  this.isConnected(false));
-      if (!cachable) { throw 'break'; }
+      if (!cachable) { throw ApiClient.NO_CONNECTION_NO_CACHE; }
       return this.storage.get(url);
     });
 
@@ -181,6 +183,8 @@ export default class ApiClient {
         // Reasoning is, that one of the previously stashed requests
         // might undo the triggering one which is undesired behavior.
         this.storage.stashRequest(options).then(() => this.isConnected(true));
+      } else {
+        this.isConnected(true);
       }
 
       // Got raw data, probably from cache.
@@ -204,7 +208,7 @@ export default class ApiClient {
             payload: result,
           });
         }, err => {
-          if (err === 'break') { return; }
+          if (err === ApiClient.NO_CONNECTION_NO_CACHE) { return; }
           return this.store.dispatch({
             type: action,
             error: true,
@@ -269,7 +273,12 @@ export default class ApiClient {
    * @return {Promise}
    */
   auth(email, password = undefined, signup = false) {
-    return this.post({ name: 'users', email, password, signup });
+    return this.post({ name: 'users', email, password, signup })
+      .then(result => this.storage.stash(email, result))
+      .catch(err => {
+        if (err !== ApiClient.NO_CONNECTION_NO_CACHE) { throw err; }
+        return this.storage.get(email);
+      });
   }
 
   /**
@@ -280,10 +289,8 @@ export default class ApiClient {
    * @return {Promise}
    */
   unauth(email) {
-    return this.remove({ name: 'user_sessions', email })
-      .then(response => {
-        this.setAuthToken();
-        return response;
-      });
+    this.setAuthToken();
+    this.storage.remove(email);
+    return this.remove({ name: 'user_sessions', email });
   }
 }
