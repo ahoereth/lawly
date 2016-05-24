@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import shallowCompare from 'react-addons-shallow-compare';
 import Immutable from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 import {
@@ -6,13 +7,12 @@ import {
   IconButton
 } from 'react-mdl';
 
-import PureComponent from 'components/PureComponent';
 import { slugify } from 'helpers/utils';
 import Html from 'components/Html';
 import styles from './norm.sss';
 
 
-export default class Norm extends PureComponent {
+export default class Norm extends React.Component {
   static propTypes = {
     annotations: ImmutablePropTypes.mapContains({
       starred: PropTypes.bool,
@@ -36,6 +36,10 @@ export default class Norm extends PureComponent {
     this.state = {
       focus: false,
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   }
 
   focus(state) {
