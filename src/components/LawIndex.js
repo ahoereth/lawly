@@ -4,15 +4,19 @@ import { Grid, Cell } from 'react-mdl';
 
 import LawList from './LawList';
 import LawInitialChooser from './LawInitialChooser';
+import LawCollectionChooser from './LawCollectionChooser';
 
 
 const LawIndex = ({
+  collection,
+  collections,
   filter,
   filters,
   initials,
   laws,
   page,
   pageSize,
+  selectCollection,
   selectInitial,
   selectPage,
   selectedInitial,
@@ -23,6 +27,13 @@ const LawIndex = ({
   const { groupkey, title, starred } = filters.toJS();
   return (
     <Grid>
+      <Cell col={12} table={8} phone={4}>
+        <LawCollectionChooser
+          collections={collections}
+          selected={collection}
+          onSelect={selectCollection}
+        />
+      </Cell>
       <Cell col={1} tablet={1} phone={4}>
         <LawInitialChooser
           initials={initials}
@@ -74,12 +85,15 @@ const LawIndex = ({
 };
 
 LawIndex.propTypes = {
+  collection: PropTypes.string,
+  collections: ImmutableTypes.listOf(PropTypes.string),
   filter: PropTypes.func,
   filters: ImmutableTypes.map,
   initials: ImmutableTypes.listOf(PropTypes.string).isRequired,
   laws: ImmutableTypes.list.isRequired,
   page: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
+  selectCollection: PropTypes.func.isRequired,
   selectInitial: PropTypes.func.isRequired,
   selectPage: PropTypes.func.isRequired,
   selectedInitial: PropTypes.string.isRequired,

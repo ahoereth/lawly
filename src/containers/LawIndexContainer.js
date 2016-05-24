@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import {
   getFilteredLawsByPage, getInitial, getInitials, getPage, getPageSize,
-  getFilters, getFilteredLawsCount,
+  getFilters, getFilteredLawsCount, getCollectionTitle, getCollectionTitles,
   fetchLawIndex,
   selectCollection, selectLawIndexInitial, selectLawIndexPage, filterLawIndex,
 } from 'redux/modules/law_index';
@@ -18,6 +18,8 @@ import { isNumeric, toInt } from 'helpers/utils';
 
 class LawIndexContainer extends React.Component {
   static propTypes = {
+    collection: PropTypes.string,
+    collections: ImmutableTypes.listOf(PropTypes.string),
     fetchIndex: PropTypes.func.isRequired,
     filter: PropTypes.func.isRequired,
     filters: ImmutableTypes.map,
@@ -62,12 +64,15 @@ class LawIndexContainer extends React.Component {
 
   render() {
     const {
+      collection,
+      collections,
       filter,
       filters,
       initials,
       laws,
       page,
       pageSize,
+      selectCollection,
       selectedInitial,
       selectInitial,
       selectPage,
@@ -83,6 +88,7 @@ class LawIndexContainer extends React.Component {
         selectedInitial, selectInitial, selectPage,
         star, stars,
         filter, filters,
+        collection, collections, selectCollection,
       }} />
     );
   }
@@ -98,6 +104,8 @@ const mapStateToProps = (state) => ({
   selectedInitial: getInitial(state),
   stars: getIndexStars(state),
   filters: getFilters(state),
+  collections: getCollectionTitles(state),
+  collection: getCollectionTitle(state),
 });
 
 const mapDispatchToProps = {

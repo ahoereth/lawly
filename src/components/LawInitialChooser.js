@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutableTypes from 'react-immutable-proptypes';
 import { Grid, Cell, Button } from 'react-mdl';
 
 import styles from './lawInitialChooser.sss';
@@ -22,7 +22,7 @@ const LawInitialChooser = ({ initials, selected, onSelect }) => (
 );
 
 LawInitialChooser.propTypes = {
-  initials: ImmutablePropTypes.listOf(PropTypes.string).isRequired,
+  initials: ImmutableTypes.listOf(PropTypes.string).isRequired,
   onSelect: PropTypes.func.isRequired,
   selected: PropTypes.string,
 };

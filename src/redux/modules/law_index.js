@@ -33,6 +33,7 @@ export default createReducer(Map({
   [FETCH]: (state, { payload }) => state.merge({
     initials: List(payload.initials),
     laws: Immutable.fromJS(payload.index),
+    collections: Immutable.fromJS(payload.collections),
   }),
   [SELECT_COLLECTION]: (state, { payload }) => state.set('collection', payload),
   [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),
@@ -93,6 +94,13 @@ export const getCollectionTitle = state => state.getIn(['law_index', 'collection
 
 export const getCollections = state => state.getIn(['law_index', 'collections']);
 
+export const getCollectionTitles = createSelector(
+  [ getCollections ],
+  (collections) => {
+    return collections.map(coll => coll.get('title'));
+  }
+);
+
 export const getCollection = createSelector(
   [ getCollections, getCollectionTitle ],
   (collections, title) => {
@@ -108,7 +116,7 @@ const getLawsByCollection = createSelector(
   [ getLawIndex, getCollection ],
   (laws, collection) => {
     if (!collection) { return laws; }
-    const groupkeys = collection.laws.map(groupkey => groupkey.toLowerCase());
+    const groupkeys = collection.get('laws').map(groupkey => groupkey.toLowerCase());
     return laws.filter(law =>
       groupkeys.indexOf(law.get('groupkey').toLowerCase()) !== -1
     );
