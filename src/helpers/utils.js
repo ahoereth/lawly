@@ -47,6 +47,17 @@ export function isBoolean(x) {
 
 
 /**
+ * Check if given value is numeric (might still be a string).
+ *
+ * @param  {number/string} val
+ * @return {Boolean}
+ */
+export function isNumeric(val) {
+  return !isNaN(parseFloat(val)) && isFinite(val);
+}
+
+
+/**
  * Check if a string starts with a specific substring.
  *
  * @param  {string} haystack
@@ -67,6 +78,17 @@ export function startsWith(haystack, needle) {
  */
 export function endsWith(haystack, needle) {
   return (haystack.lastIndexOf(needle) === (haystack.length - needle.length));
+}
+
+
+/**
+ * Converts passed variable to integer.
+ *
+ * @param  {string} n [description]
+ * @return {number}
+ */
+export function toInt(n) {
+  return n === true ? 1 : (n !== undefined && n.length ? parseInt(n, 10) : 0);
 }
 
 

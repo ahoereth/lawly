@@ -5,13 +5,15 @@ import { connect } from 'react-redux';
 import {
   getFilteredLawsByPage, getInitial, getInitials, getPage, getPageSize,
   getFilters, getFilteredLawsCount,
-  fetchLawIndex, selectLawIndexInitial, selectLawIndexPage, filterLawIndex,
+  fetchLawIndex,
+  selectCollection, selectLawIndexInitial, selectLawIndexPage, filterLawIndex,
 } from 'redux/modules/law_index';
 import {
   getIndexStars,
   star,
 } from 'redux/modules/user';
 import { LawIndex } from 'components';
+import { isNumeric, toInt } from 'helpers/utils';
 
 
 class LawIndexContainer extends React.Component {
@@ -24,8 +26,11 @@ class LawIndexContainer extends React.Component {
     page: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
     params: PropTypes.shape({
-      initial: PropTypes.string,
+      collectionOrInitial: PropTypes.string,
+      initialOrPage: PropTypes.string,
+      page: PropTypes.number,
     }).isRequired,
+    selectCollection: PropTypes.func.isRequired,
     selectInitial: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     selectedInitial: PropTypes.string,
@@ -37,17 +42,22 @@ class LawIndexContainer extends React.Component {
   componentWillMount() {
     const {
       fetchIndex,
-      page,
-      params,
       total,
+      selectCollection,
       selectInitial,
       selectPage,
-      selectedInitial,
+      params,
     } = this.props;
 
+    const { a, b, c } = params;
+    const collection = !isNumeric(b) || a.length > 1 ? a : undefined;
+    const initial = isNumeric(b) ? (a.length === 1 ? a : undefined) : b;
+    const page = isNumeric(b) ? toInt(b) : toInt(c);
+
     total > 0 || fetchIndex();
-    selectInitial(params.initial || selectedInitial);
-    selectPage(params.page ? parseInt(params.page, 10) : page);
+    selectCollection(collection);
+    selectInitial(initial);
+    selectPage(page);
   }
 
   render() {
@@ -95,6 +105,7 @@ const mapDispatchToProps = {
   selectInitial: selectLawIndexInitial,
   selectPage: selectLawIndexPage,
   filter: filterLawIndex,
+  selectCollection,
   star,
 };
 
