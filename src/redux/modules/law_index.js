@@ -13,6 +13,7 @@ export const FETCH = 'law_index/FETCH';
 export const SELECT_INITIAL = 'law_index/SELECT_INITIAL';
 export const SELECT_PAGE = 'law_index/SELECT_PAGE';
 export const FILTER = 'law_index/FILTER';
+export const SELECT_COLLECTION = 'law_index/SELECT_COLLECTION';
 
 
 
@@ -20,8 +21,10 @@ export const FILTER = 'law_index/FILTER';
 // REDUCERS
 export default createReducer(Map({
   laws: List(),
+  collections: List(),
+  collection: undefined,
   initials: List(),
-  initial: 'a',
+  initial: '',
   page: 1,
   pageSize: 20,
   error: undefined,
@@ -31,8 +34,9 @@ export default createReducer(Map({
     initials: List(payload.initials),
     laws: Immutable.fromJS(payload.index),
   }),
-  [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
+  [SELECT_COLLECTION]: (state, { payload }) => state.set('collection', payload),
   [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),
+  [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
   [FILTER]: (state, { payload }) => state.mergeIn(['filters'], Map(payload)),
 });
 
@@ -47,14 +51,22 @@ export const fetchLawIndex = () => ({
 
 export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
   const initial = getInitial(getState());
-  const pagePath = page > 1 ? '/' + page : '';
-  dispatch({ type: SELECT_PAGE, payload: page });
-  dispatch(push(`/gesetze/${initial}${pagePath}`));
+  const collection = getCollectionTitle(getState());
+  const collectionPath = collection ? collection + '/' : '';
+  const initialPath = initial ? initial + '/': '';
+  const pagePath = page > 1 ? page : '';
+  dispatch({ type: SELECT_PAGE, payload: page || 1 });
+  dispatch(push(`/gesetze/${collectionPath}${initialPath}${pagePath}`));
 };
 
-export const selectLawIndexInitial = (initial = 'a') => (dispatch) => {
+export const selectLawIndexInitial = (initial = '') => (dispatch) => {
   dispatch({ type: SELECT_INITIAL, payload: initial.toLowerCase() });
   dispatch(selectLawIndexPage(1));
+};
+
+export const selectCollection = collection => dispatch => {
+  dispatch({ type: SELECT_COLLECTION, payload: collection });
+  dispatch(selectLawIndexInitial(''));
 };
 
 export const filterLawIndex = (filters = {}) => (dispatch) => {
@@ -77,13 +89,38 @@ export const getInitials = (state) => state.getIn(['law_index', 'initials']);
 
 export const getInitial = (state) => state.getIn(['law_index', 'initial']);
 
+export const getCollectionTitle = state => state.getIn(['law_index', 'collection']);
+
+export const getCollections = state => state.getIn(['law_index', 'collections']);
+
+export const getCollection = createSelector(
+  [ getCollections, getCollectionTitle ],
+  (collections, title) => {
+    if (!title) { return; }
+    const result = collections.find(coll => coll.get('title') === title);
+    return result;
+  }
+);
+
 export const getFilters = (state) => state.getIn(['law_index', 'filters']);
 
+const getLawsByCollection = createSelector(
+  [ getLawIndex, getCollection ],
+  (laws, collection) => {
+    if (!collection) { return laws; }
+    const groupkeys = collection.laws.map(groupkey => groupkey.toLowerCase());
+    return laws.filter(law =>
+      groupkeys.indexOf(law.get('groupkey').toLowerCase()) !== -1
+    );
+  }
+);
+
 const getLawsByInitial = createSelector(
-  [ getLawIndex, getInitial ],
-  (laws, char) => laws.filter(law =>
-    law.get('groupkey')[0].toLowerCase() == char
-  )
+  [ getLawsByCollection, getInitial ],
+  (laws, char) => {
+    if (!char) { return laws; }
+    return laws.filter(law => law.get('groupkey')[0].toLowerCase() == char);
+  }
 );
 
 // Filter laws of the specified initial by starred if requested.
