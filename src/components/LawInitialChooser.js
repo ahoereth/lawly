@@ -10,9 +10,9 @@ const LawInitialChooser = ({ initials, selected, onSelect }) => (
       <Cell key={initial} col={12} tablet={8} phone={1} className={styles.cell}>
         <Button
           ripple raised
+          accent={selected === initial.toLowerCase()}
           className={styles.button}
-          disabled={selected == initial.toLowerCase()}
-          onClick={() => onSelect(initial)}
+          onClick={() => onSelect(selected !== initial.toLowerCase() ? initial : '')}
         >
           {initial}
         </Button>
