@@ -2,9 +2,9 @@ import fetch from 'isomorphic-fetch';
 
 import DataClient from './DataClient';
 import { login } from 'redux/modules/user';
-import { fetchLaw } from 'redux/modules/laws';
+import { FETCH_SINGLE } from 'redux/modules/laws';
 import {
-  isUndefined, startsWith,
+  isObject, isUndefined, startsWith,
   joinPath, parseJWT, obj2query, omit,
 } from './utils';
 
@@ -27,7 +27,7 @@ export default class ApiClient {
 
   static defaultParams = {
     email: '~',
-  }
+  };
 
   constructor(apiurl) {
     this.headers = {};
@@ -283,7 +283,13 @@ export default class ApiClient {
         return this.storage.get(email);
       })
       .then(result => {
-        result.laws.forEach(l => this.store.dispatch(fetchLaw(l.groupkey)));
+        // Fetch all starred laws in a single request and insert them into the
+        // redux store.
+        this.get({ name: 'law', groupkey: result.laws.map(l => l.groupkey )})
+            .then(laws => !isObject(laws) ? { [laws[0].groupkey]: laws } : laws)
+            .then(laws => Object.keys(laws).forEach(law =>
+              this.store.dispatch({ type: FETCH_SINGLE, payload: laws[law] })
+            ));
         return result;
       });
   }
