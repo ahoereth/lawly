@@ -104,9 +104,9 @@ export const getCollectionTitles = createSelector(
 export const getCollection = createSelector(
   [ getCollections, getCollectionTitle ],
   (collections, title) => {
-    if (!title) { return; }
+    if (!title) { return Map(); }
     const result = collections.find(coll => coll.get('title') === title);
-    return result;
+    return result || Map();
   }
 );
 
@@ -115,7 +115,7 @@ export const getFilters = (state) => state.getIn(['law_index', 'filters']);
 const getLawsByCollection = createSelector(
   [ getLawIndex, getCollection ],
   (laws, collection) => {
-    if (!collection) { return laws; }
+    if (!collection.get('laws')) { return laws; }
     const groupkeys = collection.get('laws').map(groupkey => groupkey.toLowerCase());
     return laws.filter(law =>
       groupkeys.indexOf(law.get('groupkey').toLowerCase()) !== -1
