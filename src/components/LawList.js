@@ -19,6 +19,8 @@ const LawList = ({
   star, stars,
 }) => {
   total = total || laws.size;
+  const areAllStarred = laws.filter(law => stars.get(law.get('groupkey')) >= 0).size === laws.size;
+  const starMany = laws => laws.forEach(law => star(law, !areAllStarred));
 
   const rows = laws.map(law => {
     const { groupkey, title } = law.toJS();
@@ -40,7 +42,7 @@ const LawList = ({
             ripple
             colored={state >= 0}
             name={Math.abs(state) === 1 ? 'collections_bookmark' : 'book'}
-            onClick={() => star(groupkey, state < 0)}
+            onClick={() => star(law, state < 0)}
           />
         </Tooltip>
       ),
@@ -65,7 +67,7 @@ const LawList = ({
         {!star ? null :
           <TableHeader
             name='star' numeric
-            tooltip={!filter ? undefined : 'Zeige nur gemerkte Normen'}
+            tooltip={!filter ? undefined : 'Nur gespeicherte Normen zeigen'}
           >
             {!filter ? <span/> :
               <IconButton
@@ -103,7 +105,20 @@ const LawList = ({
             />
           }
         </TableHeader>
-        <TableHeader name='action' numeric />
+        <TableHeader
+          name='action' numeric
+          tooltip={total > 50 ? '' : !areAllStarred ? 'Alle speichern' : 'Alle löschen'}
+        >
+          {total > 50 ? null :
+            <FABButton
+              mini ripple
+              colored={areAllStarred}
+              onClick={() => starMany(laws)}
+            >
+              <Icon name='save' />
+            </FABButton>
+          }
+        </TableHeader>
       </DataTable>
       {!selectPage ? null :
         <Pagination
