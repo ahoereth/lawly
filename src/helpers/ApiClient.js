@@ -284,12 +284,14 @@ export default class ApiClient {
       })
       .then(result => {
         // Fetch all starred laws in a single request and insert them into the
-        // redux store.
+        // redux store. TODO: This logic chunk does not really belong here.
         this.get({ name: 'law', groupkey: result.laws.map(l => l.groupkey )})
             .then(laws => !isObject(laws) ? { [laws[0].groupkey]: laws } : laws)
-            .then(laws => Object.keys(laws).forEach(law =>
-              this.store.dispatch({ type: FETCH_SINGLE, payload: laws[law] })
-            ));
+            .then(laws => Object.keys(laws).forEach(groupkey => {
+              const law = laws[groupkey];
+              this.storage.stash({ method: 'get', name: 'law', groupkey }, law);
+              this.store.dispatch({ type: FETCH_SINGLE, payload: law });
+            }));
         return result;
       });
   }
