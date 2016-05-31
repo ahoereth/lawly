@@ -3,6 +3,8 @@ import { push } from 'react-router-redux';
 import { fromJS, List, Map } from 'immutable';
 
 import createReducer from '../createReducer';
+import localSearch from 'helpers/LocalSearch';
+import { getLaws } from './laws';
 
 
 // ******************************************************************
@@ -21,9 +23,9 @@ export default createReducer(Map({
   query: '',
   results: List()
 }), {
-  [SEARCH]: (state, { payload }) => state.set('results', fromJS(payload.results)),
-  [SEARCH_QUERY]: (state, { payload }) => state.set('query', payload),
-  [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
+  [SEARCH]: (state, { payload: { results = [] } }) => state.set('results', fromJS(results)),
+  [SEARCH_QUERY]: (state, { payload = '' }) => state.set('query', payload),
+  [SELECT_PAGE]: (state, { payload = 1 }) => state.set('page', payload),
 });
 
 
@@ -37,14 +39,30 @@ export const selectSearchPage = (page = 1) => (dispatch, getState) => {
   dispatch(push(`/suche/${query}${pagePath}`));
 };
 
-export const search = (query = '') => (dispatch) => {
+/* global window */
+let debounce;
+export const search = (query = '') => (dispatch, getState) => {
   dispatch({ type: SEARCH_QUERY, payload: query });
   dispatch(selectSearchPage(1));
-  dispatch({
-    type: SEARCH,
-    meta: { debounce: { time: 500 } },
-    promise: api => api.get({ name: 'laws', search: query })
-  });
+  window.clearTimeout(debounce);
+  debounce = window.setTimeout(() => {
+    const timer = Date.now();
+    localSearch.search(query).then(result => {
+      console.log(`search timer: ${Date.now() - timer}ms`);
+      const refs = result.map(obj => obj.ref.split('::'));
+      const laws = getLaws(getState());
+      const results = refs.slice(0, 100).map(([groupkey, enumeration]) =>
+        laws.get(groupkey).find(law => law.get('enumeration') === enumeration)
+      );
+      dispatch({ type: SEARCH, payload: { results: List(results) } });
+    });
+  }, 500);
+
+  // dispatch({
+  //   type: SEARCH,
+  //   meta: { debounce: { time: 500 } },
+  //   promise: api => api.get({ name: 'laws', search: query })
+  // });
 };
 
 
