@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "classnames": "^2.2.3",
+    "elasticlunr": "^0.8.8",
     "isomorphic-fetch": "^2.2.1",
     "json-stable-stringify": "^1.0.1",
     "local-web-server": "^1.2.4",

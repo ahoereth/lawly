@@ -1,6 +1,9 @@
 import localforage from 'localforage/src/localforage';
 import stringify from 'json-stable-stringify';
 
+import localSearch from './LocalSearch';
+import { isObject } from './utils';
+
 
 export default class DataClient {
   static options = {
@@ -14,6 +17,10 @@ export default class DataClient {
   }
 
   stash(key, data) {
+    if (isObject(key) && key.name === 'law') {
+      localSearch.indexLaw(data);
+    }
+
     return this.forage.setItem(stringify(key), data);
   }
 

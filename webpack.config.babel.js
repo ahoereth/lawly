@@ -21,6 +21,7 @@ let config = {
   entry: {
     app: './src/client',
     'sw-entry': './src/sw-entry',
+    worker: './src/worker',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
