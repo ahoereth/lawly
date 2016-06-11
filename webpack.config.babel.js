@@ -14,14 +14,14 @@ const OfflinePlugin = require('offline-plugin');
 
 
 // *****************************************************************************
-// Defaults
+// Base
 let config = {
   devtool: '#cheap-module-eval-source-map',
   target: 'web',
+  context: path.resolve(__dirname, 'src'),
   entry: {
-    app: './src/client',
-    'sw-entry': './src/sw-entry',
-    worker: './src/worker',
+    app: 'client',
+    worker:'worker',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -71,52 +71,12 @@ let config = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'src/client.ejs',
+      template: 'client.ejs',
       title: 'Lawly',
       chunks: [ 'app' ],
       minify: { collapseWhitespace: true, }
     }),
-    new OfflinePlugin({
-      relativePaths: false,
-      publicPath: '/',
-      caches: {
-        main: [ 'index.html',  ':rest:' ],
-      },
-      externals: [
-        'index.html',
-      ],
-      ServiceWorker: {
-        output: 'sw.js',
-        entry: 'sw-entry.js',
-      },
-      AppCache: {
-        FALLBACK: {
-          '/': '/',
-        },
-      },
-    }),
   ],
-  devServer: {
-    quiet: false,
-    noInfo: true,
-    colors: true,
-    host: 'localhost',
-    port: 8080,
-    stats: {
-      assets: false,
-      colors: true,
-      version: false,
-      hash: false,
-      timings: true,
-      chunks: false,
-      chunkModules: false
-    },
-    hot: true,
-    inline: true,
-    publicPath: '/',
-    contentBase: 'dist',
-    historyApiFallback: true
-  }
 };
 
 
@@ -125,21 +85,52 @@ let config = {
 // *****************************************************************************
 // Development
 if (process.env.NODE_ENV === 'development') {
-  config.entry.tests = 'mocha!./src/tests.js';
-  config.entry.dev = 'webpack-dev-server/client?http://localhost:8080';
-  config.entry.hot = 'webpack/hot/dev-server';
-
-  config.plugins.push(new HtmlWebpackPlugin({
-    filename: 'tests.html',
-    title: 'Lawly Tests',
-    template: 'src/client.ejs',
-    chunks: [ 'tests' ],
-  }));
-  config.plugins.push(new HotModuleReplacementPlugin());
-  config.plugins.push(new NoErrorsPlugin());
-  config.plugins.push(new DefinePlugin({
-    'process.env.NODE_ENV': JSON.stringify('development'),
-  }));
+  config = Object.assign({}, config, {
+    watch: true,
+    entry: Object.assign({}, config.entry, {
+      tests: 'mocha!./tests.js',
+      dev: 'webpack-dev-server/client?http://localhost:8080',
+      hot: 'webpack/hot/dev-server',
+    }),
+    plugins: config.plugins.concat([
+      new HtmlWebpackPlugin({
+        filename: 'tests.html',
+        title: 'Lawly Tests',
+        template: 'client.ejs',
+        chunks: [ 'tests' ],
+      }),
+      new HotModuleReplacementPlugin(),
+      new NoErrorsPlugin(),
+      new DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify('development'),
+      })
+    ]),
+    devServer: {
+      quiet: false,
+      noInfo: true,
+      colors: true,
+      host: 'localhost',
+      port: 8080,
+      stats: {
+        assets: true,
+        colors: true,
+        version: false,
+        hash: false,
+        timings: true,
+        chunks: false,
+        chunkModules: false
+      },
+      watchOptions: {
+        aggregateTimeout: 300,
+        poll: 1000
+      },
+      hot: true,
+      inline: true,
+      publicPath: '/',
+      contentBase: 'dist',
+      historyApiFallback: true
+    },
+  });
 }
 
 
@@ -148,19 +139,40 @@ if (process.env.NODE_ENV === 'development') {
 // *****************************************************************************
 // Production
 if (process.env.NODE_ENV === 'production') {
-  config.devtool = 'source-map';
-
-  config.plugins.push(new optimize.DedupePlugin());
-  config.plugins.push(new optimize.UglifyJsPlugin({
-    mangle: true,
-    compress: {
-      warnings: false,
-    },
-    comments: () => false
-  }));
-  config.plugins.push(new DefinePlugin({
-    'process.env.NODE_ENV': JSON.stringify('production'),
-  }));
+  config = Object.assign({}, config, {
+    devtool: 'source-map',
+    entry: Object.assign({}, config.entry, {
+      'sw-entry': 'sw-entry',
+    }),
+    plugins: config.plugins.concat([
+      new optimize.DedupePlugin(),
+      new optimize.UglifyJsPlugin({
+        mangle: true,
+        compress: {
+          warnings: false,
+        },
+        comments: () => false
+      }),
+      new DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify('production'),
+      }),
+      new OfflinePlugin({
+        relativePaths: false,
+        publicPath: '/',
+        caches: {
+          main: [ 'index.html',  ':rest:' ],
+        },
+        externals: [ 'index.html' ],
+        ServiceWorker: {
+          output: 'sw.js',
+          entry: 'sw-entry.js',
+        },
+        AppCache: {
+          FALLBACK: { '/': '/' },
+        },
+      })
+    ]),
+  });
 }
 
 
