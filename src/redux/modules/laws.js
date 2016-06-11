@@ -15,8 +15,10 @@ export default createReducer(Map({
   laws: Map(), // Map of Lists of Maps
   error: undefined,
 }), {
-  [FETCH_SINGLE]: (state, { payload }) =>
-    state.setIn(['laws', payload[0].groupkey], fromJS(payload))
+  [FETCH_SINGLE]: (state, { payload }) => {
+    const groupkey = Object.keys(payload)[0];
+    return state.setIn(['laws', groupkey], fromJS(payload[groupkey]));
+  }
 });
 
 

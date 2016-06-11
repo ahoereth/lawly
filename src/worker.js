@@ -1,5 +1,7 @@
 import elasticlunr from 'elasticlunr';
 
+import { isObject } from './helpers/utils';
+
 
 class LocalSearchWorker {
   static fields = [
@@ -36,6 +38,11 @@ class LocalSearchWorker {
   }
 
   indexLaw(norms) {
+    if (isObject(norms)) {
+      norms = Object.keys(norms).reduce((list, key) => {
+        return list.concat(norms[key]);
+      }, []);
+    }
     norms.forEach(norm => {
       this.index.addDoc({
         ...norm,
