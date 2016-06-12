@@ -1,4 +1,4 @@
-import localforage from 'localforage/src/localforage';
+import localforage from 'localforage';
 import stringify from 'json-stable-stringify';
 
 import localSearch from './LocalSearch';
