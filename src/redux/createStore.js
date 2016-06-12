@@ -29,6 +29,9 @@ export default function createStore(client, data = {}) {
 
   client.init(store);
 
+  /* global window, DEBUG */
+  DEBUG && (window.store = store);
+
   /* global module, require */
   if (module.hot) {
     module.hot.accept('./modules/reducer', () => {

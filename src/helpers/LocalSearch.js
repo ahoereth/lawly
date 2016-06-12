@@ -24,8 +24,8 @@ class LocalSearch {
     this.promises = {};
     this.worker.onmessage = e => this.messageHandler(e);
 
-    /* global window */
-    window.work = this.worker;
+    /* global window, DEBUG */
+    DEBUG && (window.work = this.worker);
   }
 
   messageHandler(e) {
