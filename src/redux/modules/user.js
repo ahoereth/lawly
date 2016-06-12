@@ -22,13 +22,11 @@ export default createReducer(Map({
   laws: List(), // { groupkey: { enumeration: { ...norm } } }
   error: false,
 }), {
-  [LOGIN]: (state, { payload }) => {
-    return state.merge({
-      loggedin: true,
-      email: payload.email,
-      laws: Immutable.fromJS(payload.laws || []),
-    });
-  },
+  [LOGIN]: (state, { payload }) => state.merge({
+    loggedin: true,
+    email: payload.email,
+    laws: Immutable.fromJS(payload.laws || []),
+  }),
   [LOGOUT]: (state/*, { payload }*/) => state.merge({
     loggedin: false, email: undefined, laws: Map(), error: undefined
   }),
@@ -84,13 +82,17 @@ export const star = (law, state = true) => ({
 
 // ******************************************************************
 // SELECTORS
-export const getUser = (state) => state.get('user');
+export const getUser = state => state.get('user');
 
-export const getUserLaws = (state) => state.getIn(['user', 'laws'])
-                                           .filter(norm => norm.get('starred'));
+export const getUserLaws = state => state.getIn(['user', 'laws']);
+
+export const getStarredUserLaws = createSelector(
+  [ getUserLaws ],
+  laws => laws.filter(norm => norm.get('starred'))
+);
 
 export const getIndexStars = createSelector(
-  [ getUserLaws ],
+  [ getStarredUserLaws ],
   (laws) => laws.reduce((map, norm) => {
     const key = norm.get('groupkey');
     const child = norm.get('enumeration') !== '0';
