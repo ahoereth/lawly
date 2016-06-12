@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
 import {
@@ -22,7 +22,7 @@ class SearchContainer extends React.Component {
       query: PropTypes.string,
     }).isRequired,
     query: PropTypes.string,
-    results: ImmutablePropTypes.listOf(ImmutablePropTypes.mapContains({
+    results: ImmutableTypes.listOf(ImmutableTypes.mapContains({
       groupkey: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       enumeration: PropTypes.string,
@@ -30,7 +30,7 @@ class SearchContainer extends React.Component {
     search: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     star: PropTypes.func.isRequired,
-    stars: ImmutablePropTypes.setOf(PropTypes.string).isRequired,
+    stars: ImmutableTypes.map.isRequired,
     total: PropTypes.number.isRequired,
   };
 

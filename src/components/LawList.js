@@ -19,7 +19,7 @@ const LawList = ({
   star, stars,
 }) => {
   total = total || laws.size;
-  const areAllStarred = laws.filter(law => stars.get(law.get('groupkey')) >= 0).size === laws.size;
+  const areAllStarred = !stars ? false : laws.filter(law => stars.get(law.get('groupkey')) >= 0).size === laws.size;
   const starMany = laws => laws.forEach(law => star(law, !areAllStarred));
 
   const rows = laws.map(law => {

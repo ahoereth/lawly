@@ -51,7 +51,7 @@ Search.propTypes = {
   search: PropTypes.func.isRequired,
   selectPage: PropTypes.func.isRequired,
   star: PropTypes.func.isRequired,
-  stars: ImmutableTypes.setOf(PropTypes.string).isRequired,
+  stars: ImmutableTypes.map.isRequired,
   total: PropTypes.number.isRequired,
 };
 
