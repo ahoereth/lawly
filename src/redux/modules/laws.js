@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { Map, fromJS } from 'immutable';
+import { Map, List, fromJS } from 'immutable';
 
 import createReducer from '../createReducer';
 
@@ -50,32 +50,25 @@ export const fetchLaw = (groupkey) => ({
 // SELECTORS
 export const getLaws = (state) => state.getIn(['laws', 'laws']);
 
-export const getNorms = (state) => (
+export const getNorms = (state: any) => (
   state.getIn(['laws', 'laws', state.getIn(['laws', 'selected'])])
 );
 
 export const getNormHierarchy = createSelector(
   [ getNorms ],
-  (norms) => {
-    if (typeof norms === 'undefined') { return []; }
-
-    let list = [];
+  (norms = List()) => {
+    let nodes = List(), path = List();
     norms.forEach(norm => {
-      let level = norm.get('enumeration').split('.').length - 1;
-      let currentList = list;
-      while (0 < (level--)) {
-        if (!currentList[currentList.length-1]) {
-          currentList.push({ children: [] });
-        }
-        currentList = currentList[currentList.length-1].children;
+      const depth = norm.get('enumeration').split('.').length - 1;
+      if (depth*2 > path.size) {
+        path = path.push(nodes.getIn(path).size-1, 'children');
+      } else if (depth*2 < path.size) {
+        path = path.skipLast(2);
       }
 
-      currentList.push({
-        norm: norm,
-        children: []
-      });
+      nodes = nodes.updateIn(path, List(), list => list.push(Map({ norm })));
     });
 
-    return list;
+    return nodes;
   }
 );

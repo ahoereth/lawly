@@ -1,10 +1,10 @@
 import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import Immutable from 'immutable';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutableTypes from 'react-immutable-proptypes';
 import {
   Card, CardTitle, CardMenu, CardText,
-  IconButton
+  Button, IconButton,
 } from 'react-mdl';
 
 import { slugify } from 'helpers/utils';
@@ -14,27 +14,29 @@ import styles from './norm.sss';
 
 export default class Norm extends React.Component {
   static propTypes = {
-    annotations: ImmutablePropTypes.mapContains({
+    annotations: ImmutableTypes.mapOf(ImmutableTypes.mapContains({
       starred: PropTypes.bool,
-    }).isRequired,
-    data: ImmutablePropTypes.mapContains({
+    }).isRequired).isRequired,
+    data: ImmutableTypes.mapContains({
       enumeration: PropTypes.string.isRequired,
       groupkey: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
       body: PropTypes.string.isRequired,
       foot: PropTypes.string.isRequired,
     }).isRequired,
-    descendants: PropTypes.array,
+    descendants: ImmutableTypes.list.isRequired,
     star: PropTypes.func,
   };
 
   static defaultProps = {
     annotations: Immutable.Map(),
+    descendants: Immutable.List(),
   };
 
   constructor(props) {
     super(props);
     this.state = {
+      expanded: false,
       focus: false,
     };
   }
@@ -43,19 +45,23 @@ export default class Norm extends React.Component {
     return shallowCompare(this, nextProps, nextState);
   }
 
+  expand = () => {
+    this.setState({ expanded: !this.state.expanded });
+  }
+
   focus(state) {
     this.setState({ focus: !!state });
   }
 
   render() {
     const { annotations, data, descendants, star } = this.props;
-    const { focus } = this.state;
+    const { expanded, focus } = this.state;
 
-    const starred = annotations.get('starred');
-    const lead = data.get('enumeration') === '0';
-
-    let heading = data.get('enumeration').split('.').length + 1;
-    heading = lead ? 1 : (heading > 6 ? 6 : heading);
+    const enumeration = data.get('enumeration');
+    const starred = annotations.getIn([enumeration, 'starred']);
+    const lead = enumeration === '0';
+    const level = lead ? 0 : enumeration.split('.').length;
+    const heading = lead ? 1 : (level > 6 ? 6 : level+1);
     const icons = lead ? ['book', 'book'] : ['bookmark', 'bookmark_border'];
 
     const title = !lead ? data.get('title') :
@@ -84,7 +90,13 @@ export default class Norm extends React.Component {
         <CardText>
           <Html>{data.get('body')}</Html>
           <Html>{data.get('foot')}</Html>
-          <Norms nodes={descendants} />
+          {expanded || descendants.isEmpty() ? (
+            <Norms nodes={descendants} star={star} annotations={annotations} />
+          ) : (
+            <Button raised ripple onClick={this.expand}>
+              Untergeordnete Normen anzeigen
+            </Button>
+          )}
         </CardText>
       </Card>
     );

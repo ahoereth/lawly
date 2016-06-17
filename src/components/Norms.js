@@ -1,22 +1,32 @@
 import React, { PropTypes } from 'react';
-// import ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutableTypes from 'react-immutable-proptypes';
+import { Map } from 'immutable';
 
 import { Norm } from 'components';
 
 
-const Norms = ({ nodes }) => (
+const Norms = ({ annotations, nodes, star }) => (
   <div>
-    {nodes.map(({ norm, children }, i) =>
-      <Norm key={i} data={norm} descendants={children} />
+    {nodes.map((node, i) =>
+      <Norm
+        key={i}
+        data={node.get('norm')}
+        descendants={node.get('children')}
+        annotations={annotations}
+        star={star}
+      />
     )}
   </div>
 );
 
 
 Norms.propTypes = {
-  // annotations: ImmutablePropTypes.mapOf(ImmutablePropTypes.map).isRequired,
-  nodes: PropTypes.array.isRequired,
-  // star: PropTypes.func.isRequired,
+  annotations: ImmutableTypes.mapOf(ImmutableTypes.map).isRequired,
+  nodes: ImmutableTypes.listOf(ImmutableTypes.mapContains({
+    norm: ImmutableTypes.map.isRequired,
+    children: ImmutableTypes.list,
+  })).isRequired,
+  star: PropTypes.func.isRequired,
 };
 
 

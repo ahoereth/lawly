@@ -11,8 +11,7 @@ import { Law } from 'components';
 class LawContainer extends React.Component {
   static propTypes = {
     annotations: ImmutableTypes.map.isRequired,
-    fetch: PropTypes.func.isRequired,
-    norms: PropTypes.array.isRequired,
+    norms: ImmutableTypes.list.isRequired,
     params: PropTypes.shape({
       groupkey: PropTypes.string.isRequired
     }).isRequired,
@@ -33,7 +32,7 @@ class LawContainer extends React.Component {
   render() {
     const { norms, star, annotations } = this.props;
 
-    if (!norms.length) {
+    if (norms.isEmpty()) {
       return <div>Loading...</div>;
     }
 

@@ -22,7 +22,7 @@ const Law = ({ annotations, norms, star }) => (
 
 Law.propTypes = {
   annotations: ImmutableTypes.mapOf(ImmutableTypes.map).isRequired,
-  norms: PropTypes.array.isRequired,
+  norms: ImmutableTypes.list.isRequired,
   star: PropTypes.func.isRequired,
 };
 

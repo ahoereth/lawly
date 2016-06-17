@@ -6,21 +6,25 @@ import { slugify } from 'helpers/utils';
 
 export default class NormList extends React.Component {
   static propTypes = {
-    nodes: PropTypes.arrayOf(PropTypes.shape({
+    nodes: ImmutableTypes.listOf(ImmutableTypes.mapContains({
       norm: ImmutableTypes.mapContains({
         title: PropTypes.string.isRequired,
         enumeration: PropTypes.string.isRequired,
       }).isRequired,
-      children: PropTypes.array,
+      children: ImmutableTypes.list,
     })).isRequired,
   };
 
-  listNodes = ({ norm, children }, i) => (
-    <li key={i}>
-      <a href={'#'+slugify(norm.get('title'))}>{norm.get('title')}</a>
-      {!children ? false : <ul>{children.map(this.listNodes)}</ul>}
-    </li>
-  );
+  listNodes = (node, i) => {
+    const title = node.getIn(['norm', 'title']);
+    const children = node.get('children', false);
+    return (
+      <li key={i}>
+        <a href={'#'+slugify(title)}>{title}</a>
+        {!children ? false : <ul>{children.map(this.listNodes)}</ul>}
+      </li>
+    );
+  }
 
   render() {
     const { nodes, ...otherProps} = this.props;
