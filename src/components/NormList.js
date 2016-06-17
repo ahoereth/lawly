@@ -1,38 +1,33 @@
 import React, { PropTypes } from 'react';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutableTypes from 'react-immutable-proptypes';
 
 import { slugify } from 'helpers/utils';
-import { List } from 'components';
 
 
-const NormList = ({ norms }) => {
-  let list = [];
+export default class NormList extends React.Component {
+  static propTypes = {
+    nodes: PropTypes.arrayOf(PropTypes.shape({
+      norm: ImmutableTypes.mapContains({
+        title: PropTypes.string.isRequired,
+        enumeration: PropTypes.string.isRequired,
+      }).isRequired,
+      children: PropTypes.array,
+    })).isRequired,
+  };
 
-  norms.slice(1).forEach(norm => {
-    let level = norm.get('enumeration').split('.').length - 1;
-    let currentList = list;
-    while (0 < (level--)) {
-      if (!currentList[currentList.length-1]) {
-        currentList.push({ items: [] });
-      }
-      currentList = currentList[currentList.length-1].items;
-    }
+  listNodes = ({ norm, children }, i) => (
+    <li key={i}>
+      <a href={'#'+slugify(norm.get('title'))}>{norm.get('title')}</a>
+      {!children ? false : <ul>{children.map(this.listNodes)}</ul>}
+    </li>
+  );
 
-    currentList.push({
-      name: <a href={'#'+slugify(norm.get('title'))}>{norm.get('title')}</a>,
-      items: []
-    });
-  });
-
-  return <List>{list}</List>;
-};
-
-NormList.propTypes = {
-  norms: ImmutablePropTypes.listOf(ImmutablePropTypes.mapContains({
-    title: PropTypes.string.isRequired,
-    enumeration: PropTypes.string.isRequired,
-  })).isRequired,
-};
-
-
-export default NormList;
+  render() {
+    const { nodes, ...otherProps} = this.props;
+    return (
+      <ul {...otherProps}>
+        {nodes.map(this.listNodes)}
+      </ul>
+    );
+  }
+}

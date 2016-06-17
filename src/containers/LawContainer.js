@@ -1,21 +1,22 @@
 import React, { PropTypes } from 'react';
 import Immutable from 'immutable';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
-import { fetchLaw, getLaws } from 'redux/modules/laws';
+import { selectLaw, getNormHierarchy } from 'redux/modules/laws';
 import { getUserLaws, star } from 'redux/modules/user';
 import { Law } from 'components';
 
 
 class LawContainer extends React.Component {
   static propTypes = {
-    annotations: ImmutablePropTypes.map.isRequired,
+    annotations: ImmutableTypes.map.isRequired,
     fetch: PropTypes.func.isRequired,
-    norms: ImmutablePropTypes.list.isRequired,
+    norms: PropTypes.array.isRequired,
     params: PropTypes.shape({
       groupkey: PropTypes.string.isRequired
     }).isRequired,
+    selectLaw: PropTypes.func.isRequired,
     star: PropTypes.func.isRequired,
   };
 
@@ -25,14 +26,14 @@ class LawContainer extends React.Component {
   };
 
   componentWillMount() {
-    const { fetch, params, norms } = this.props;
-    norms.isEmpty() && fetch(params.groupkey);
+    const { selectLaw, params } = this.props;
+    selectLaw(params.groupkey);
   }
 
   render() {
     const { norms, star, annotations } = this.props;
 
-    if (norms.isEmpty()) {
+    if (!norms.length) {
       return <div>Loading...</div>;
     }
 
@@ -45,7 +46,7 @@ const mapStateToProps = (state, props) => {
   const { groupkey } = props.params;
 
   return {
-    norms: getLaws(state).get(groupkey),
+    norms: getNormHierarchy(state),
     annotations: Immutable.Map(getUserLaws(state).filter(law =>
       law.get('groupkey') === groupkey
     ).map(norm => [norm.get('enumeration'), norm]))
@@ -53,7 +54,7 @@ const mapStateToProps = (state, props) => {
 };
 
 const mapDispatchToProps = {
-  fetch: fetchLaw,
+  selectLaw,
   star,
 };
 

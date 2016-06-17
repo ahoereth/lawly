@@ -1,4 +1,5 @@
 export Home from './Home';
+export Html from './Html';
 export Law from './Law';
 export LawIndex from './LawIndex';
 export LawInitialChooser from './LawInitialChooser';
@@ -7,5 +8,6 @@ export Layout from './layout';
 export List from './List';
 export Norm from './Norm';
 export NormList from './NormList';
+export Norms from './Norms';
 export Search from './Search';
 export SearchInput from './SearchInput';

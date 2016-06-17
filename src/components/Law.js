@@ -1,31 +1,28 @@
 import React, { PropTypes } from 'react';
-import ImmutablePropTypes from 'react-immutable-proptypes';
+import ImmutableTypes from 'react-immutable-proptypes';
 import { Grid, Cell } from 'react-mdl';
 
-import { Norm, NormList } from 'components';
+import { NormList, Norms } from 'components';
 
 
 const Law = ({ annotations, norms, star }) => (
   <Grid>
     <Cell col={8} className='law'>
-      {norms.map(norm => (
-        <Norm
-          key={norm.get('enumeration')}
-          data={norm}
-          star={star}
-          annotations={annotations.get(norm.get('enumeration'))}
-        />
-      ))}
+      <Norms
+        nodes={norms}
+        annotations={annotations}
+        star={star}
+      />
     </Cell>
     <Cell col={4} className='law-sidebar'>
-      <NormList norms={norms} />
+      <NormList nodes={norms} />
     </Cell>
   </Grid>
 );
 
 Law.propTypes = {
-  annotations: ImmutablePropTypes.mapOf(ImmutablePropTypes.map).isRequired,
-  norms: ImmutablePropTypes.list.isRequired,
+  annotations: ImmutableTypes.mapOf(ImmutableTypes.map).isRequired,
+  norms: PropTypes.array.isRequired,
   star: PropTypes.func.isRequired,
 };
 

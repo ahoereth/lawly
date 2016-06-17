@@ -8,7 +8,7 @@ import {
 } from 'react-mdl';
 
 import { slugify } from 'helpers/utils';
-import Html from 'components/Html';
+import { Html, Norms } from 'components';
 import styles from './norm.sss';
 
 
@@ -24,6 +24,7 @@ export default class Norm extends React.Component {
       body: PropTypes.string.isRequired,
       foot: PropTypes.string.isRequired,
     }).isRequired,
+    descendants: PropTypes.array,
     star: PropTypes.func,
   };
 
@@ -47,7 +48,7 @@ export default class Norm extends React.Component {
   }
 
   render() {
-    const { annotations, data, star } = this.props;
+    const { annotations, data, descendants, star } = this.props;
     const { focus } = this.state;
 
     const starred = annotations.get('starred');
@@ -83,6 +84,7 @@ export default class Norm extends React.Component {
         <CardText>
           <Html>{data.get('body')}</Html>
           <Html>{data.get('foot')}</Html>
+          <Norms nodes={descendants} />
         </CardText>
       </Card>
     );
