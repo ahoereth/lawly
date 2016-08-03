@@ -8,8 +8,10 @@ import ApiClient from './helpers/ApiClient';
 import createStore from './redux/createStore';
 import routes from './routes';
 
-import offlinePluginRuntime from 'offline-plugin/runtime';
-offlinePluginRuntime.install();
+/* global require, DEBUG */
+if (!DEBUG) {
+  require('offline-plugin/runtime').install();
+}
 
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
