@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
-import { fromJS, List, Map } from 'immutable';
+import { List, Map } from 'immutable';
 
 import createReducer from '../createReducer';
 import localSearch from 'helpers/LocalSearch';
@@ -10,7 +10,7 @@ import { getLaws } from './laws';
 // ******************************************************************
 // ACTIONS
 export const SEARCH = 'search/SEARCH';
-export const SEARCH_QUERY = 'search/SEARCH_QUERY';
+export const SEARCHED = 'search/SEARCHED';
 export const SELECT_PAGE = 'search/SELECT_PAGE';
 
 
@@ -21,10 +21,10 @@ export default createReducer(Map({
   page: 1,
   pageSize: 20,
   query: '',
-  results: List()
+  results: List(),
 }), {
-  [SEARCH]: (state, { payload: { results = [] } }) => state.set('results', fromJS(results)),
-  [SEARCH_QUERY]: (state, { payload = '' }) => state.set('query', payload),
+  [SEARCH]: (state, { payload = '' }) => state.set('query', payload),
+  [SEARCHED]: (state, { payload }) => state.set('results', List(payload)),
   [SELECT_PAGE]: (state, { payload = 1 }) => state.set('page', payload),
 });
 
@@ -42,7 +42,7 @@ export const selectSearchPage = (page = 1) => (dispatch, getState) => {
 /* global window */
 let debounce;
 export const search = (query = '') => (dispatch, getState) => {
-  dispatch({ type: SEARCH_QUERY, payload: query });
+  dispatch({ type: SEARCH, payload: query });
   dispatch(selectSearchPage(1));
   window.clearTimeout(debounce);
   debounce = window.setTimeout(() => {
@@ -54,7 +54,7 @@ export const search = (query = '') => (dispatch, getState) => {
       const results = refs.slice(0, 100).map(([groupkey, enumeration]) =>
         laws.get(groupkey).find(law => law.get('enumeration') === enumeration)
       );
-      dispatch({ type: SEARCH, payload: { results: List(results) } });
+      dispatch({ type: SEARCHED, payload: results });
     });
   }, 500);
 

@@ -3,20 +3,23 @@ import spies from 'chai-spies';
 import configureMockStore from 'redux-mock-store';
 chai.use(spies);
 
-import { Map, OrderedMap } from 'immutable';
+import { Map, List } from 'immutable';
 
 import functionsMiddleware from '../middlewares/functionsMiddleware';
 import reducer, {
   SEARCH,
+  SEARCHED,
   SELECT_PAGE,
+
   selectSearchPage,
   search,
+
   getQuery,
   getPage,
   getPageSize,
-  getLawsByQuery,
-  // getLawsByQueryAndPage,
-} from './search';
+  // getResults,
+  // getResultsByPage,
+} from 'redux/modules/search';
 
 
 const mockStore = configureMockStore([ functionsMiddleware() ]);
@@ -27,6 +30,7 @@ describe('search', () => {
     page: 1,
     pageSize: 20,
     query: '',
+    results: List(),
   });
 
   describe('reducer', () => {
@@ -40,6 +44,12 @@ describe('search', () => {
       expect(state.get('query')).to.equal('myquery');
     });
 
+    it('should handle SEARCHED', () => {
+      const payload = [ 'a', 'b' ];
+      const state = reducer({}, { type: SEARCHED, payload });
+      expect(state.get('results')).to.equal(List(payload));
+    });
+
     it('should handle SELECT_PAGE', () => {
       const state = reducer({}, { type: SELECT_PAGE, payload: 12 });
       expect(state.get('page')).to.equal(12);
@@ -48,60 +58,64 @@ describe('search', () => {
 
 
   describe('actions', () => {
-    it('should create an action to select a page', () => {
+    it('selectSearchPage() should dispatch SELECT_PAGE', () => {
       const expectedAction = { type: SELECT_PAGE, payload: 12 };
       const store = mockStore(initialState);
       store.dispatch(selectSearchPage(12));
       expect(store.getActions()).to.contain(expectedAction);
     });
 
-    it('should create an action search', () => {
+    it('search() should dispatch SEARCH', () => {
       const query = 'myquery';
       const expectedAction = { type: SEARCH, payload: query };
       const store = mockStore(initialState);
       store.dispatch(search(query));
       expect(store.getActions()).to.contain(expectedAction);
     });
+
+    it('search() should dispatch SEARCHED', () => {
+      // TODO
+    });
   });
 
 
   describe('selectors', () => {
-    it('should provide a selector to get the search query', () => {
+    it('should provide getQuery', () => {
       const query = 'myquery';
       const state = Map({ search: Map({ query }) });
       expect(getQuery(state)).to.equal(query);
     });
 
-    it('should provide a selector to get the current page', () => {
+    it('should provide getPage', () => {
       const page = 12;
       const state = Map({ search: Map({ page }) });
       expect(getPage(state)).to.equal(page);
     });
 
-    it('should provide a selector to get the page size', () => {
+    it('should provide getPageSize', () => {
       const pageSize = 12;
       const state = Map({ search: Map({ pageSize }) });
       expect(getPageSize(state)).to.equal(pageSize);
     });
 
-    it('should provide a selector to get the laws by query', () => {
-      const state = Map({
-        law_index: Map({
-          laws: OrderedMap({
-            na: Map({ groupkey: 'na', title: 'nope' }),
-            no: Map({ groupkey: 'no', title: 'yes' }),
-            yo: Map({ groupkey: 'yo', title: 'neither' }),
-          }),
-        }),
-        search: Map({
-          query: 'y'
-        }),
-      });
-      const result = OrderedMap({
-        no: Map({ groupkey: 'no', title: 'yes' }),
-        yo: Map({ groupkey: 'yo', title: 'neither' }),
-      });
-      expect(getLawsByQuery(state)).to.equal(result);
-    });
+    // it('should provide getResults and getResultsByPage', () => {
+    //   const state = Map({
+    //     law_index: Map({
+    //       laws: List([
+    //         Map({ groupkey: 'na', title: 'nope' }),
+    //         Map({ groupkey: 'no', title: 'yes' }),
+    //         Map({ groupkey: 'yo', title: 'neither' }),
+    //       ]),
+    //     }),
+    //     search: Map({
+    //       query: 'y'
+    //     }),
+    //   });
+    //   const result = List([
+    //     Map({ groupkey: 'no', title: 'yes' }),
+    //     Map({ groupkey: 'yo', title: 'neither' }),
+    //   ]);
+    //   expect(getResults(state)).to.equal(result);
+    // });
   });
 });
