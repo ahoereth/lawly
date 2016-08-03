@@ -27,7 +27,7 @@ const LawIndex = ({
 }) => {
   return (
     <Grid>
-      <Cell col={12} table={8} phone={4}>
+      <Cell col={12} tablet={8} phone={4}>
         <LawCollectionChooser
           collections={collections}
           selected={collection.get('title')}

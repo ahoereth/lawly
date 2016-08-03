@@ -5,6 +5,8 @@ import {
   Textfield, Button
 } from 'react-mdl';
 
+import { omit } from 'helpers/utils';
+
 
 class LoginForm extends React.Component {
   static propTypes = {
@@ -53,7 +55,7 @@ class LoginForm extends React.Component {
 
     return (
       <form onSubmit={this.submit}>
-        <Card shadow={shadow} {...otherProps}>
+        <Card shadow={shadow} {...omit(otherProps, 'login', 'user')}>
           <CardTitle>Login</CardTitle>
           <CardText>
               <Textfield
