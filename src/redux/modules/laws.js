@@ -2,6 +2,7 @@ import { createSelector } from 'reselect';
 import { Map, List, fromJS } from 'immutable';
 
 import createReducer from '../createReducer';
+import { isObject } from 'helpers/utils';
 
 
 // ******************************************************************
@@ -18,15 +19,10 @@ export default createReducer(Map({
   selected: undefined,
   error: undefined,
 }), {
-  [SELECT]: (state, { payload }) => {
-    const groupkey = Object.keys(payload)[0];
-    return state
-      .set('selected', groupkey)
-      .setIn(['laws', groupkey], fromJS(payload[groupkey]));
-  },
+  [SELECT]: (state, { payload }) => state.set('selected', payload),
   [FETCH_SINGLE]: (state, { payload }) => {
-    const groupkey = Object.keys(payload)[0];
-    return state.setIn(['laws', groupkey], fromJS(payload[groupkey]));
+    payload = isObject(payload) ? payload[Object.keys(payload)[0]] : payload;
+    return state.setIn(['laws', payload[0].groupkey], fromJS(payload));
   }
 });
 
@@ -34,15 +30,15 @@ export default createReducer(Map({
 
 // ******************************************************************
 // ACTION CREATORS
-export const selectLaw = (groupkey) => ({
-  type: SELECT,
-  promise: api => api.get({ name: 'law', groupkey, cachable: true })
-});
-
-export const fetchLaw = (groupkey) => ({
+export const fetchLaw = groupkey => ({
   type: FETCH_SINGLE,
   promise: api => api.get({ name: 'law', groupkey, cachable: true })
 });
+
+export const selectLaw = groupkey => dispatch => {
+  dispatch(fetchLaw(groupkey));
+  dispatch({ type: SELECT, payload: groupkey });
+};
 
 
 
