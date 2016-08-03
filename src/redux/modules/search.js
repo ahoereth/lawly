@@ -39,27 +39,27 @@ export const selectSearchPage = (page = 1) => (dispatch, getState) => {
   dispatch(push(`/suche/${query}${pagePath}`));
 };
 
-/* global window */
-let debounce;
+
 export const search = (query = '') => (dispatch, getState) => {
   dispatch({ type: SEARCH, payload: query });
   dispatch(selectSearchPage(1));
-  window.clearTimeout(debounce);
-  debounce = window.setTimeout(() => {
-    const timer = Date.now();
-    localSearch.search(query).then(result => {
-      console.log(`search timer: ${Date.now() - timer}ms`);
-      const refs = result.map(obj => obj.ref.split('::'));
-      const laws = getLaws(getState());
-      const results = refs.slice(0, 100).map(([groupkey, enumeration]) =>
-        laws.get(groupkey).find(law => law.get('enumeration') === enumeration)
-      );
-      dispatch({ type: SEARCHED, payload: results });
-    });
-  }, 500);
+  return dispatch({
+    type: SEARCHED,
+    meta: { debounce: { time: 500 } },
+    promise: () => {
+      const timer = Date.now();
+      return localSearch.search(query).then(result => {
+        console.log(`local search timer: ${Date.now() - timer}ms`);
+        const laws = getLaws(getState());
+        return result.slice(0, 100)
+          .map(obj => obj.ref.split('::'))
+          .map(([k, e]) => laws.get(k).find(l => l.get('enumeration') === e));
+      });
+    }
+  });
 
   // dispatch({
-  //   type: SEARCH,
+  //   type: SEARCHED,
   //   meta: { debounce: { time: 500 } },
   //   promise: api => api.get({ name: 'laws', search: query })
   // });
