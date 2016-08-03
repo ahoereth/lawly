@@ -12,8 +12,8 @@ import { getIndexStars } from './user';
 export const FETCH = 'law_index/FETCH';
 export const SELECT_INITIAL = 'law_index/SELECT_INITIAL';
 export const SELECT_PAGE = 'law_index/SELECT_PAGE';
-export const FILTER = 'law_index/FILTER';
 export const SELECT_COLLECTION = 'law_index/SELECT_COLLECTION';
+export const FILTER = 'law_index/FILTER';
 
 
 
@@ -82,17 +82,19 @@ export const filterLawIndex = (filters = {}) => (dispatch) => {
 // SELECTORS
 export const getLawIndex = (state) => state.getIn(['law_index', 'laws']);
 
-export const getPageSize = (state) => state.getIn(['law_index', 'pageSize']);
-
 export const getPage = (state) => state.getIn(['law_index', 'page']);
 
-export const getInitials = (state) => state.getIn(['law_index', 'initials']);
+export const getPageSize = (state) => state.getIn(['law_index', 'pageSize']);
 
 export const getInitial = (state) => state.getIn(['law_index', 'initial']);
 
-export const getCollectionTitle = state => state.getIn(['law_index', 'collection']);
+export const getInitials = (state) => state.getIn(['law_index', 'initials']);
 
 export const getCollections = state => state.getIn(['law_index', 'collections']);
+
+export const getCollectionTitle = state => state.getIn(['law_index', 'collection']);
+
+export const getFilters = (state) => state.getIn(['law_index', 'filters']);
 
 export const getCollectionTitles = createSelector(
   [ getCollections ],
@@ -110,9 +112,7 @@ export const getCollection = createSelector(
   }
 );
 
-export const getFilters = (state) => state.getIn(['law_index', 'filters']);
-
-const getLawsByCollection = createSelector(
+export const getLawsByCollection = createSelector(
   [ getLawIndex, getCollection ],
   (laws, collection) => {
     if (!collection.get('laws')) { return laws; }
@@ -123,7 +123,7 @@ const getLawsByCollection = createSelector(
   }
 );
 
-const getLawsByInitial = createSelector(
+export const getLawsByInitial = createSelector(
   [ getLawsByCollection, getInitial ],
   (laws, char) => {
     if (!char) { return laws; }
@@ -133,7 +133,7 @@ const getLawsByInitial = createSelector(
 
 // Filter laws of the specified initial by starred if requested.
 // Wrapped in its own selector to utilize memorization.
-const getStarFilteredLawsByInitial = createSelector(
+export const getStarFilteredLawsByInitial = createSelector(
   [ getLawsByInitial, getFilters, getIndexStars ],
   (laws, filters, stars) => {
     if (filters.get('starred')) {
@@ -147,7 +147,7 @@ const getStarFilteredLawsByInitial = createSelector(
 // Filter laws of the specified initial probably already filtered by starred
 // further more by groupkey if requested.
 // Wrapped in its own selector to utilize memorization.
-const getStarAndKeyFilteredLawsByInitial = createSelector(
+export const getStarAndKeyFilteredLawsByInitial = createSelector(
   [ getStarFilteredLawsByInitial, getFilters ],
   (laws, filters) => {
     if (filters.get('groupkey')) {
@@ -164,7 +164,7 @@ const getStarAndKeyFilteredLawsByInitial = createSelector(
 // Filter laws of the specified initial probably already filtered by starred
 // and groupkey further more by title if requested.
 // Wrapped in its own selector to utilize memorization.
-const getFilteredLaws = createSelector(
+export const getFilteredLaws = createSelector(
   [ getStarAndKeyFilteredLawsByInitial, getFilters ],
   (laws, filters) => {
     if (filters.get('title')) {
