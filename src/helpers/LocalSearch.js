@@ -30,9 +30,15 @@ class LocalSearch {
 
   messageHandler(e) {
     const { type, id, val } = e.data;
-    if (type !== 'response') { return; }
-    this.promises[id].resolve(val);
-    delete this.promises[id];
+    switch (type) {
+      case 'response':
+        this.promises[id].resolve(val);
+        delete this.promises[id];
+        break;
+      case 'log':
+        console.log('worker log', val);
+        break;
+    }
   }
 
   indexLaw(norms) {

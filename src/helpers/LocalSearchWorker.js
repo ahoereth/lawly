@@ -1,6 +1,16 @@
 import elasticlunr from 'elasticlunr';
 
-import { isObject } from './helpers/utils';
+import { isObject } from 'helpers/utils';
+
+
+/* global self */
+const worker = self;
+
+
+// function log(...val) {
+//   val = val.length === 1 ? val[0] : val;
+//   worker.postMessage({ type: 'log', val });
+// }
 
 
 class LocalSearchWorker {
@@ -35,6 +45,8 @@ class LocalSearchWorker {
 
     this.index.pipeline.before(oldTrimmer, newTrimmer);
     this.index.pipeline.remove(oldTrimmer);
+
+    this.index.saveDocument(false);
   }
 
   indexLaw(norms) {
@@ -43,12 +55,10 @@ class LocalSearchWorker {
         return list.concat(norms[key]);
       }, []);
     }
-    norms.forEach(norm => {
-      this.index.addDoc({
-        ...norm,
-        id: norm.groupkey + '::' + norm.enumeration
-      });
-    });
+
+    norms.forEach(norm => this.index.addDoc({
+      ...norm, id: norm.groupkey + '::' + norm.enumeration
+    }, false));
   }
 
   search(query) {
@@ -66,12 +76,11 @@ class LocalSearchWorker {
 const search = new LocalSearchWorker();
 
 
-/* global self */
-self.onmessage = function(e) {
+worker.onmessage = function(e) {
   const { type, id, cmd, args } = e.data;
   if (type === 'response') { return; }
   const val = search[cmd](...args);
   if (id) {
-    self.postMessage({ type: 'response', id, val });
+    worker.postMessage({ type: 'response', id, val });
   }
 };

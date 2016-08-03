@@ -21,7 +21,7 @@ let config = {
   context: path.resolve(__dirname, 'src'),
   entry: {
     app: 'client',
-    worker:'worker',
+    worker: 'helpers/LocalSearchWorker',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
