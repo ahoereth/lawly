@@ -78,9 +78,9 @@ const search = new LocalSearchWorker();
 
 worker.onmessage = function(e) {
   const { type, id, cmd, args } = e.data;
-  if (type === 'response') { return; }
+  if (type === 'response' || type === 'log') { return; }
   const val = search[cmd](...args);
   if (id) {
-    worker.postMessage({ type: 'response', id, val });
+    worker.postMessage({ type: 'response', cmd, id, val });
   }
 };

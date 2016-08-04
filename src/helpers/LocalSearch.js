@@ -2,7 +2,8 @@ import stringify from 'json-stable-stringify';
 
 
 class Deferred {
-  constructor() {
+  constructor(data) {
+    this.data = data;
     this.promise = new Promise((resolve, reject) => {
       this.resolve = resolve;
       this.reject  = reject;
@@ -29,11 +30,19 @@ class LocalSearch {
   }
 
   messageHandler(e) {
-    const { type, id, val } = e.data;
+    const { type, cmd, id, val } = e.data;
     switch (type) {
+      case 'request':
+        break;
       case 'response':
-        this.promises[id].resolve(val);
-        delete this.promises[id];
+        switch (cmd) {
+          case 'search':
+            this.promises[id].resolve(
+              this.parseResult({ result: val, ...this.promises[id].data })
+            );
+            delete this.promises[id];
+            break;
+        }
         break;
       case 'log':
         console.log('worker log', val);
@@ -45,11 +54,26 @@ class LocalSearch {
     this.worker.postMessage({ cmd: 'indexLaw', args: [norms] });
   }
 
-  search(query) {
-    const msg = { cmd: 'search', args: [query] };
+  parseResult({ result, laws, limit }) {
+    // Currently parsing the result outside of the web worker because
+    // sending the required laws to the worker is expensive.
+    return {
+      total: result.length,
+      results: result.slice(0, limit || result.length).map(obj => {
+        const [k, n] = obj.ref.split('::');
+        return {
+          groupkey: k, enumeration: n,
+          title: laws.get(k).find(l => l.get('enumeration') === n).get('title')
+        };
+      }),
+    };
+  }
+
+  search(query, data) {
+    const msg = { type: 'request', cmd: 'search', args: [query] };
     const id = stringify(msg); // TODO: Hash instead of full json?
+    this.promises[id] = new Deferred(data);
     this.worker.postMessage({ ...msg, id });
-    this.promises[id] = new Deferred();
     return this.promises[id].promise;
   }
 }
