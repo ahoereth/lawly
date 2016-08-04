@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 
 import {
   search,
-  getResultsByPage, getPage, getQuery, getPageSize,
+  getQuery, getPageSize,
+  getLocalResultsByPage,
+  getRemoteResultsByPage,
   selectSearchPage,
 } from 'redux/modules/search';
 import {
@@ -14,39 +16,60 @@ import {
 import { Search } from 'components';
 
 
+const mapStateToProps = (state) => ({
+  local: getLocalResultsByPage(state), // results, total, page
+  remote: getRemoteResultsByPage(state), // results, total, page
+  pageSize: getPageSize(state),
+  query: getQuery(state),
+  stars: getIndexStars(state),
+});
+
+
+const mapDispatchToProps = {
+  search,
+  star,
+  selectPage: selectSearchPage,
+};
+
+
+const SearchResultType = PropTypes.shape({
+  page: PropTypes.number,
+  results: ImmutableTypes.listOf(ImmutableTypes.mapContains({
+    enumeration: PropTypes.string,
+    groupkey: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+  }).isRequired),
+  total: PropTypes.number,
+}).isRequired;
+
+
 class SearchContainer extends React.Component {
   static propTypes = {
-    page: PropTypes.number,
+    local: SearchResultType,
     pageSize: PropTypes.number,
     params: PropTypes.shape({
       query: PropTypes.string,
     }).isRequired,
     query: PropTypes.string,
-    results: ImmutableTypes.listOf(ImmutableTypes.mapContains({
-      groupkey: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
-      enumeration: PropTypes.string,
-    })).isRequired,
+    remote: SearchResultType,
     search: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     star: PropTypes.func.isRequired,
     stars: ImmutableTypes.map.isRequired,
-    total: PropTypes.number.isRequired,
   };
 
   componentDidMount() {
-    const { search, params, query, selectPage, page  } = this.props;
+    const { search, params, query, selectPage, remote } = this.props;
     search(params.query || query); // Initialize search.
-    selectPage(params.page ? parseInt(params.page, 10) : page); // Init page.
+    selectPage(params.page ? parseInt(params.page, 10) : remote.page); // Init page.
   }
 
   render() {
     const {
-      results,
+      remote,
+      // local,
       search,
       selectPage,
-      total,
-      page,
       pageSize,
       query,
       star,
@@ -55,11 +78,11 @@ class SearchContainer extends React.Component {
 
     return (
       <Search
-        results={results}
-        page={page}
+        results={remote.results}
+        page={remote.page}
+        total={remote.total}
         pageSize={pageSize}
         selectPage={selectPage}
-        total={total}
         search={search}
         query={query}
         star={star}
@@ -68,21 +91,6 @@ class SearchContainer extends React.Component {
     );
   }
 }
-
-
-const mapStateToProps = (state) => ({
-  ...getResultsByPage(state), // results, total
-  page: getPage(state),
-  pageSize: getPageSize(state),
-  query: getQuery(state),
-  stars: getIndexStars(state),
-});
-
-const mapDispatchToProps = {
-  search,
-  star,
-  selectPage: selectSearchPage,
-};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchContainer);
