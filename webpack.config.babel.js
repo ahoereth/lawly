@@ -29,35 +29,15 @@ let config = {
     filename: '[name].js'
   },
   resolve: {
-    modules: [
-      'node_modules',
-      path.resolve(__dirname, 'src'),
-    ],
+    modules: [ 'node_modules', path.resolve(__dirname, 'src') ],
+    extensions: [ '.js', '.ts', '.tsx' ]
   },
   module: {
     loaders: [
-      {
-        test: /\.js$/,
-        loader: 'babel',
-        exclude: /node_modules/
-      }, {
-        test: /\.js$/,
-        loader: 'eslint-loader',
-        exclude: /node_modules/
-      }, {
-        test: /\.css$/,
-        loaders: [ 'style', 'css', 'postcss' ]
-      }, {
-        test: /\.sss$/,
-        loaders: [
-          'style',
-          'css?localIdentName=[name]_[local]',
-          'postcss?parser=sugarss'
-        ]
-      }, {
-        test: /\.(woff|woff2|eot|ttf)$/,
-        loader: 'file-loader?name=[name].[ext]'
-      }
+      { test: /\.js$/, loaders: [ 'babel', 'eslint' ], exclude: /node_modules/},
+      { test: /\.css$/, loaders: [ 'style', 'css', 'postcss' ] },
+      { test: /\.sss$/, loaders: [ 'style', 'css', 'postcss?parser=sugarss' ] },
+      { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' }
     ]
   },
   externals: {
