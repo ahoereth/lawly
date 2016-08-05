@@ -55,11 +55,12 @@ class LocalSearch {
   }
 
   parseResult({ result, laws, limit }) {
+    limit = !limit || limit > result.length ? result.length : limit;
     // Currently parsing the result outside of the web worker because
     // sending the required laws to the worker is expensive.
     return {
-      total: result.length,
-      results: result.slice(0, limit || result.length).map(obj => {
+      total: limit,
+      results: result.slice(0, limit).map(obj => {
         const [k, n] = obj.ref.split('::');
         return {
           groupkey: k, enumeration: n,
