@@ -5,10 +5,12 @@ import { connect } from 'react-redux';
 import { pick } from 'helpers/utils';
 import {
   search,
-  selectSearchPage,
+  selectPage,
+  getPage,
   getPageSize,
   getQuery,
   getResultsByPage,
+  getTotal,
 } from 'redux/modules/search';
 import {
   star,
@@ -18,17 +20,19 @@ import { Search } from 'components';
 
 
 const mapStateToProps = (state) => ({
-  ...getResultsByPage(state), // results, total, page
+  page: getPage(state),
   pageSize: getPageSize(state),
   query: getQuery(state),
+  results: getResultsByPage(state),
   stars: getIndexStars(state),
+  total: getTotal(state),
 });
 
 
 const mapDispatchToProps = {
   search,
   star,
-  selectPage: selectSearchPage,
+  selectPage,
 };
 
 
