@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
+import { pick } from 'helpers/utils';
 import {
   search,
   selectSearchPage,
@@ -54,31 +55,8 @@ class SearchContainer extends React.Component {
   }
 
   render() {
-    const {
-      page,
-      pageSize,
-      query,
-      results,
-      search,
-      selectPage,
-      star,
-      stars,
-      total,
-    } = this.props;
-
-    return (
-      <Search
-        page={page}
-        pageSize={pageSize}
-        query={query}
-        results={results}
-        selectPage={selectPage}
-        search={search}
-        star={star}
-        stars={stars}
-        total={total}
-      />
-    );
+    const props = pick(this.props, Object.keys(Search.propTypes));
+    return <Search {...props} />;
   }
 }
 

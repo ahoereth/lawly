@@ -156,8 +156,8 @@ export function obj2query(obj = null, seperator = false) {
  * @param  {string} needles...
  * @return {object/array}
  */
-export function omit(haystack/*, needles... */) {
-  const needles = Array.prototype.slice.call(arguments, 1);
+export function omit(haystack, ...needles) {
+  needles = Array.isArray(needles[0]) ? needles[0] : needles;
   if (isObject(haystack)) {
     // Omit object properties by keys. Generate a list of keys to keep, and
     // then create a new object based on them.
@@ -179,11 +179,11 @@ export function omit(haystack/*, needles... */) {
  * @param  {string} needles...
  * @return {object}
  */
-export function pick(haystack/*, needles... */) {
-  const needles = Array.prototype.slice.call(arguments, 1);
-  return needles.reduce((r, k) => {
-    if (isUndefined(haystack[k])) return r;
-    return ({...r, [k]: haystack[k] });
+export function pick(haystack, ...needles) {
+  needles = Array.isArray(needles[0]) ? needles[0] : needles;
+  return needles.reduce((agg, key) => {
+    if (haystack.hasOwnProperty(key)) { agg[key] = haystack[key]; }
+    return agg;
   }, {});
 }
 
