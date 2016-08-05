@@ -6,37 +6,47 @@ chai.use(spies);
 import { Map, List } from 'immutable';
 
 import functionsMiddleware from '../middlewares/functionsMiddleware';
+import promiseMiddleware from '../middlewares/promiseMiddleware';
 import reducer, {
   SEARCH,
   SEARCHED,
   SELECT_PAGE,
 
-  selectSearchPage,
+  selectPage,
   search,
 
   getQuery,
   getPage,
   getPageSize,
-  // getResults,
-  // getResultsByPage,
-} from 'redux/modules/search';
+  getResults,
+  getTotal,
+  getResultsByPage,
+} from './search';
 
 
-const mockStore = configureMockStore([ functionsMiddleware() ]);
+const mockApi = {};
+const mockStore = configureMockStore([
+  functionsMiddleware(),
+  promiseMiddleware(mockApi)
+]);
 
 
 describe('search', () => {
-  const initialState = Map({
+  const localState = Map({
     page: 1,
     pageSize: 20,
     query: '',
     results: List(),
+    total: 0,
+  });
+
+  const initialState = Map({
+    search: localState,
   });
 
   describe('reducer', () => {
     it('should return the initial state', () => {
-      const state = reducer(undefined, {});
-      expect(state).to.equal(initialState);
+      expect(reducer(undefined, {})).to.equal(localState);
     });
 
     it('should handle SEARCH', () => {
@@ -45,9 +55,10 @@ describe('search', () => {
     });
 
     it('should handle SEARCHED', () => {
-      const payload = [ 'a', 'b' ];
+      const payload = { total: 2, results: [ 'a', 'b' ] };
       const state = reducer({}, { type: SEARCHED, payload });
-      expect(state.get('results')).to.equal(List(payload));
+      expect(state.get('results')).to.equal(List(payload.results));
+      expect(state.get('total')).to.equal(payload.total);
     });
 
     it('should handle SELECT_PAGE', () => {
@@ -58,64 +69,71 @@ describe('search', () => {
 
 
   describe('actions', () => {
-    it('selectSearchPage() should dispatch SELECT_PAGE', () => {
+    it('selectPage() should dispatch SELECT_PAGE', () => {
       const expectedAction = { type: SELECT_PAGE, payload: 12 };
-      const store = mockStore(initialState);
-      store.dispatch(selectSearchPage(12));
+      const store = mockStore(localState);
+      store.dispatch(selectPage(12));
       expect(store.getActions()).to.contain(expectedAction);
     });
 
     it('search() should dispatch SEARCH', () => {
-      const query = 'myquery';
-      const expectedAction = { type: SEARCH, payload: query };
-      const store = mockStore(initialState);
-      store.dispatch(search(query));
+      const expectedAction = { type: SEARCH, payload: 'foo' };
+      mockApi.search = () => Promise.resolve();
+      const store = mockStore(localState);
+      store.dispatch(search('foo'));
       expect(store.getActions()).to.contain(expectedAction);
     });
 
-    it('search() should dispatch SEARCHED', () => {
-      // TODO
+    it('search() should dispatch SEARCHED', (done) => {
+      const action = { type: SEARCHED, payload: { total: 2, results: [] } };
+      mockApi.search = chai.spy(() => Promise.resolve(action.payload));
+      const store = mockStore(localState);
+      store.dispatch(search()).then((dispatchedAction) => {
+        expect(mockApi.search).to.be.called.once;
+        expect(dispatchedAction).to.deep.equal(action);
+      }).then(done, done);
     });
   });
 
 
   describe('selectors', () => {
-    it('should provide getQuery', () => {
-      const query = 'myquery';
-      const state = Map({ search: Map({ query }) });
-      expect(getQuery(state)).to.equal(query);
+    it('should provide getQuery()', () => {
+      const state = initialState.setIn(['search', 'query'], 'foo');
+      expect(getQuery(state)).to.equal('foo');
     });
 
-    it('should provide getPage', () => {
-      const page = 12;
-      const state = Map({ search: Map({ page }) });
-      expect(getPage(state)).to.equal(page);
+    it('should provide getPage()', () => {
+      const state = initialState.setIn(['search', 'page'], 7);
+      expect(getPage(state)).to.equal(7);
     });
 
-    it('should provide getPageSize', () => {
-      const pageSize = 12;
-      const state = Map({ search: Map({ pageSize }) });
-      expect(getPageSize(state)).to.equal(pageSize);
+    it('should provide getPageSize()', () => {
+      const state = initialState.setIn(['search', 'pageSize'], 12);
+      expect(getPageSize(state)).to.equal(12);
     });
 
-    // it('should provide getResults and getResultsByPage', () => {
-    //   const state = Map({
-    //     law_index: Map({
-    //       laws: List([
-    //         Map({ groupkey: 'na', title: 'nope' }),
-    //         Map({ groupkey: 'no', title: 'yes' }),
-    //         Map({ groupkey: 'yo', title: 'neither' }),
-    //       ]),
-    //     }),
-    //     search: Map({
-    //       query: 'y'
-    //     }),
-    //   });
-    //   const result = List([
-    //     Map({ groupkey: 'no', title: 'yes' }),
-    //     Map({ groupkey: 'yo', title: 'neither' }),
-    //   ]);
-    //   expect(getResults(state)).to.equal(result);
-    // });
+    it('should provide getResults()', () => {
+      const results = List([ Map(), Map() ]);
+      const state = initialState.setIn(['search', 'results'], results);
+      expect(getResults(state)).to.equal(results);
+    });
+
+    it('should provide getTotal()', () => {
+      const state = initialState.setIn(['search', 'total'], 7);
+      expect(getTotal(state)).to.equal(7);
+    });
+
+    it('should provide getResultsByPage()', () => {
+      const results = List([
+        Map({ groupkey: 'no', title: 'nope' }),
+        Map({ groupkey: 'na', title: 'neither' }),
+        Map({ groupkey: 'yop', title: 'exactly' }),
+        Map({ groupkey: 'yes', title: 'this as well' }),
+      ]);
+      const state = initialState.mergeIn(['search'], Map({
+        results: results, total: 4, page: 2, pageSize: 2,
+      }));
+      expect(getResultsByPage(state)).to.equal(results.slice(-2));
+    });
   });
 });
