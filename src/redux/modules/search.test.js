@@ -8,6 +8,8 @@ import { Map, List } from 'immutable';
 import functionsMiddleware from '../middlewares/functionsMiddleware';
 import promiseMiddleware from '../middlewares/promiseMiddleware';
 import reducer, {
+  SCOPE,
+
   SEARCH,
   SEARCHED,
   SELECT_PAGE,
@@ -41,7 +43,7 @@ describe('search', () => {
   });
 
   const initialState = Map({
-    search: localState,
+    [SCOPE]: localState,
   });
 
   describe('reducer', () => {
@@ -98,28 +100,28 @@ describe('search', () => {
 
   describe('selectors', () => {
     it('should provide getQuery()', () => {
-      const state = initialState.setIn(['search', 'query'], 'foo');
+      const state = initialState.setIn([SCOPE, 'query'], 'foo');
       expect(getQuery(state)).to.equal('foo');
     });
 
     it('should provide getPage()', () => {
-      const state = initialState.setIn(['search', 'page'], 7);
+      const state = initialState.setIn([SCOPE, 'page'], 7);
       expect(getPage(state)).to.equal(7);
     });
 
     it('should provide getPageSize()', () => {
-      const state = initialState.setIn(['search', 'pageSize'], 12);
+      const state = initialState.setIn([SCOPE, 'pageSize'], 12);
       expect(getPageSize(state)).to.equal(12);
     });
 
     it('should provide getResults()', () => {
       const results = List([ Map(), Map() ]);
-      const state = initialState.setIn(['search', 'results'], results);
+      const state = initialState.setIn([SCOPE, 'results'], results);
       expect(getResults(state)).to.equal(results);
     });
 
     it('should provide getTotal()', () => {
-      const state = initialState.setIn(['search', 'total'], 7);
+      const state = initialState.setIn([SCOPE, 'total'], 7);
       expect(getTotal(state)).to.equal(7);
     });
 
@@ -130,7 +132,7 @@ describe('search', () => {
         Map({ groupkey: 'yop', title: 'exactly' }),
         Map({ groupkey: 'yes', title: 'this as well' }),
       ]);
-      const state = initialState.mergeIn(['search'], Map({
+      const state = initialState.mergeIn([SCOPE], Map({
         results: results, total: 4, page: 2, pageSize: 2,
       }));
       expect(getResultsByPage(state)).to.equal(results.slice(-2));

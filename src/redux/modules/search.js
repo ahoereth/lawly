@@ -5,6 +5,9 @@ import { List, Map, fromJS } from 'immutable';
 import createReducer from '../createReducer';
 
 
+export const SCOPE = 'search';
+
+
 // ******************************************************************
 // ACTIONS
 export const SEARCH = 'search/SEARCH';
@@ -55,15 +58,15 @@ export const search = (query = '') => (dispatch) => {
 
 // ******************************************************************
 // SELECTORS
-export const getQuery = state => state.getIn(['search', 'query'], '');
+export const getQuery = state => state.getIn([SCOPE, 'query'], '');
 
-export const getPage = state => state.getIn(['search', 'page'], 1);
+export const getPage = state => state.getIn([SCOPE, 'page'], 1);
 
-export const getPageSize = state => state.getIn(['search', 'pageSize'], 20);
+export const getPageSize = state => state.getIn([SCOPE, 'pageSize'], 20);
 
-export const getResults = state => state.getIn(['search', 'results'], List());
+export const getResults = state => state.getIn([SCOPE, 'results'], List());
 
-export const getTotal = state => state.getIn(['search', 'total'], 0);
+export const getTotal = state => state.getIn([SCOPE, 'total'], 0);
 
 export const getResultsByPage = createSelector(
   [ getResults, getPage, getPageSize ],
