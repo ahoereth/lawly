@@ -15,7 +15,7 @@ const Search  = ({
   selectPage,
   star,
   stars,
-  total
+  total,
 }) => (
   <Grid>
     <Cell col={12}>
@@ -31,23 +31,19 @@ const Search  = ({
         page={page}
         pageSize={pageSize}
         selectPage={selectPage}
-        total={total}
         star={star}
         stars={stars}
+        total={total}
       />
     </Cell>
   </Grid>
 );
 
 Search.propTypes = {
-  page: PropTypes.number,
+  page: PropTypes.number.isRequired,
   pageSize: PropTypes.number,
   query: PropTypes.string,
-  results: ImmutableTypes.listOf(ImmutableTypes.mapContains({
-    groupkey: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-    enumeration: PropTypes.string,
-  })).isRequired,
+  results: ImmutableTypes.list.isRequired,
   search: PropTypes.func.isRequired,
   selectPage: PropTypes.func.isRequired,
   star: PropTypes.func.isRequired,

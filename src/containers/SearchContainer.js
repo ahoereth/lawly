@@ -4,21 +4,20 @@ import { connect } from 'react-redux';
 
 import {
   search,
-  getQuery, getPageSize,
-  getLocalResultsByPage,
-  getRemoteResultsByPage,
   selectSearchPage,
+  getPageSize,
+  getQuery,
+  getResultsByPage,
 } from 'redux/modules/search';
 import {
-  getIndexStars,
   star,
+  getIndexStars,
 } from 'redux/modules/user';
 import { Search } from 'components';
 
 
 const mapStateToProps = (state) => ({
-  local: getLocalResultsByPage(state), // results, total, page
-  remote: getRemoteResultsByPage(state), // results, total, page
+  ...getResultsByPage(state), // results, total, page
   pageSize: getPageSize(state),
   query: getQuery(state),
   stars: getIndexStars(state),
@@ -32,61 +31,52 @@ const mapDispatchToProps = {
 };
 
 
-const SearchResultType = PropTypes.shape({
-  page: PropTypes.number,
-  results: ImmutableTypes.listOf(ImmutableTypes.mapContains({
-    enumeration: PropTypes.string,
-    groupkey: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
-  }).isRequired),
-  total: PropTypes.number,
-}).isRequired;
-
-
 class SearchContainer extends React.Component {
   static propTypes = {
-    local: SearchResultType,
+    page: PropTypes.number.isRequired,
     pageSize: PropTypes.number,
     params: PropTypes.shape({
       query: PropTypes.string,
     }).isRequired,
     query: PropTypes.string,
-    remote: SearchResultType,
+    results: ImmutableTypes.list.isRequired,
     search: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     star: PropTypes.func.isRequired,
     stars: ImmutableTypes.map.isRequired,
+    total: PropTypes.number.isRequired,
   };
 
   componentDidMount() {
-    const { search, params, query, selectPage, remote } = this.props;
+    const { search, params, query, selectPage, page } = this.props;
     search(params.query || query); // Initialize search.
-    selectPage(params.page ? parseInt(params.page, 10) : remote.page); // Init page.
+    selectPage(params.page ? parseInt(params.page, 10) : page); // Init page.
   }
 
   render() {
     const {
-      remote,
-      // local,
-      search,
-      selectPage,
+      page,
       pageSize,
       query,
+      results,
+      search,
+      selectPage,
       star,
       stars,
+      total,
     } = this.props;
 
     return (
       <Search
-        results={remote.results}
-        page={remote.page}
-        total={remote.total}
+        page={page}
         pageSize={pageSize}
+        query={query}
+        results={results}
         selectPage={selectPage}
         search={search}
-        query={query}
         star={star}
         stars={stars}
+        total={total}
       />
     );
   }

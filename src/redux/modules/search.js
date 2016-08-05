@@ -3,34 +3,28 @@ import { push } from 'react-router-redux';
 import { List, Map, fromJS } from 'immutable';
 
 import createReducer from '../createReducer';
-import { getLaws } from './laws';
-import localSearch from 'helpers/LocalSearch';
+import { isBoolean } from 'helpers/utils';
 
 
 // ******************************************************************
 // ACTIONS
 export const SEARCH = 'search/SEARCH';
-export const SEARCHED_REMOTE = 'search/SEARCHED/REMOTE';
-export const SEARCHED_LOCAL = 'search/SEARCHED/LOCAL';
+export const SEARCHED = 'search/SEARCHED';
+export const LOCAL_ONLY = 'search/filter/LOCAL_ONLY';
 export const SELECT_PAGE = 'search/SELECT_PAGE';
 
 
 
 // ******************************************************************
 // REDUCERS
-const searched_reducer = source => (state, { payload: { total, results } }) =>
-  state.set(source, Map({ results: fromJS(results || []), total: total || 0 }));
-
 export default createReducer(Map({
   page: 1,
   pageSize: 20,
   query: '',
-  local: Map({ total: 0, results: List() }),
-  remote: Map({ total: 0, results: List() }),
+  search: Map({ total: 0, results: List() }),
 }), {
   [SEARCH]: (state, { payload = '' }) => state.set('query', payload),
-  [SEARCHED_LOCAL]: searched_reducer('local'),
-  [SEARCHED_REMOTE]: searched_reducer('remote'),
+  [SEARCHED]: (state, { payload }) => state.set('search', fromJS(payload)),
   [SELECT_PAGE]: (state, { payload = 1 }) => state.set('page', payload),
 });
 
@@ -46,52 +40,41 @@ export const selectSearchPage = (page = 1) => (dispatch, getState) => {
 };
 
 
-export const search = (query = '') => (dispatch, getState) => {
+export const search = (query = '') => (dispatch) => {
   dispatch({ type: SEARCH, payload: query });
   dispatch(selectSearchPage(1));
-
-  // Reset results.
-  dispatch({ type: SEARCHED_REMOTE, payload: {} });
-  dispatch({ type: SEARCHED_LOCAL, payload: {} });
-
+  dispatch({ type: SEARCHED, payload: {} });
   dispatch({
-    type: SEARCHED_REMOTE,
+    type: SEARCHED,
     meta: { debounce: { time: 500 } },
-    promise: api => api.get({ name: 'laws', search: query }),
+    promise: api => api.search(query),
   });
+};
 
-  dispatch({
-    type: SEARCHED_LOCAL,
-    meta: { debounce: { time: 500 } },
-    promise: () => {
-      const laws = getLaws(getState());
-      return localSearch.search(query, { laws, limit: 100 });
-    }
-  });
+export const filterLocalOnly = (filters = {}) => (dispatch) => {
+  filters = isBoolean(filters) ? { starred: true } : filters;
+  dispatch({ type: LOCAL_ONLY, payload: !!filters.starred || false });
+  dispatch(selectSearchPage(1));
 };
 
 
 
 // ******************************************************************
 // SELECTORS
-export const getQuery = state => state.getIn(['search', 'query']);
+export const getQuery = state => state.getIn(['search', 'query'], '');
 
-export const getPageSize = state => state.getIn(['search', 'pageSize']);
+export const getPageSize = state => state.getIn(['search', 'pageSize'], 20);
 
-const getPage = state => state.getIn(['search', 'page'], 1);
+export const getPage = state => state.getIn(['search', 'page'], 1);
 
-const getResults = source => state => state.getIn(['search', source, 'results'], List());
+export const getResults = state => state.getIn(['search', 'search', 'results'], List());
 
-const getTotal = source => state => state.getIn(['search', source, 'total'], 0);
+export const getTotal = state => state.getIn(['search', 'search', 'total'], 0);
 
-const getResultsByPage = source => createSelector(
-  [getResults(source), getTotal(source), getPage, getPageSize],
+export const getResultsByPage = createSelector(
+  [ getResults, getTotal, getPage, getPageSize ],
   (results, total, page, size) => ({
     total, page,
     results: results.slice(size * (page-1), size * page),
   })
 );
-
-export const getLocalResultsByPage = getResultsByPage('local');
-
-export const getRemoteResultsByPage = getResultsByPage('remote');

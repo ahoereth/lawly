@@ -1,8 +1,9 @@
 import fetch from 'isomorphic-fetch';
 
 import DataClient from './DataClient';
+import localSearch from './LocalSearch';
 import { login } from 'redux/modules/user';
-import { FETCH_SINGLE } from 'redux/modules/laws';
+import { FETCH_SINGLE, getLaws } from 'redux/modules/laws';
 import {
   isObject, isUndefined, startsWith,
   joinPath, parseJWT, obj2query, omit,
@@ -307,5 +308,19 @@ export default class ApiClient {
     this.setAuthToken();
     this.storage.remove(email);
     return this.remove({ name: 'user_sessions', email });
+  }
+
+  /**
+   * Unified search handler. Wraps remote and local search -- provides results
+   * from whichever is available, prefering the former.
+   *
+   * @param  {string} query
+   * @return {Promise}
+   */
+  search(query) {
+    return this.get({ name: 'laws', search: query }).catch(() => {
+      const laws = getLaws(this.store.getState());
+      return localSearch.search(query, { laws, limit: 100 });
+    });
   }
 }
