@@ -7,6 +7,9 @@ import createReducer from '../createReducer';
 import { getIndexStars } from './user';
 
 
+export const SCOPE = 'law_index';
+
+
 // ******************************************************************
 // ACTIONS
 export const FETCH = 'law_index/FETCH';
@@ -80,21 +83,21 @@ export const filterLawIndex = (filters = {}) => (dispatch) => {
 
 // ******************************************************************
 // SELECTORS
-export const getLawIndex = (state) => state.getIn(['law_index', 'laws']);
+export const getLawIndex = (state) => state.getIn([SCOPE, 'laws']);
 
-export const getPage = (state) => state.getIn(['law_index', 'page']);
+export const getPage = (state) => state.getIn([SCOPE, 'page']);
 
-export const getPageSize = (state) => state.getIn(['law_index', 'pageSize']);
+export const getPageSize = (state) => state.getIn([SCOPE, 'pageSize']);
 
-export const getInitial = (state) => state.getIn(['law_index', 'initial']);
+export const getInitial = (state) => state.getIn([SCOPE, 'initial']);
 
-export const getInitials = (state) => state.getIn(['law_index', 'initials']);
+export const getInitials = (state) => state.getIn([SCOPE, 'initials']);
 
-export const getCollections = state => state.getIn(['law_index', 'collections']);
+export const getCollections = state => state.getIn([SCOPE, 'collections']);
 
-export const getCollectionTitle = state => state.getIn(['law_index', 'collection']);
+export const getCollectionTitle = state => state.getIn([SCOPE, 'collection']);
 
-export const getFilters = (state) => state.getIn(['law_index', 'filters']);
+export const getFilters = (state) => state.getIn([SCOPE, 'filters']);
 
 export const getCollectionTitles = createSelector(
   [ getCollections ],
