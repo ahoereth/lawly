@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { search, getQuery } from 'redux/modules/search';
-import { Layout } from '../components';
+import { search, getQuery } from 'modules/search';
+import { Layout } from 'components';
 
 
 const navigation = [

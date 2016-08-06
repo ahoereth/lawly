@@ -2,8 +2,8 @@ import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
-import { login, logout, getUser, getUserLaws } from 'redux/modules/user';
-import { Home } from '../components';
+import { login, logout, getUser, getUserLaws } from 'modules/user';
+import { Home } from 'components';
 
 
 class HomeContainer extends React.Component {

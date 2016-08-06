@@ -2,12 +2,12 @@ import fetch from 'isomorphic-fetch';
 
 import DataClient from './DataClient';
 import localSearch from './LocalSearch';
-import { login } from 'redux/modules/user';
-import { FETCH_SINGLE, getLaws } from 'redux/modules/laws';
 import {
   isObject, isUndefined, startsWith,
   joinPath, parseJWT, obj2query, omit,
 } from './utils';
+import { login } from 'modules/user';
+import { FETCH_SINGLE, getLaws } from 'modules/laws';
 
 
 export default class ApiClient {

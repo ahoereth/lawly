@@ -1,10 +1,10 @@
 import { combineReducers } from 'redux-immutablejs';
 import { routerReducer } from 'react-router-redux';
 
-import law_index from './law_index';
-import laws from './laws';
-import search from './search';
-import user from './user';
+import law_index from 'modules/law_index';
+import laws from 'modules/laws';
+import search from 'modules/search';
+import user from 'modules/user';
 
 export default combineReducers({
   law_index,

@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { Map, List, fromJS } from 'immutable';
 
-import createReducer from '../createReducer';
+import createReducer from 'store/createReducer';
 import { isObject } from 'helpers/utils';
 
 

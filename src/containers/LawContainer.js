@@ -3,8 +3,8 @@ import Immutable from 'immutable';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
-import { selectLaw, getNormHierarchy } from 'redux/modules/laws';
-import { getUserLaws, star } from 'redux/modules/user';
+import { selectLaw, getNormHierarchy } from 'modules/laws';
+import { getUserLaws, star } from 'modules/user';
 import { Law } from 'components';
 
 

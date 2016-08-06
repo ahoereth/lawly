@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
 import { List, Map, fromJS } from 'immutable';
 
-import createReducer from '../createReducer';
+import createReducer from 'store/createReducer';
 
 
 export const SCOPE = 'search';

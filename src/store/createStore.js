@@ -4,7 +4,7 @@ import { routerMiddleware, } from 'react-router-redux';
 import Immutable from 'immutable';
 import createDebounce from 'redux-debounced';
 
-import reducer from './modules/reducer';
+import rootReducer from './rootReducer';
 import {
   functionsMiddleware,
   apiMiddleware,
@@ -27,7 +27,7 @@ export default function createStore(client, data = {}) {
     applyMiddleware(...middlewares),
     window && window.devToolsExtension ? window.devToolsExtension() : f => f
   )(_createStore);
-  const store = finalCreateStore(reducer, Immutable.fromJS(data));
+  const store = finalCreateStore(rootReducer, Immutable.fromJS(data));
 
   client.init(store);
 
@@ -36,8 +36,8 @@ export default function createStore(client, data = {}) {
 
   /* global module, require */
   if (module.hot) {
-    module.hot.accept('./modules/reducer', () => {
-      store.replaceReducer(require('./modules/reducer'));
+    module.hot.accept('./rootReducer', () => {
+      store.replaceReducer(require('./rootReducer'));
     });
   }
 

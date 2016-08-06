@@ -3,7 +3,7 @@ import chaiImmutable from 'chai-immutable';
 chai.use(chaiImmutable);
 import { List, Map, fromJS } from 'immutable';
 
-import mockStore, { mockApi } from '../mockStore';
+import mockStore, { mockApi } from 'store/mockStore';
 import reducer, {
   SCOPE,
 
@@ -158,38 +158,51 @@ describe('law_index', () => {
 
 
   describe('selectors', () => {
-    it('should provide a selector to get the index object', () => {
+    it('should provide getLawIndex()', () => {
       const laws = List([ Map({ groupkey: 'a' }) ]);
       const state = initialState.setIn([SCOPE, 'laws'], laws);
       expect(getLawIndex(state)).to.equal(laws);
     });
 
-    it('should provide a selector to get the page size', () => {
-      const state = initialState.setIn([SCOPE, 'pageSize'], 12);
-      expect(getPageSize(state)).to.equal(12);
-    });
-
-    it('should provide a selector to get the current page', () => {
+    it('should provide getPage()', () => {
       const state = initialState.setIn([SCOPE, 'page'], 7);
       expect(getPage(state)).to.equal(7);
     });
 
-    it('should provide a selector to get the initial', () => {
+    it('should provide getPageSize()', () => {
+      const state = initialState.setIn([SCOPE, 'pageSize'], 12);
+      expect(getPageSize(state)).to.equal(12);
+    });
+
+    it('should provide getInitial()', () => {
       const state = initialState.setIn([SCOPE, 'initial'], 'z');
       expect(getInitial(state)).to.equal('z');
     });
 
-    it('should provide a selector to get the list of initials', () => {
+    it('should provide getInitials()', () => {
       const initials = List(['a', 'b', 'c']);
       const state = initialState.setIn([SCOPE, 'initials'], initials);
       expect(getInitials(state)).to.equal(initials);
     });
 
-    it('should provide a selector to get by initial', () => {
+    // getCollections,
+    // getCollectionTitle,
+    // getFilters,
+    // getCollection,
+    // getCollectionTitles,
+    // getLawsByCollection,
+
+    it('should provide getLawsByInitial()', () => {
       const laws = List([ Map({ groupkey: 'a' }), Map({ groupkey: 'z' }) ]);
       const state = initialState.mergeIn([SCOPE], Map({ initial: 'z', laws }));
       const expectedSlice = laws.filter(law => law.get('groupkey') === 'z');
       expect(getLawsByInitial(state)).to.equal(expectedSlice);
     });
+
+    // getStarFilteredLawsByInitial,
+    // getStarAndKeyFilteredLawsByInitial,
+    // getFilteredLaws,
+    // getFilteredLawsCount,
+    // getFilteredLawsByPage,
   });
 });

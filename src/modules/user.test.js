@@ -1,7 +1,7 @@
 import chai, { expect } from 'chai';
 import { List, Map, fromJS } from 'immutable';
 
-import mockStore, { mockApi } from '../mockStore';
+import mockStore, { mockApi } from 'store/mockStore';
 import reducer, {
   SCOPE,
 
@@ -97,7 +97,6 @@ describe('user', () => {
       const action = { type: STAR, payload: { ...law, starred: true } };
       const store = mockStore(initialState);
       store.dispatch(star(law, true));
-      console.log(store.getActions());
       expect(store.getActions()).to.deep.contain(action);
     });
 

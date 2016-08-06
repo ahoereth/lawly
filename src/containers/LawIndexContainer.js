@@ -7,11 +7,11 @@ import {
   getFilters, getFilteredLawsCount, getCollection, getCollectionTitles,
   fetchLawIndex,
   selectCollection, selectLawIndexInitial, selectLawIndexPage, filterLawIndex,
-} from 'redux/modules/law_index';
+} from 'modules/law_index';
 import {
   getIndexStars,
   star,
-} from 'redux/modules/user';
+} from 'modules/user';
 import { LawIndex } from 'components';
 import { isNumeric, toInt } from 'helpers/utils';
 

@@ -11,11 +11,11 @@ import {
   getQuery,
   getResultsByPage,
   getTotal,
-} from 'redux/modules/search';
+} from 'modules/search';
 import {
   star,
   getIndexStars,
-} from 'redux/modules/user';
+} from 'modules/user';
 import { Search } from 'components';
 
 

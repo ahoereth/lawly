@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import ApiClient from './helpers/ApiClient';
-import createStore from './redux/createStore';
+import createStore from './store/createStore';
 import routes from './routes';
 
 /* global require, DEBUG */
