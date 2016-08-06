@@ -8,7 +8,7 @@ import {
   Textfield,
 } from 'react-mdl';
 
-import Pagination from './Pagination';
+import Pagination from 'components/Pagination';
 import styles from './lawList.sss';
 
 
