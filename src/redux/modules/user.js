@@ -6,6 +6,9 @@ import { localeCompare } from 'helpers/utils';
 import semverCompare from 'helpers/semverCompare';
 
 
+export const SCOPE = 'user';
+
+
 // ******************************************************************
 // ACTIONS
 export const LOGIN = 'user/LOGIN';
@@ -67,24 +70,22 @@ export const logout = (email) => ({
   promise: client => client.unauth(email)
 });
 
-export const star = (law, state = true) => ({
-  type: STAR,
-  payload: {
-    title: law.get('title'),
-    groupkey: law.get('groupkey'),
-    enumeration: law.get('enumeration', '0'),
-    starred: state
-  },
-  api: { method: 'put', name: 'user_law' },
-});
+export const star = (law, state = true) => {
+  const { title, groupkey, enumeration } = Map.isMap(law) ? law.toJS() : law;
+  return {
+    type: STAR,
+    payload: { title, groupkey, enumeration: enumeration || 0, starred: state },
+    api: { method: 'put', name: 'user_law' },
+  };
+};
 
 
 
 // ******************************************************************
 // SELECTORS
-export const getUser = state => state.get('user');
+export const getUser = state => state.get(SCOPE);
 
-export const getUserLaws = state => state.getIn(['user', 'laws']);
+export const getUserLaws = state => state.getIn([SCOPE, 'laws']);
 
 export const getStarredUserLaws = createSelector(
   [ getUserLaws ],

@@ -1,46 +1,42 @@
 import chai, { expect } from 'chai';
-import spies from 'chai-spies';
-import configureMockStore from 'redux-mock-store';
-chai.use(spies);
+import { List, Map, fromJS } from 'immutable';
 
-import { Map, Set, fromJS } from 'immutable';
-
-import { functionsMiddleware, promiseMiddleware } from '../middlewares';
+import mockStore, { mockApi } from '../mockStore';
 import reducer, {
+  SCOPE,
+
   LOGIN,
   LOGOUT,
   STAR,
+
   login,
   logout,
   star,
   getUser,
   getUserLaws,
+  getStarredUserLaws,
   getIndexStars,
 } from './user';
 
 
-const mockApi = {};
-const mockStore = configureMockStore([
-  functionsMiddleware(),
-  promiseMiddleware(mockApi),
-]);
-
-
 describe('user', () => {
-  const initialState = Map({
+  const localState = Map({
     loggedin: false,
     email: undefined,
-    laws: Map(),
+    laws: List(),
     error: false,
+  });
+
+  const initialState = Map({
+    [SCOPE]: localState,
   });
 
   describe('reducer', () => {
     it('should return the initial state', () => {
-      const state = reducer(undefined, {});
-      expect(state).to.equal(initialState);
+      expect(reducer(undefined, {})).to.equal(localState);
     });
 
-    it('should handle `LOGIN`', () => {
+    it('should handle LOGIN', () => {
       const payload = {
         email: 'mail',
         laws: { a: { '0': { starred: true } } },
@@ -50,7 +46,7 @@ describe('user', () => {
       expect(state.get('laws')).to.equal(fromJS(payload.laws));
     });
 
-    it('should handle `LOGOUT`', () => {
+    it('should handle LOGOUT', () => {
       const state = reducer(
         { loggedin: true, email: 'mail', laws: Map({a: 'a'}) },
         { type: LOGOUT, payload: null }
@@ -60,18 +56,18 @@ describe('user', () => {
       expect(state.get('laws')).to.equal(Map());
     });
 
-    it('should handle `STAR`', () => {
+    it('should handle STAR', () => {
       const state = reducer(undefined, {
         type: STAR,
         payload: { groupkey: 'a', enumeration: '0', starred: true }
       });
-      expect(state.getIn(['laws', 'a', '0', 'starred'])).to.be.true;
+      expect(state.get('laws').first().get('starred')).to.be.true;
     });
   });
 
 
   describe('actions', () => {
-    it('should create an action `login`', (done) => {
+    it('login() should dispatch LOGIN', (done) => {
       const expectedAction = {
         type: LOGIN, payload: {
           email: 'mail',
@@ -79,14 +75,14 @@ describe('user', () => {
         }
       };
       const store = mockStore(initialState);
-      mockApi.auth = chai.spy(() => Promise.resolve(expectedAction.payload));
+      mockApi.reset(() => Promise.resolve(expectedAction.payload));
       store.dispatch(login('mail', 'pw')).then(action => {
         expect(action).to.deep.equal(expectedAction);
         expect(mockApi.auth).to.be.called.once;
       }).then(done).catch(done);
     });
 
-    it('should create an action `logout`', (done) => {
+    it('logout() should dispatch LOGOUT', (done) => {
       const expectedAction = { type: LOGOUT, payload: undefined };
       const store = mockStore(initialState);
       mockApi.unauth = chai.spy(() => Promise.resolve());
@@ -96,43 +92,56 @@ describe('user', () => {
       }).then(done).catch(done);
     });
 
-    it('should create an action `star`', (done) => {
-      const expectedAction = {
-        type: STAR,
-        payload: { groupkey: 'a', enumeration: '0', starred: true }
-      };
+    it('star() should dispatch STAR', () => {
+      const law = { groupkey: 'a', enumeration: '0', title: 'foo' };
+      const action = { type: STAR, payload: { ...law, starred: true } };
       const store = mockStore(initialState);
-      mockApi.put = chai.spy(() => Promise.resolve(expectedAction.payload));
-      store.dispatch(star('groupkey', '0')).then(action => {
-        expect(action).to.deep.equal(expectedAction);
-        expect(mockApi.put).to.be.called.once;
-      }).then(done).catch(done);
+      store.dispatch(star(law, true));
+      console.log(store.getActions());
+      expect(store.getActions()).to.deep.contain(action);
+    });
+
+    it('star() should allow immutable maps', () => {
+      const law = { groupkey: 'a', enumeration: '0', title: 'foo' };
+      const action = { type: STAR, payload: { ...law, starred: false } };
+      const store = mockStore(initialState);
+      store.dispatch(star(Map(law), false));
+      expect(store.getActions()).to.deep.contain(action);
     });
   });
 
 
   describe('selectors', () => {
-    it('should provide `getUser` selector', () => {
-      const state = Map({ user: Map({ email: 'mail' }) });
-      expect(getUser(state)).to.equal(state.get('user'));
+    it('should provide getUser()', () => {
+      const state = initialState.setIn([SCOPE, 'email'], 'foo');
+      expect(getUser(state).get('email')).to.equal('foo');
     });
 
-    it('should provide `getUserLaws` selector', () => {
-      const state = Map({ user: Map({ laws: Map({
-        'a': Map({ groupkey: 'a' }),
-        'b': Map({ groupkey: 'b' }),
-      }) }) });
-      expect(getUserLaws(state)).to.equal(state.getIn(['user', 'laws']));
+    it('should provide getUserLaws()', () => {
+      const laws = fromJS({ 'a': { groupkey: 'a' }, 'b': { groupkey: 'b' } });
+      const state = initialState.setIn([SCOPE, 'laws'], Map(laws));
+      expect(getUserLaws(state)).to.equal(laws);
     });
 
-    it('should provide `getIndexStars` selector', () => {
-      const state = Map({ user: Map({ laws: Map({
-        'a': Map({ '0': Map({ starred: true }) }),
-        'b': Map({ '0': Map({ starred: false }) }),
-        'c': Map({ '0': Map({ starred: true }) }),
-        'd': Map({ '1': Map({ starred: true }) }),
-      }) }) });
-      expect(getIndexStars(state)).to.equal(Set(['a', 'c']));
+    it('should provide getStarredUserLaws()', () => {
+      const state = initialState.setIn([SCOPE, 'laws'], fromJS([
+        { groupkey: 'a', enumeration: '0',   starred: true  },
+        { groupkey: 'a', enumeration: '1.3', starred: false },
+        { groupkey: 'c', enumeration: '0',   starred: false },
+      ]));
+      const starred = [{ groupkey: 'a', enumeration: '0',   starred: true  }];
+      expect(getStarredUserLaws(state)).to.equal(fromJS(starred));
+    });
+
+    it('should provide getIndexStars()', () => {
+      const state = initialState.setIn([SCOPE, 'laws'], fromJS([
+        { groupkey: 'a', enumeration: '0',   starred: true  },
+        { groupkey: 'a', enumeration: '1.3', starred: false },
+        { groupkey: 'a', enumeration: '1.6', starred: true  },
+        { groupkey: 'b', enumeration: '0',   starred: true  },
+        { groupkey: 'c', enumeration: '0',   starred: false },
+      ]));
+      expect(getIndexStars(state)).to.equal(Map({ a: 1, b: 0 }));
     });
   });
 });
