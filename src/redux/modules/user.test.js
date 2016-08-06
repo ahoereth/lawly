@@ -5,8 +5,7 @@ chai.use(spies);
 
 import { Map, Set, fromJS } from 'immutable';
 
-import promiseMiddleware from '../middlewares/promiseMiddleware';
-import functionsMiddleware from '../middlewares/functionsMiddleware';
+import { functionsMiddleware, promiseMiddleware } from '../middlewares';
 import reducer, {
   LOGIN,
   LOGOUT,
@@ -22,8 +21,8 @@ import reducer, {
 
 const mockApi = {};
 const mockStore = configureMockStore([
-  promiseMiddleware(mockApi),
   functionsMiddleware(),
+  promiseMiddleware(mockApi),
 ]);
 
 

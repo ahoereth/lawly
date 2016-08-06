@@ -4,11 +4,13 @@ import { routerMiddleware, } from 'react-router-redux';
 import Immutable from 'immutable';
 import createDebounce from 'redux-debounced';
 
-import functionsMiddleware from './middlewares/functionsMiddleware';
-import apiMiddleware from './middlewares/apiMiddleware';
-import promiseMiddleware from './middlewares/promiseMiddleware';
-import fetchMiddleware from './middlewares/fetchMiddleware';
 import reducer from './modules/reducer';
+import {
+  functionsMiddleware,
+  apiMiddleware,
+  promiseMiddleware,
+  fetchMiddleware,
+} from './middlewares';
 
 
 /* global window */

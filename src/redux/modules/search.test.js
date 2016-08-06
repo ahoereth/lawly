@@ -5,8 +5,7 @@ chai.use(spies);
 
 import { Map, List } from 'immutable';
 
-import functionsMiddleware from '../middlewares/functionsMiddleware';
-import promiseMiddleware from '../middlewares/promiseMiddleware';
+import { functionsMiddleware, promiseMiddleware } from '../middlewares';
 import reducer, {
   SCOPE,
 

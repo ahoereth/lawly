@@ -7,8 +7,7 @@ chai.use(chaiImmutable);
 
 import { List, Map, fromJS } from 'immutable';
 
-import promiseMiddleware from '../middlewares/promiseMiddleware';
-import functionsMiddleware from '../middlewares/functionsMiddleware';
+import { functionsMiddleware, promiseMiddleware } from '../middlewares';
 import reducer, {
   SCOPE,
 
