@@ -2,8 +2,7 @@ import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Grid, Cell } from 'react-mdl';
 
-import LawList from 'components/LawList';
-import LoginForm from 'components/LoginForm';
+import { LawList, LoginForm } from 'components';
 import WelcomeMessage from './WelcomeMessage';
 
 

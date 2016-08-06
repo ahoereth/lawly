@@ -1,8 +1,7 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
-import { Map } from 'immutable';
 
-import { Norm } from 'components';
+import Norm from './Norm';
 
 
 const Norms = ({ annotations, nodes, star }) => (
