@@ -1,4 +1,4 @@
-import { pick, isObject } from 'helpers/utils';
+import { isObject } from 'helpers/utils';
 
 
 /**
@@ -21,10 +21,7 @@ export default function apiMiddleware(client) {
     // Simulate the action.
     next({ type, payload });
 
-    return client.fetch({
-      ...pick(api, 'method', 'name'),
-      ...payload,
-      action: type,
-    });
+    const { method, name } = api;
+    return client[method]({ ...payload, name, action: type });
   };
 }
