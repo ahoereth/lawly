@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 
 import { slugify } from 'helpers/utils';
@@ -14,6 +15,10 @@ export default class NormList extends React.Component {
       children: ImmutableTypes.list,
     })).isRequired,
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  }
 
   listNodes = (node, i) => {
     const title = node.getIn(['norm', 'title']);

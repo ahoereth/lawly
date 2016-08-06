@@ -7,23 +7,21 @@ import {
 import UserLaw from './UserLaw';
 
 
-const UserLaws = ({ laws, indexTitles }) => {
-  return (
-    <Card shadow={0}>
-      <CardTitle>Merkzettel</CardTitle>
-      <CardText>
-        {laws.entrySeq().map(([groupkey, norms]) => (
-          <UserLaw
-            key={groupkey}
-            groupkey={groupkey}
-            norms={norms}
-            title={indexTitles.get(groupkey)}
-          />
-        ))}
-      </CardText>
-    </Card>
-  );
-};
+const UserLaws = ({ laws, indexTitles }) => (
+  <Card shadow={0}>
+    <CardTitle>Merkzettel</CardTitle>
+    <CardText>
+      {laws.entrySeq().map(([groupkey, norms]) => (
+        <UserLaw
+          key={groupkey}
+          groupkey={groupkey}
+          norms={norms}
+          title={indexTitles.get(groupkey)}
+        />
+      ))}
+    </CardText>
+  </Card>
+);
 
 UserLaws.propTypes = {
   indexTitles: ImmutableTypes.mapOf(PropTypes.string).isRequired,

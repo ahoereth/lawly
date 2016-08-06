@@ -24,47 +24,45 @@ const LawIndex = ({
   star,
   stars,
   total,
-}) => {
-  return (
-    <Grid>
-      <Cell col={12} tablet={8} phone={4}>
-        <LawCollectionChooser
-          collections={collections}
-          selected={collection.get('title')}
-          onSelect={selectCollection}
-        />
-      </Cell>
-      <Cell col={1} tablet={1} phone={4}>
-        <LawInitialChooser
-          initials={initials}
-          selected={selectedInitial}
-          onSelect={selectInitial}
-        />
-      </Cell>
-      <Cell col={11} tablet={7} phone={4}>
-        <LawIndexLead
-          collection={collection}
-          initial={selectedInitial}
-          page={page}
-          pageSize={pageSize}
-          total={total}
-          filters={filters}
-        />
-        <LawList
-          laws={laws}
-          page={page}
-          pageSize={pageSize}
-          total={total}
-          selectPage={selectPage}
-          star={star}
-          stars={stars}
-          filter={filter}
-          filters={filters}
-        />
-      </Cell>
-    </Grid>
-  );
-};
+}) => (
+  <Grid>
+    <Cell col={12} tablet={8} phone={4}>
+      <LawCollectionChooser
+        collections={collections}
+        selected={collection.get('title')}
+        onSelect={selectCollection}
+      />
+    </Cell>
+    <Cell col={1} tablet={1} phone={4}>
+      <LawInitialChooser
+        initials={initials}
+        selected={selectedInitial}
+        onSelect={selectInitial}
+      />
+    </Cell>
+    <Cell col={11} tablet={7} phone={4}>
+      <LawIndexLead
+        collection={collection}
+        initial={selectedInitial}
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        filters={filters}
+      />
+      <LawList
+        laws={laws}
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        selectPage={selectPage}
+        star={star}
+        stars={stars}
+        filter={filter}
+        filters={filters}
+      />
+    </Cell>
+  </Grid>
+);
 
 LawIndex.propTypes = {
   collection: ImmutableTypes.mapContains({

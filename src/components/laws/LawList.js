@@ -55,7 +55,7 @@ const LawList = ({
       )
     };
   }).toJS();
-  // ^ Conversion needed because react-mdl does not like immutable objects.
+  // ^TODO: Conversion needed because react-mdl does not like immutable objects.
 
   return (
     <div>
