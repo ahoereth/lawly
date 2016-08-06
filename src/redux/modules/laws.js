@@ -5,6 +5,9 @@ import createReducer from '../createReducer';
 import { isObject } from 'helpers/utils';
 
 
+export const SCOPE = 'laws';
+
+
 // ******************************************************************
 // ACTIONS
 export const FETCH_SINGLE = 'laws/FETCH_SINGLE';
@@ -17,7 +20,6 @@ export const SELECT = 'laws/SELECT';
 export default createReducer(Map({
   laws: Map(), // Map of Lists of Maps
   selected: undefined,
-  error: undefined,
 }), {
   [SELECT]: (state, { payload }) => state.set('selected', payload),
   [FETCH_SINGLE]: (state, { payload }) => {
@@ -36,30 +38,32 @@ export const fetchLaw = groupkey => ({
 });
 
 export const selectLaw = groupkey => dispatch => {
-  dispatch(fetchLaw(groupkey));
   dispatch({ type: SELECT, payload: groupkey });
+  return dispatch(fetchLaw(groupkey));
 };
 
 
 
 // ******************************************************************
 // SELECTORS
-export const getLaws = (state) => state.getIn(['laws', 'laws']);
+export const getLaws = state => state.getIn([SCOPE, 'laws']);
 
-export const getNorms = (state: any) => (
-  state.getIn(['laws', 'laws', state.getIn(['laws', 'selected'])])
-);
+export const getSelection = state => state.getIn([SCOPE, 'selected']);
+
+export const getSelected = state => getLaws(state).get(getSelection(state));
 
 export const getNormHierarchy = createSelector(
-  [ getNorms ],
+  [ getSelected ],
   (norms = List()) => {
     let nodes = List(), path = List();
     norms.forEach(norm => {
-      const depth = norm.get('enumeration').split('.').length - 1;
+      const depth = norm.get('enumeration').split('.').length-1;
       if (depth*2 > path.size) {
         path = path.push(nodes.getIn(path).size-1, 'children');
-      } else if (depth*2 < path.size) {
-        path = path.skipLast(2);
+      } else {
+        while (depth*2 < path.size) {
+          path = path.skipLast(2);
+        }
       }
 
       nodes = nodes.updateIn(path, List(), list => list.push(Map({ norm })));

@@ -3,58 +3,132 @@ import spies from 'chai-spies';
 import configureMockStore from 'redux-mock-store';
 chai.use(spies);
 
-import { Map, List } from 'immutable';
+import { Map, List, fromJS } from 'immutable';
 
-import promiseMiddleware from '../middlewares/promiseMiddleware';
+import { functionsMiddleware, promiseMiddleware } from '../middlewares';
 import reducer, {
+  SCOPE,
+
   FETCH_SINGLE,
+  SELECT,
   fetchLaw,
+  selectLaw,
+
   getLaws,
+  getSelection,
+  getSelected,
+  getNormHierarchy,
 } from './laws';
 
 
 const mockApi = {};
-const mockStore = configureMockStore([ promiseMiddleware(mockApi) ]);
+const mockStore = configureMockStore([
+  functionsMiddleware(),
+  promiseMiddleware(mockApi),
+]);
 
 
 describe('laws', () => {
-  const initialState = Map({ laws: Map(), error: undefined });
+  const localState = Map({
+    laws: Map(), // Map of Lists of Maps
+    selected: undefined,
+  });
+
+  const initialState = Map({
+    [SCOPE]: localState,
+  });
+
 
   describe('reducer', () => {
     it('should return the initial state', () => {
-      const state = reducer(undefined, {});
-      expect(state).to.equal(initialState);
+      expect(reducer(undefined, {})).to.equal(localState);
     });
 
-    it('should handle fetching a law', () => {
+    it('should handle FETCH_SINGLE', () => {
       const a = { groupkey: 'a', n: 1 }, b = { groupkey: 'a', n: 2 };
       const state = reducer({}, { type: FETCH_SINGLE, payload: [ a, b ] });
       expect(state.get('laws')).to.equal(Map({ a: List([ Map(a), Map(b) ]) }));
+    });
+
+    it('should handle SELECT', () => {
+      const state = reducer({}, { type: SELECT, payload: 'a' });
+      expect(state.get('selected')).to.equal('a');
     });
   });
 
 
   describe('actions', () => {
-    it('should create an action to fetch a single law', (done) => {
-      const groupkey = 'BGB';
-      const expectedAction = { type: FETCH_SINGLE, payload: { groupkey } };
+    it('fetchLaw() should dispatch FETCH_SINGLE', (done) => {
+      const action = { type: FETCH_SINGLE, payload: { groupkey: 'foo' } };
       mockApi.get = chai.spy(({groupkey}) => Promise.resolve({groupkey}));
 
-      mockStore(initialState).dispatch(fetchLaw(groupkey))
-        .then((dispatchedAction) => {
-          expect(mockApi.get).to.be.called.once;
-          expect(dispatchedAction).to.deep.equal(expectedAction);
-        })
-        .then(done, done);
+      const store = mockStore(initialState);
+      store.dispatch(fetchLaw('foo')).then((dispatchedAction) => {
+        expect(mockApi.get).to.be.called.once;
+        expect(dispatchedAction).to.deep.equal(action);
+      }).then(done, done);
+    });
+
+    it('selectLaw() should dispatch SELECT', () => {
+      const action = { type: 'laws/SELECT', payload: 'foo' };
+      const store = mockStore(initialState);
+      store.dispatch(selectLaw('foo'));
+      expect(store.getActions()).to.deep.contain(action);
     });
   });
 
 
   describe('selectors', () => {
-    it('should provide a selector to get all laws in an object', () => {
+    it('should provide getLaws()', () => {
       const laws = Map({ BGB: Map({ groupkey: 'BGB' }) });
-      const state = Map({ laws: Map({ laws }) });
+      const state = initialState.setIn([SCOPE, 'laws'], laws);
       expect(getLaws(state)).to.equal(laws);
+    });
+
+    it('should provide getSelection()', () => {
+      const state = initialState.setIn([SCOPE, 'selected'], 'foo');
+      expect(getSelection(state)).to.equal('foo');
+    });
+
+    it('should provide getSelected()', () => {
+      const laws = fromJS({ a: [{ groupkey: 'a' }], b: [{ groupkey: 'b' }] });
+      const state = initialState.mergeIn([SCOPE], Map({selected: 'b', laws}));
+      expect(getSelected(state)).to.equal(laws.get('b'));
+    });
+
+    it('should provide getNormHierarchy()', () => {
+      const laws = fromJS({ foo: [
+        { enumeration: '0' },
+        { enumeration: '1' },
+        { enumeration: '1.1' },
+        { enumeration: '1.2' },
+        { enumeration: '1.2.1' },
+        { enumeration: '2' },
+        { enumeration: '3' },
+        { enumeration: '3.1' },
+        { enumeration: '3.1.1' },
+        { enumeration: '3.1.2' },
+        { enumeration: '3.2' },
+      ]});
+      const hierarchy = fromJS([
+        { norm: { enumeration: '0' } },
+        { norm: { enumeration: '1' }, children: [
+          { norm: { enumeration: '1.1' } },
+          { norm: { enumeration: '1.2' }, children: [
+            { norm: { enumeration: '1.2.1' } },
+          ]}
+        ]},
+        { norm: { enumeration: '2' } },
+        { norm: { enumeration: '3' }, children: [
+          { norm: { enumeration: '3.1' }, children: [
+            { norm: { enumeration: '3.1.1' } },
+            { norm: { enumeration: '3.1.2' } },
+          ]},
+          { norm: { enumeration: '3.2' } },
+        ]}
+      ]);
+      const state = initialState.mergeIn([SCOPE], Map({selected: 'foo', laws}));
+      expect(getNormHierarchy(state)).to.equal(hierarchy);
     });
   });
 });
