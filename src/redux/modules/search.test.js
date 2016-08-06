@@ -1,11 +1,7 @@
-import chai, { expect } from 'chai';
-import spies from 'chai-spies';
-import configureMockStore from 'redux-mock-store';
-chai.use(spies);
-
+import { expect } from 'chai';
 import { Map, List } from 'immutable';
 
-import { functionsMiddleware, promiseMiddleware } from '../middlewares';
+import mockStore, { mockApi } from '../mockStore';
 import reducer, {
   SCOPE,
 
@@ -23,13 +19,6 @@ import reducer, {
   getTotal,
   getResultsByPage,
 } from './search';
-
-
-const mockApi = {};
-const mockStore = configureMockStore([
-  functionsMiddleware(),
-  promiseMiddleware(mockApi)
-]);
 
 
 describe('search', () => {
@@ -79,7 +68,7 @@ describe('search', () => {
 
     it('search() should dispatch SEARCH', () => {
       const expectedAction = { type: SEARCH, payload: 'foo' };
-      mockApi.search = () => Promise.resolve();
+      mockApi.reset();
       const store = mockStore(localState);
       store.dispatch(search('foo'));
       expect(store.getActions()).to.contain(expectedAction);
@@ -87,7 +76,7 @@ describe('search', () => {
 
     it('search() should dispatch SEARCHED', (done) => {
       const action = { type: SEARCHED, payload: { total: 2, results: [] } };
-      mockApi.search = chai.spy(() => Promise.resolve(action.payload));
+      mockApi.reset(() => Promise.resolve(action.payload));
       const store = mockStore(localState);
       store.dispatch(search()).then((dispatchedAction) => {
         expect(mockApi.search).to.be.called.once;

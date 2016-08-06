@@ -1,11 +1,7 @@
-import chai, { expect } from 'chai';
-import spies from 'chai-spies';
-import configureMockStore from 'redux-mock-store';
-chai.use(spies);
-
+import { expect } from 'chai';
 import { Map, List, fromJS } from 'immutable';
 
-import { functionsMiddleware, promiseMiddleware } from '../middlewares';
+import mockStore, { mockApi } from '../mockStore';
 import reducer, {
   SCOPE,
 
@@ -19,13 +15,6 @@ import reducer, {
   getSelected,
   getNormHierarchy,
 } from './laws';
-
-
-const mockApi = {};
-const mockStore = configureMockStore([
-  functionsMiddleware(),
-  promiseMiddleware(mockApi),
-]);
 
 
 describe('laws', () => {
@@ -60,9 +49,8 @@ describe('laws', () => {
   describe('actions', () => {
     it('fetchLaw() should dispatch FETCH_SINGLE', (done) => {
       const action = { type: FETCH_SINGLE, payload: { groupkey: 'foo' } };
-      mockApi.get = chai.spy(({groupkey}) => Promise.resolve({groupkey}));
-
       const store = mockStore(initialState);
+      mockApi.reset(({ groupkey }) => Promise.resolve({ groupkey }));
       store.dispatch(fetchLaw('foo')).then((dispatchedAction) => {
         expect(mockApi.get).to.be.called.once;
         expect(dispatchedAction).to.deep.equal(action);

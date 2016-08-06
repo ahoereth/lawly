@@ -1,13 +1,9 @@
 import chai, { expect } from 'chai';
-import spies from 'chai-spies';
 import chaiImmutable from 'chai-immutable';
-import configureMockStore from 'redux-mock-store';
-chai.use(spies);
 chai.use(chaiImmutable);
-
 import { List, Map, fromJS } from 'immutable';
 
-import { functionsMiddleware, promiseMiddleware } from '../middlewares';
+import mockStore, { mockApi } from '../mockStore';
 import reducer, {
   SCOPE,
 
@@ -41,13 +37,6 @@ import reducer, {
   // getFilteredLawsCount,
   // getFilteredLawsByPage,
 } from './law_index';
-
-
-const mockApi = {};
-const mockStore = configureMockStore([
-  functionsMiddleware(),
-  promiseMiddleware(mockApi)
-]);
 
 
 describe('law_index', () => {
@@ -115,7 +104,7 @@ describe('law_index', () => {
     it('fetchLawIndex() should dispatch FETCH', (done) => {
       const payload = { initials: [], index: [] };
       const action = { type: FETCH, payload };
-      mockApi.get = chai.spy(() => Promise.resolve(payload));
+      mockApi.reset(() => Promise.resolve(payload));
       const store = mockStore(initialState);
       store.dispatch(fetchLawIndex()).then((dispatchedAction) => {
         expect(mockApi.get).to.be.called.once;
