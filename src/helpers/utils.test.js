@@ -2,13 +2,18 @@ import chai from 'chai';
 chai.should();
 
 import {
-  isObject,
   isString,
+  isObject,
+  isUndefined,
+  isBoolean,
+  isNumeric,
   startsWith,
   endsWith,
+  toInt,
   arr2obj,
   obj2arr,
   obj2query,
+  pick,
   omit,
   slugify,
   joinPath,
@@ -19,6 +24,21 @@ import {
 
 
 describe('utils', () => {
+  describe('isString', () => {
+    it('strings are strings', () => {
+      isString('some string').should.be.true;
+      isString(new String('another string')).should.be.true;
+    });
+
+    it('nothing else is a string', () => {
+      isString([ 'a', 'r' ]).should.be.false;
+      isString({ r: 'a', y: '!' }).should.be.false;
+      isString(123).should.be.false;
+      isString(() => {}).should.be.false;
+      isString(null).should.be.false;
+    });
+  });
+
   describe('isObject', () => {
     it('plain objects are objects', () => {
       isObject({}).should.be.true;
@@ -47,18 +67,80 @@ describe('utils', () => {
     });
   });
 
-  describe('isString', () => {
-    it('strings are strings', () => {
-      isString('some string').should.be.true;
-      isString(new String('another string')).should.be.true;
+  describe('isUndefined', () => {
+    it('detects undefined as undefined', () => {
+      const x = undefined;
+      let y;
+      isUndefined(undefined).should.be.true;
+      isUndefined(x).should.be.true;
+      isUndefined(y).should.be.true;
     });
 
-    it('nothing else is a string', () => {
-      isString([ 'a', 'r' ]).should.be.false;
-      isString({ r: 'a', y: '!' }).should.be.false;
-      isString(123).should.be.false;
-      isString(() => {}).should.be.false;
-      isString(null).should.be.false;
+    it('detects that other stuff is not undefined', () => {
+      isUndefined(123).should.be.false;
+      isUndefined('').should.be.false;
+      isUndefined(null).should.be.false;
+      isUndefined(() => {}).should.be.false;
+    });
+  });
+
+  describe('isBoolean', () => {
+    it('should detect booleans as booleans', () => {
+      isBoolean(true).should.be.true;
+      isBoolean(false).should.be.true;
+      isBoolean(1).should.be.false;
+      isBoolean(null).should.be.false;
+    });
+  });
+
+  describe('isNumeric', () => {
+    it('should detect numbers as numeric', () => {
+      isNumeric(123).should.be.true;
+      isNumeric(-123).should.be.true;
+      isNumeric(+123).should.be.true;
+    });
+
+    it('should detect number strings as numeric', () => {
+      isNumeric('123').should.be.true;
+      isNumeric('-123').should.be.true;
+      isNumeric('+123').should.be.true;
+      isNumeric('0.123').should.be.true;
+      isNumeric('-0.123').should.be.true;
+      isNumeric('.123').should.be.true;
+      isNumeric('-.123').should.be.true;
+      isNumeric('1e100').should.be.true;
+      isNumeric('1e-100').should.be.true;
+      isNumeric('-1e-100').should.be.true;
+    });
+
+    it('should not detect infinity as numeric', () => { // or should it?
+      isNumeric(Infinity).should.be.false;
+      isNumeric(-Infinity).should.be.false;
+    });
+
+    it('should not detect other strings as numeric', () => {
+      isNumeric('abc').should.be.false;
+      isNumeric('10%').should.be.false;
+      isNumeric('#10').should.be.false;
+      isNumeric('2^10').should.be.false;
+      isNumeric('2!').should.be.false;
+      isNumeric('(10)').should.be.false;
+      isNumeric('10px').should.be.false;
+      isNumeric('*').should.be.false;
+      isNumeric('').should.be.false;
+    });
+
+    it('should not detect booleans, arrays or raw objects as numeric', () => {
+      isNumeric(true).should.be.false;
+      isNumeric(false).should.be.false;
+      isNumeric([]).should.be.false;
+      isNumeric({}).should.be.false;
+    });
+
+    it('should not detect functions, undefined or null as numeric', () => {
+      isNumeric(function(){}).should.be.false;
+      isNumeric(undefined).should.be.false;
+      isNumeric(null).should.be.false;
     });
   });
 
@@ -78,6 +160,35 @@ describe('utils', () => {
       endsWith('abc', 'abc').should.be.true;
       endsWith('acbc', 'c').should.be.true;
       endsWith('abc', 'ab').should.not.be.true;
+    });
+  });
+
+  describe('toInt', () => {
+    it('should cast undefined, null and empty strings to zero', () => {
+      toInt(undefined).should.equal(0);
+      toInt(null).should.equal(0);
+      toInt('').should.equal(0);
+    });
+
+    it('should cast boolean true to one and false to zero', () => {
+      toInt(true).should.equal(1);
+      toInt(false).should.equal(0);
+    });
+
+    it('should cast other isNumerics to their equivalent numbers', () => {
+      toInt('123').should.equal(123);
+      toInt('-123').should.equal(-123);
+      toInt('+123').should.equal(123);
+      toInt('0.123').should.equal(0);
+      toInt('-0.123').should.equal(0);
+      toInt('.123').should.equal(0);
+      toInt('-.123').should.equal(0);
+    });
+
+    it('cannot handle #e## notation', () => {
+      toInt('1e100').should.not.equal(1e100);
+      toInt('1e-100').should.not.equal(1e-100);
+      toInt('-1e-100').should.not.equal(-1e-100);
     });
   });
 
@@ -116,9 +227,14 @@ describe('utils', () => {
   });
 
   describe('omit', () => {
-    it('removes object values as expected by key', () => {
+    it('omits object values by rest argument', () => {
       omit({ a: 1, b: 2, c: 3 }, 'c', 'b').should.have.keys('a');
       omit({ a: 1, b: 2 }, 'd', 'b').should.have.keys('a');
+    });
+
+    it('omits object values by array', () => {
+      omit({ a: 1, b: 2, c: 3 }, ['c', 'b']).should.have.keys('a');
+      omit({ a: 1, b: 2 }, ['d', 'b']).should.have.keys('a');
     });
 
     it('does not alter the source object', () => {
@@ -134,6 +250,33 @@ describe('utils', () => {
       omit([1, 2], 4, 1).should.deep.equal([2]);
       omit([1, 2, 3], 1, 2).should.deep.equal([3]);
     });
+  });
+
+  describe('pick', () => {
+    it('picks values by rest argument', () => {
+      pick({ a: 1, b: 2, c: 3 }, 'c', 'b').should.have.keys('c', 'b');
+      pick({ a: 1, b: 2 }, 'd', 'b').should.have.keys('b');
+    });
+
+    it('picks values by array', () => {
+      pick({ a: 1, b: 2, c: 3 }, ['c', 'b']).should.have.keys('c', 'b');
+      pick({ a: 1, b: 2 }, ['d', 'b']).should.have.keys('b');
+    });
+
+    it('does not alter the source object', () => {
+      let obj = { a: 1, b: 2 };
+      pick(obj, 'b').should.deep.equal({ b: 2 });
+      obj.should.deep.equal({ a: 1, b: 2 });
+    });
+
+    // Not implemented currently.
+    // it('picks array values as expected by value', () => {
+    //   pick(['some value'], 'some value').should.deep.equal(['some value']);
+    //   pick(['some value'], 'woop').should.deep.equal([]);
+    //   pick([1, 2], 2).should.deep.equal([2]);
+    //   pick([1, 2], 4, 1).should.deep.equal([1]);
+    //   pick([1, 2, 3], 1, 2).should.deep.equal([1, 2]);
+    // });
   });
 
   describe('slugify', () => {

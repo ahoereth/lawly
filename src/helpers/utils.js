@@ -88,7 +88,11 @@ export function endsWith(haystack, needle) {
  * @return {number}
  */
 export function toInt(n) {
-  return n === true ? 1 : (n !== undefined && n.length ? parseInt(n, 10) : 0);
+  if (isString(n)) {
+    n = startsWith(n, '.') ? '0' + n : n;
+    n = startsWith(n, '-.') ? '-0' + n.slice(1) : n;
+  }
+  return n === true ? 1 : (!n ? 0 : parseInt(n, 10));
 }
 
 
