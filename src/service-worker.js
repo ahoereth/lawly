@@ -1,40 +1,62 @@
 import toolbox from 'sw-toolbox';
 
-/* global process */
-toolbox.options.debug = (process.env.NODE_ENV !== 'production');
+const { Request, Response } = self; /* global self */
 
-toolbox.precache([
+
+const statics = [
   '/service-worker.js',
   '/index.html',
   '/app.js',
   '/web-worker.js',
   '/manifest.json',
-]);
+];
+const exts = statics.map(name => name.slice(name.lastIndexOf('.')));
+const extRegex = new RegExp(`(${exts.join('|')})$`, 'i');
 
-/* global Request */
-toolbox.router.get('/(.*)', (request, values, options) => {
+
+// Cache static assets.
+toolbox.precache(statics);
+
+
+// Enable debug mode and suppress sockjs-node request errors.
+if (process.env.NODE_ENV !== 'production') { /* global process */
+  toolbox.options.debug = true;
+
+  toolbox.router.get('/sockjs-node/*', (request, values, options) => {
+    return toolbox.networkOnly(request, values, options)
+                  .catch(() => new Response());
+  });
+}
+
+
+// Redirect SPA subroute requests to index.
+toolbox.router.get('/*', (request, values, options) => {
+  // Do not redirect static asset requests.
+  if (request.url.match(extRegex)) {
+    // TODO: Maybe use `fastest` when in production for faster app startup?
+    return toolbox.networkFirst(request, values, options)
+                  .catch(() => new Response());
+  }
+
+  // TODO: Maybe use `fastest` here? Why rely on the server for route redirects?
   return toolbox.networkFirst(request, values, options).catch(() => {
-    return toolbox.cacheOnly(new Request('/index.html'), values, options);
+    return toolbox.cacheOnly(new Request('/index.html'), values, options)
+                  .catch(() => new Response());
   });
 }, {
   origin: /localhost:8080$/,
+  cache: {
+    name: 'statics',
+  },
 });
 
-toolbox.router.any('/(.*)', toolbox.networkOnly, {
-  origin: /localhost:3000$/,
-});
 
-
-toolbox.router.get('/(.*)', toolbox.cacheFirst, {
+// Cache Google fonts and icons.
+// TODO: Maybe use `cacheFirst` with additional `cache.maxAgeSeconds` here in
+// order to not fire off network requests to Google on every startup?
+toolbox.router.get('/*', toolbox.fastest, {
   origin: /\.(googleapis|gstatic)\.com$/,
   cache: {
     name: 'googleapis',
   },
 });
-
-
-(sw => {
-  sw.addEventListener('activate', event => {
-    event.waitUntil(self.clients.claim());
-  });
-})(self); /* global self */
