@@ -68,16 +68,17 @@ if (process.env.NODE_ENV === 'development') {
   const HOST = 'localhost';
   const PORT = 8080;
 
+  const hotreloading = [
+    'react-hot-loader/patch',
+    `webpack-dev-server/client?http://${HOST}:${PORT}/`,
+    'webpack/hot/only-dev-server',
+  ];
+
   config = Object.assign({}, config, {
     watch: true,
     entry: Object.assign({}, config.entry, {
-      app: [
-        'react-hot-loader/patch',
-        `webpack-dev-server/client?http://${HOST}:${PORT}/`,
-        'webpack/hot/only-dev-server',
-        config.entry.app,
-      ],
-      tests: 'mocha!./tests.js',
+      app: hotreloading.concat([ config.entry.app ]),
+      tests: hotreloading.concat([ 'mocha!./tests.js' ]),
     }),
     plugins: config.plugins.concat([
       new HtmlWebpackPlugin({
