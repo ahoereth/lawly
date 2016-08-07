@@ -33,11 +33,11 @@ export default function createStore(client, data = {}) {
 
   /* global window, process */
   process.env.NODE_ENV !== 'production' && (window.store = store);
-
-  /* global module, require */
+  
+  /* global module */
   if (module.hot) {
     module.hot.accept('./rootReducer', () => {
-      store.replaceReducer(require('./rootReducer'));
+      store.replaceReducer(rootReducer);
     });
   }
 

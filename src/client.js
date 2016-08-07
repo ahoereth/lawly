@@ -1,12 +1,12 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { Router, browserHistory } from 'react-router';
-import { Provider } from 'react-redux';
+import { browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
+import { AppContainer } from 'react-hot-loader';
 
 import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
-import routes from './routes';
+import App from './App';
 
 /* global require, DEBUG */
 if (!DEBUG) {
@@ -35,11 +35,22 @@ history.listen(location => {
   if (elem) { elem.scrollTop = 0; }
 });
 
+
 render(
-  <Provider store={store}>
-    <Router history={history}>
-      {routes}
-    </Router>
-  </Provider>,
+  <AppContainer>
+    <App store={store} history={history} />
+  </AppContainer>,
   target
 );
+
+/* global module */
+if (module.hot) {
+  module.hot.accept('./App', () => {
+    render(
+      <AppContainer>
+        <App store={store} history={history} />
+      </AppContainer>,
+      target
+    );
+  });
+}

@@ -65,12 +65,19 @@ let config = {
 // *****************************************************************************
 // Development
 if (process.env.NODE_ENV === 'development') {
+  const HOST = 'localhost';
+  const PORT = 8080;
+
   config = Object.assign({}, config, {
     watch: true,
     entry: Object.assign({}, config.entry, {
+      app: [
+        'react-hot-loader/patch',
+        `webpack-dev-server/client?http://${HOST}:${PORT}/`,
+        'webpack/hot/only-dev-server',
+        config.entry.app,
+      ],
       tests: 'mocha!./tests.js',
-      dev: 'webpack-dev-server/client?http://localhost:8080',
-      hot: 'webpack/hot/dev-server',
     }),
     plugins: config.plugins.concat([
       new HtmlWebpackPlugin({
@@ -87,31 +94,10 @@ if (process.env.NODE_ENV === 'development') {
         },
       })
     ]),
-    devServer: {
-      quiet: false,
-      noInfo: true,
-      colors: true,
-      host: 'localhost',
-      port: 8080,
-      stats: {
-        assets: true,
-        colors: true,
-        version: false,
-        hash: false,
-        timings: true,
-        chunks: false,
-        chunkModules: false
-      },
-      watchOptions: {
-        aggregateTimeout: 300,
-        poll: 1000
-      },
-      hot: true,
-      inline: true,
-      publicPath: '/',
-      contentBase: 'dist',
-      historyApiFallback: true
-    },
+    server: {
+      host: HOST,
+      port: PORT,
+    }
   });
 }
 
