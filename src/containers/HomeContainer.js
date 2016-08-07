@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
@@ -13,6 +14,10 @@ class HomeContainer extends React.Component {
     logout: PropTypes.func.isRequired,
     user: ImmutableTypes.map,
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  }
 
   render() {
     return <Home {...this.props} />;

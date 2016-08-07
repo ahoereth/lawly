@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
@@ -40,6 +41,10 @@ class LawIndexContainer extends React.Component {
     stars: ImmutableTypes.map.isRequired,
     total: PropTypes.number.isRequired,
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  }
 
   componentWillMount() {
     const {

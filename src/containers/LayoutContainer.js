@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import shallowCompare from 'react-addons-shallow-compare';
 import { connect } from 'react-redux';
 
 import { search, getQuery } from 'modules/search';
@@ -20,6 +21,10 @@ class LayoutContainer extends React.Component {
     search: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  }
 
   constructor(props) {
     super(props);

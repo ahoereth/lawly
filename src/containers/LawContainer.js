@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import shallowCompare from 'react-addons-shallow-compare';
 import Immutable from 'immutable';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
@@ -23,6 +24,10 @@ class LawContainer extends React.Component {
     annotations: Immutable.Map(),
     norms: Immutable.List(),
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  }
 
   componentWillMount() {
     const { selectLaw, params } = this.props;
