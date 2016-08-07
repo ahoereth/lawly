@@ -7,7 +7,6 @@
     "start": "npm run dev",
     "dev": "NODE_ENV=development node src/server-dev.js",
     "build": "NODE_ENV=production webpack",
-    "serve": "ws -d dist -s index.html -p 8080 -c",
     "lint": "eslint src",
     "test": "echo 'Tests viewable on /tests.html' && npm run dev"
   },
@@ -17,7 +16,6 @@
     "isomorphic-fetch": "^2.2.1",
     "json-stable-stringify": "^1.0.1",
     "localforage": "^1.4.2",
-    "material-design-icons": "^2.2.3",
     "react": "^15.0.0",
     "react-addons-shallow-compare": "^15.1.0",
     "react-dom": "^15.0.0",

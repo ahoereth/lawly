@@ -8,10 +8,6 @@ toolbox.precache([
   '/index.html',
   '/app.js',
   '/web-worker.js',
-  '/MaterialIcons-Regular.eot',
-  '/MaterialIcons-Regular.ttf',
-  '/MaterialIcons-Regular.woff',
-  '/MaterialIcons-Regular.woff2',
 ]);
 
 /* global Request */
@@ -20,13 +16,17 @@ toolbox.router.get('/(.*)', (request, values, options) => {
     return toolbox.cacheOnly(new Request('/index.html'), values, options);
   });
 }, {
-  origin: /localhost:8080/,
+  origin: /localhost:8080$/,
 });
 
-toolbox.router.any('/(.*)',  (request, values, options) => {
-  return toolbox.networkFirst(request, values, options).catch((error) => {
-    throw error;
-  });
-}, {
-  origin: /localhost:3000/,
+toolbox.router.any('/(.*)', toolbox.networkOnly, {
+  origin: /localhost:3000$/,
+});
+
+
+toolbox.router.get('/(.*)', toolbox.cacheFirst, {
+  origin: /\.(googleapis|gstatic)\.com$/,
+  cache: {
+    name: 'googleapis',
+  },
 });
