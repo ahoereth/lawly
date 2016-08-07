@@ -1,4 +1,9 @@
-const STATICS = [
+import toolbox from 'sw-toolbox';
+
+/* global process */
+toolbox.options.debug = (process.env.NODE_ENV !== 'production');
+
+toolbox.precache([
   '/service-worker.js',
   '/index.html',
   '/app.js',
@@ -7,49 +12,21 @@ const STATICS = [
   '/MaterialIcons-Regular.ttf',
   '/MaterialIcons-Regular.woff',
   '/MaterialIcons-Regular.woff2',
-];
+]);
 
-(sw => {
-  const { caches, fetch } = sw;
-  const STATICS_CACHE = 'statics';
-
-  function log(...args) {
-    console.log('[SW]', ...args);
-  }
-
-  sw.addEventListener('install', event => {
-    log('install');
-    event.waitUntil(
-      caches.open(STATICS_CACHE)
-        .then(cache => cache.addAll(STATICS))
-        .then(() => sw.skipWaiting())
-    );
+/* global Request */
+toolbox.router.get('/(.*)', (request, values, options) => {
+  return toolbox.networkFirst(request, values, options).catch(() => {
+    return toolbox.cacheOnly(new Request('/index.html'), values, options);
   });
+}, {
+  origin: /localhost:8080/,
+});
 
-  self.addEventListener('fetch', event => {
-    const response = caches.match(event.request).then(response => {
-      const request = event.request;
-      const origin = self.location.origin;
-
-      if (response) {
-        log('from cache: ', request.url);
-        return response;
-      } else {
-        log('try remote: ', request.url);
-        return fetch(request).catch(() => {
-          if (request.url.indexOf(origin) > -1) {
-            log('redirect to /: ', request.url);
-            return fetch('/index.html').then(() => caches.match('/index.html'));
-          }
-        });
-      }
-    });
-
-    event.respondWith(response);
+toolbox.router.any('/(.*)',  (request, values, options) => {
+  return toolbox.networkFirst(request, values, options).catch((error) => {
+    throw error;
   });
-
-  self.addEventListener('activate', event => {
-    log('activate');
-    event.waitUntil(sw.clients.claim());
-  });
-})(self); /* global self */
+}, {
+  origin: /localhost:3000/,
+});
