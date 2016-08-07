@@ -5,7 +5,7 @@ import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
 import { selectLaw, getNormHierarchy } from 'modules/laws';
-import { getUserLaws, star } from 'modules/user';
+import { getSelectionAnnotations, star } from 'modules/user';
 import { Law } from 'components';
 
 
@@ -46,16 +46,10 @@ class LawContainer extends React.Component {
 }
 
 
-const mapStateToProps = (state, props) => {
-  const { groupkey } = props.params;
-
-  return {
-    norms: getNormHierarchy(state),
-    annotations: Immutable.Map(getUserLaws(state).filter(law =>
-      law.get('groupkey') === groupkey
-    ).map(norm => [norm.get('enumeration'), norm]))
-  };
-};
+const mapStateToProps = state => ({
+  norms: getNormHierarchy(state),
+  annotations: getSelectionAnnotations(state),
+});
 
 const mapDispatchToProps = {
   selectLaw,

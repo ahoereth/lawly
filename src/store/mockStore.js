@@ -12,7 +12,7 @@ import {
 
 
 export const mockApi = {
-  keys: ['get', 'search', 'auth', 'put'],
+  keys: ['get', 'put', 'search', 'auth', 'unauth'],
   reset: function(handler) {
     handler = handler || (payload => Promise.resolve(payload));
     handler = chai.spy(handler);

@@ -4,6 +4,7 @@ import Immutable, { List, Map } from 'immutable';
 import createReducer from 'store/createReducer';
 import { localeCompare } from 'helpers/utils';
 import semverCompare from 'helpers/semverCompare';
+import { getSelection } from 'modules/laws';
 
 
 export const SCOPE = 'user';
@@ -108,4 +109,12 @@ export const getIndexStars = createSelector(
       return map;
     }
   }, Map({}))
+);
+
+export const getSelectionAnnotations = createSelector(
+  [ getUserLaws, getSelection ],
+  (norms, groupkey) => Map(
+    norms.filter(law => law.get('groupkey') === groupkey)
+         .map(norm => [norm.get('enumeration'), norm])
+  )
 );

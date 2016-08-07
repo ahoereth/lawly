@@ -1,4 +1,4 @@
-import chai, { expect } from 'chai';
+import { expect } from 'chai';
 import { List, Map, fromJS } from 'immutable';
 
 import mockStore, { mockApi } from 'store/mockStore';
@@ -16,7 +16,9 @@ import reducer, {
   getUserLaws,
   getStarredUserLaws,
   getIndexStars,
+  getSelectionAnnotations,
 } from './user';
+import { SCOPE as lawsSCOPE } from './laws';
 
 
 describe('user', () => {
@@ -85,7 +87,7 @@ describe('user', () => {
     it('logout() should dispatch LOGOUT', (done) => {
       const expectedAction = { type: LOGOUT, payload: undefined };
       const store = mockStore(initialState);
-      mockApi.unauth = chai.spy(() => Promise.resolve());
+      mockApi.reset(() => Promise.resolve());
       store.dispatch(logout('mail')).then(action => {
         expect(action).to.deep.equal(expectedAction);
         expect(mockApi.unauth).to.be.called.once;
@@ -141,6 +143,19 @@ describe('user', () => {
         { groupkey: 'c', enumeration: '0',   starred: false },
       ]));
       expect(getIndexStars(state)).to.equal(Map({ a: 1, b: 0 }));
+    });
+
+    it('should provide getSelectionAnnotations()', () => {
+      let state = initialState.setIn([SCOPE, 'laws'], fromJS([
+        { groupkey: 'a', enumeration: '0',   starred: true  },
+        { groupkey: 'a', enumeration: '1.3', starred: false },
+        { groupkey: 'a', enumeration: '1.6', starred: true  },
+        { groupkey: 'b', enumeration: '0',   starred: true  },
+        { groupkey: 'c', enumeration: '0',   starred: false },
+      ])).setIn([lawsSCOPE, 'selected'], 'a');
+      let target = state.getIn([SCOPE, 'laws']).take(3);
+      target = Map(target.map(norm => norm.get('enumeration')).zip(target));
+      expect(getSelectionAnnotations(state)).to.equal(target);
     });
   });
 });
