@@ -21,12 +21,12 @@ class LocalSearch {
 
   constructor() {
     /* global Worker */
-    this.worker = new Worker('/worker.js');
+    this.worker = new Worker('/localsearchworker.js');
     this.promises = {};
     this.worker.onmessage = e => this.messageHandler(e);
 
-    /* global window, DEBUG */
-    DEBUG && (window.work = this.worker);
+    /* global window, process */
+    process.env.NODE_ENV !== 'production' && (window.work = this.worker);
   }
 
   messageHandler(e) {

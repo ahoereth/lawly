@@ -15,8 +15,8 @@ export default class DataClient {
   constructor() {
     this.forage = localforage.createInstance(DataClient.options);
 
-    /* global window, DEBUG */
-    DEBUG && (window.forage = this.forage);
+    /* global window, process */
+    process.env.NODE_ENV !== 'production' && (window.forage = this.forage);
   }
 
   stash(key, data) {

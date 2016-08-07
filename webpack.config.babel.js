@@ -82,7 +82,9 @@ if (process.env.NODE_ENV === 'development') {
       new HotModuleReplacementPlugin(),
       new NoErrorsPlugin(),
       new DefinePlugin({
-        'DEBUG': true,
+        'process.env': {
+          'NODE_ENV': JSON.stringify('development')
+        },
       })
     ]),
     devServer: {
@@ -134,7 +136,9 @@ if (process.env.NODE_ENV === 'production') {
         comments: () => false
       }),
       new DefinePlugin({
-        'DEBUG': false,
+        'process.env': {
+          'NODE_ENV': JSON.stringify('production')
+        },
       }),
       new OfflinePlugin({
         relativePaths: false,
