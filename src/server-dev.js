@@ -1,7 +1,7 @@
 /* global require */
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
-var config = require('../webpack.config.babel');
+var config = require('../webpack.config');
 
 // When changing something here, also change webpack.config.
 const { host, port } = config.server;
