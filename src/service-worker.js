@@ -31,3 +31,10 @@ toolbox.router.get('/(.*)', toolbox.cacheFirst, {
     name: 'googleapis',
   },
 });
+
+
+(sw => {
+  sw.addEventListener('activate', event => {
+    event.waitUntil(self.clients.claim());
+  });
+})(self); /* global self */

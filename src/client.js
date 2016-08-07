@@ -8,14 +8,13 @@ import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
 import App from './App';
 
-/* global navigator */
-navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
-
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
 import 'file?name=[name].[ext]!manifest.json';
 import './index.sss';
 
+const sw = navigator.serviceWorker; /* global navigator */
+sw && sw.register('/service-worker.js', { scope: '/' });
 
 const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
