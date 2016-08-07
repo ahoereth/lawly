@@ -50,3 +50,8 @@ if (module.hot) {
     );
   });
 }
+
+/* global process, window, require */
+if (process.env.NODE_ENV !== 'production') {
+  window.Perf = require('react-addons-perf');
+}
