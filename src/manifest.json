@@ -1,0 +1,14 @@
+{
+  "lang": "de",
+  "dir": "ltr",
+  "name": "Lawly",
+  "description": "Moderne Werkzeuge für Juristen",
+  "short_name": "Lawly",
+  "icons": [],
+  "scope": "/",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "red",
+  "background_color": "silver"
+}

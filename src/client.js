@@ -13,6 +13,7 @@ navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
 
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
+import 'file?name=[name].[ext]!manifest.json';
 import './index.sss';
 
 

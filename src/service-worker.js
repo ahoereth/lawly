@@ -8,6 +8,7 @@ toolbox.precache([
   '/index.html',
   '/app.js',
   '/web-worker.js',
+  '/manifest.json',
 ]);
 
 /* global Request */
