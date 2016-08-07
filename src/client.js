@@ -8,10 +8,8 @@ import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
 import App from './App';
 
-/* global require, DEBUG */
-if (!DEBUG) {
-  require('offline-plugin/runtime').install();
-}
+/* global navigator */
+navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
 
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';

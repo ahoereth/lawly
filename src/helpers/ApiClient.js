@@ -59,7 +59,9 @@ export default class ApiClient {
         // Refire the earliest failed request if any. This triggers a loop
         // which will fire off all outstanding one by one.
         this.storage.popRequest().then(request => {
-          if (request) { this.fetch(request); }
+          if (request) {
+            this.fetch(request);
+          }
         });
       } else {
         // TODO: Start testing network connection frequently.
@@ -170,24 +172,18 @@ export default class ApiClient {
       headers: {...ApiClient.jsonHeaders, ...this.headers, ...options.headers },
     });
 
-    // Network error.
-    request = request.catch(() => {
-      this.storage.stashRequest(options).then(() =>  this.isConnected(false));
-      if (!cachable) { throw ApiClient.NO_CONNECTION_NO_CACHE; }
-      return this.storage.get({ name, method, ...params });
-    });
-
     // Server responded.
     request = request.then(res => {
-      if (!this.isConnected()) {
-        // TODO: Here not only the connection status is updated, but
-        // additionally the current triggering request performed again.
-        // Reasoning is, that one of the previously stashed requests
-        // might undo the triggering one which is undesired behavior.
-        this.storage.stashRequest(options).then(() => this.isConnected(true));
-      } else {
-        this.isConnected(true);
-      }
+      this.isConnected(true);
+      // if (!this.isConnected()) {
+      //   // TODO: Here not only the connection status is updated, but
+      //   // additionally the current triggering request performed again.
+      //   // Reasoning is, that one of the previously stashed requests
+      //   // might undo the triggering one which is undesired behavior.
+      //   this.storage.stashRequest(options).then(() => this.isConnected(true));
+      // } else {
+      //   this.isConnected(true);
+      // }
 
       // Got raw data, probably from cache.
       if (!res.headers || !res.headers.get('content-type')) {
@@ -201,6 +197,13 @@ export default class ApiClient {
         }
         return result;
       });
+    });
+
+    // Network error.
+    request = request.catch(() => {
+      this.storage.stashRequest(options).then(() =>  this.isConnected(false));
+      if (!cachable) { throw ApiClient.NO_CONNECTION_NO_CACHE; }
+      return this.storage.get({ name, method, ...params });
     });
 
     // If the request has an action type attached dispatch that action here.

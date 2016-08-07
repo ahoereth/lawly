@@ -44,9 +44,8 @@ export default class DataClient {
   stashRequest(request) {
     return this.forage.getItem('requests').then(requests => {
       const reqStr = stringify(request);
-      requests = (requests || []).filter(req => stringify(req) === reqStr)
+      requests = (requests || []).filter(req => stringify(req) !== reqStr)
                                  .concat([request]);
-
       return this.forage.setItem('requests', requests);
     });
   }

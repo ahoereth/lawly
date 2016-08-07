@@ -3,17 +3,7 @@ import elasticlunr from 'elasticlunr';
 import { isObject } from 'helpers/utils';
 
 
-/* global self */
-const worker = self;
-
-
-// function log(...val) {
-//   val = val.length === 1 ? val[0] : val;
-//   worker.postMessage({ type: 'log', val });
-// }
-
-
-class LocalSearchWorker {
+export default class LocalSearchWorker {
   static fields = [
     'groupkey',
     'title',
@@ -71,16 +61,3 @@ class LocalSearchWorker {
     });
   }
 }
-
-
-const search = new LocalSearchWorker();
-
-
-worker.onmessage = function(e) {
-  const { type, id, cmd, args } = e.data;
-  if (type === 'response' || type === 'log') { return; }
-  const val = search[cmd](...args);
-  if (id) {
-    worker.postMessage({ type: 'response', cmd, id, val });
-  }
-};

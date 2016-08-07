@@ -10,7 +10,6 @@ const {
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const precss = require('precss');
-const OfflinePlugin = require('offline-plugin');
 
 
 // *****************************************************************************
@@ -21,7 +20,8 @@ let config = {
   context: path.resolve(__dirname, 'src'),
   entry: {
     app: 'client',
-    worker: 'helpers/LocalSearchWorker',
+    'web-worker': 'web-worker',
+    'service-worker': 'service-worker',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -109,9 +109,6 @@ if (process.env.NODE_ENV === 'development') {
 if (process.env.NODE_ENV === 'production') {
   config = Object.assign({}, config, {
     devtool: 'source-map',
-    entry: Object.assign({}, config.entry, {
-      'sw-entry': 'sw-entry',
-    }),
     plugins: config.plugins.concat([
       new optimize.DedupePlugin(),
       new optimize.UglifyJsPlugin({
@@ -126,21 +123,6 @@ if (process.env.NODE_ENV === 'production') {
           'NODE_ENV': JSON.stringify('production')
         },
       }),
-      new OfflinePlugin({
-        relativePaths: false,
-        publicPath: '/',
-        caches: {
-          main: [ 'index.html',  ':rest:' ],
-        },
-        externals: [ 'index.html' ],
-        ServiceWorker: {
-          output: 'sw.js',
-          entry: 'sw-entry.js',
-        },
-        AppCache: {
-          FALLBACK: { '/': '/' },
-        },
-      })
     ]),
   });
 }
