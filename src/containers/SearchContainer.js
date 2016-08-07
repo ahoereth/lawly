@@ -20,7 +20,7 @@ import {
 import { Search } from 'components';
 
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   page: getPage(state),
   pageSize: getPageSize(state),
   query: getQuery(state),

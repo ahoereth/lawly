@@ -9,6 +9,18 @@ import { getSelectionAnnotations, star } from 'modules/user';
 import { Law } from 'components';
 
 
+const mapStateToProps = state => ({
+  norms: getNormHierarchy(state),
+  annotations: getSelectionAnnotations(state),
+});
+
+
+const mapDispatchToProps = {
+  selectLaw,
+  star,
+};
+
+
 class LawContainer extends React.Component {
   static propTypes = {
     annotations: ImmutableTypes.map.isRequired,
@@ -44,17 +56,6 @@ class LawContainer extends React.Component {
     return <Law norms={norms} annotations={annotations} star={star} />;
   }
 }
-
-
-const mapStateToProps = state => ({
-  norms: getNormHierarchy(state),
-  annotations: getSelectionAnnotations(state),
-});
-
-const mapDispatchToProps = {
-  selectLaw,
-  star,
-};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(LawContainer);

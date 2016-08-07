@@ -17,6 +17,30 @@ import { LawIndex } from 'components';
 import { isNumeric, toInt } from 'helpers/utils';
 
 
+const mapStateToProps = state => ({
+  total: getFilteredLawsCount(state),
+  laws: getFilteredLawsByPage(state),
+  initials: getInitials(state),
+  page: getPage(state),
+  pageSize: getPageSize(state),
+  selectedInitial: getInitial(state),
+  stars: getIndexStars(state),
+  filters: getFilters(state),
+  collections: getCollectionTitles(state),
+  collection: getCollection(state),
+});
+
+
+const mapDispatchToProps = {
+  fetchIndex: fetchLawIndex,
+  selectInitial: selectLawIndexInitial,
+  selectPage: selectLawIndexPage,
+  filter: filterLawIndex,
+  selectCollection,
+  star,
+};
+
+
 class LawIndexContainer extends React.Component {
   static propTypes = {
     collection: ImmutableTypes.map.isRequired,
@@ -98,29 +122,6 @@ class LawIndexContainer extends React.Component {
     );
   }
 }
-
-
-const mapStateToProps = (state) => ({
-  total: getFilteredLawsCount(state),
-  laws: getFilteredLawsByPage(state), // total, laws
-  initials: getInitials(state),
-  page: getPage(state),
-  pageSize: getPageSize(state),
-  selectedInitial: getInitial(state),
-  stars: getIndexStars(state),
-  filters: getFilters(state),
-  collections: getCollectionTitles(state),
-  collection: getCollection(state),
-});
-
-const mapDispatchToProps = {
-  fetchIndex: fetchLawIndex,
-  selectInitial: selectLawIndexInitial,
-  selectPage: selectLawIndexPage,
-  filter: filterLawIndex,
-  selectCollection,
-  star,
-};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(LawIndexContainer);
