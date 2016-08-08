@@ -1,6 +1,5 @@
 import chai, { expect } from 'chai';
 import chaiImmutable from 'chai-immutable';
-chai.use(chaiImmutable);
 import { List, Map, fromJS } from 'immutable';
 
 import mockStore, { mockApi } from 'store/mockStore';
@@ -39,6 +38,9 @@ import reducer, {
 } from './law_index';
 
 
+chai.use(chaiImmutable);
+
+
 describe('law_index', () => {
   const localState = Map({
     laws: List(),
@@ -62,9 +64,9 @@ describe('law_index', () => {
     });
 
     it('should handle FETCH', () => {
-      const initials = [ 'a', 'b' ];
-      const index = [ { groupkey: 'a' }, { groupkey: 'b' } ];
-      const collections = [ { title: 'Deutsche Gesetze', laws: [ 'a', 'b' ] } ];
+      const initials = ['a', 'b'];
+      const index = [{ groupkey: 'a' }, { groupkey: 'b' }];
+      const collections = [{ title: 'Deutsche Gesetze', laws: ['a', 'b'] }];
       const action = { type: FETCH, payload: { index, initials, collections } };
       const state = reducer(localState, action);
 
@@ -159,7 +161,7 @@ describe('law_index', () => {
 
   describe('selectors', () => {
     it('should provide getLawIndex()', () => {
-      const laws = List([ Map({ groupkey: 'a' }) ]);
+      const laws = List([Map({ groupkey: 'a' })]);
       const state = initialState.setIn([SCOPE, 'laws'], laws);
       expect(getLawIndex(state)).to.equal(laws);
     });
@@ -193,7 +195,7 @@ describe('law_index', () => {
     // getLawsByCollection,
 
     it('should provide getLawsByInitial()', () => {
-      const laws = List([ Map({ groupkey: 'a' }), Map({ groupkey: 'z' }) ]);
+      const laws = List([Map({ groupkey: 'a' }), Map({ groupkey: 'z' })]);
       const state = initialState.mergeIn([SCOPE], Map({ initial: 'z', laws }));
       const expectedSlice = laws.filter(law => law.get('groupkey') === 'z');
       expect(getLawsByInitial(state)).to.equal(expectedSlice);

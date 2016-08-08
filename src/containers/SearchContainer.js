@@ -53,14 +53,14 @@ class SearchContainer extends React.Component {
     total: PropTypes.number.isRequired,
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  }
-
   componentDidMount() {
     const { search, params, query, selectPage, page } = this.props;
     search(params.query || query); // Initialize search.
     selectPage(params.page ? parseInt(params.page, 10) : page); // Init page.
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   }
 
   render() {

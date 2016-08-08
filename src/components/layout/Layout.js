@@ -10,7 +10,7 @@ import Footer from './Footer';
 const Layout = ({ title, children, navigation, search, query }) => (
   <MaterialLayout>
     <Header title={title} links={navigation} search={search} query={query} />
-    {/*<Drawer title={title} primary={navigation} />*/}
+    {/* <Drawer title={title} primary={navigation} /> */}
     <Content>
       {children}
     </Content>
@@ -22,7 +22,7 @@ Layout.propTypes = {
   children: PropTypes.node,
   navigation: PropTypes.arrayOf(PropTypes.shape({
     to: PropTypes.string.isRequired,
-    text: PropTypes.string.isRequired
+    text: PropTypes.string.isRequired,
   })),
   query: PropTypes.string,
   search: PropTypes.func.isRequired,

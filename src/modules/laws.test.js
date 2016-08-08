@@ -34,9 +34,10 @@ describe('laws', () => {
     });
 
     it('should handle FETCH_SINGLE', () => {
-      const a = { groupkey: 'a', n: 1 }, b = { groupkey: 'a', n: 2 };
-      const state = reducer({}, { type: FETCH_SINGLE, payload: [ a, b ] });
-      expect(state.get('laws')).to.equal(Map({ a: List([ Map(a), Map(b) ]) }));
+      const a = { groupkey: 'a', n: 1 };
+      const b = { groupkey: 'a', n: 2 };
+      const state = reducer({}, { type: FETCH_SINGLE, payload: [a, b] });
+      expect(state.get('laws')).to.equal(Map({ a: List([Map(a), Map(b)]) }));
     });
 
     it('should handle SELECT', () => {
@@ -80,7 +81,7 @@ describe('laws', () => {
 
     it('should provide getSelected()', () => {
       const laws = fromJS({ a: [{ groupkey: 'a' }], b: [{ groupkey: 'b' }] });
-      const state = initialState.mergeIn([SCOPE], Map({selected: 'b', laws}));
+      const state = initialState.mergeIn([SCOPE], Map({ selected: 'b', laws }));
       expect(getSelected(state)).to.equal(laws.get('b'));
     });
 
@@ -97,25 +98,27 @@ describe('laws', () => {
         { enumeration: '3.1.1' },
         { enumeration: '3.1.2' },
         { enumeration: '3.2' },
-      ]});
+      ] });
       const hierarchy = fromJS([
         { norm: { enumeration: '0' } },
         { norm: { enumeration: '1' }, children: [
           { norm: { enumeration: '1.1' } },
           { norm: { enumeration: '1.2' }, children: [
             { norm: { enumeration: '1.2.1' } },
-          ]}
-        ]},
+          ] },
+        ] },
         { norm: { enumeration: '2' } },
         { norm: { enumeration: '3' }, children: [
           { norm: { enumeration: '3.1' }, children: [
             { norm: { enumeration: '3.1.1' } },
             { norm: { enumeration: '3.1.2' } },
-          ]},
+          ] },
           { norm: { enumeration: '3.2' } },
-        ]}
+        ] },
       ]);
-      const state = initialState.mergeIn([SCOPE], Map({selected: 'foo', laws}));
+      const state = initialState.mergeIn([SCOPE], Map({
+        laws, selected: 'foo',
+      }));
       expect(getNormHierarchy(state)).to.equal(hierarchy);
     });
   });

@@ -31,30 +31,27 @@ export default createReducer(Map({
     email: payload.email,
     laws: Immutable.fromJS(payload.laws || []),
   }),
-  [LOGOUT]: (state/*, { payload }*/) => state.merge({
-    loggedin: false, email: undefined, laws: Map(), error: undefined
+  [LOGOUT]: state => state.merge({
+    loggedin: false, email: undefined, laws: Map(), error: undefined,
   }),
-  [STAR]: (state, { payload }) => {
-    return state.update('laws', laws => {
-      const { groupkey, enumeration } = payload;
-      const key = laws.findKey(norm =>
-        norm.get('groupkey') === groupkey &&
-        norm.get('enumeration') === enumeration
-      );
+  [STAR]: (state, { payload }) => state.update('laws', laws => {
+    const { groupkey: key, enumeration } = payload;
+    const targetkey = laws.findKey(norm =>
+      norm.get('groupkey') === key && norm.get('enumeration') === enumeration
+    );
 
-      if (key >= 0) {
-        // Update existing.
-        return laws.mergeIn([key], Map(payload));
-      } else {
-        // Add new and resort.
-        return laws.push(Map(payload)).sortBy(
-          n => [n.get('groupkey'), n.get('enumeration')],
-          ([k1, e1], [k2, e2]) => k1 !== k2 ? localeCompare(k1, k2)
-                                            : semverCompare(e1, e2)
-        );
-      }
-    });
-  }
+    // Update existing.
+    if (targetkey >= 0) {
+      return laws.mergeIn([targetkey], Map(payload));
+    }
+
+    // Add new and resort.
+    return laws.push(Map(payload)).sortBy(
+      n => [n.get('groupkey'), n.get('enumeration')],
+      ([k1, e1], [k2, e2]) => (k1 !== k2 ? localeCompare(k1, k2)
+                                         : semverCompare(e1, e2))
+    );
+  }),
 });
 
 
@@ -63,12 +60,12 @@ export default createReducer(Map({
 // ACTION CREATORS
 export const login = (email, password, signup = false) => ({
   type: LOGIN,
-  promise: client => client.auth(email, password, signup)
+  promise: client => client.auth(email, password, signup),
 });
 
 export const logout = (email) => ({
   type: LOGOUT,
-  promise: client => client.unauth(email)
+  promise: client => client.unauth(email),
 });
 
 export const star = (law, state = true) => {
@@ -89,12 +86,12 @@ export const getUser = state => state.get(SCOPE);
 export const getUserLaws = state => state.getIn([SCOPE, 'laws']);
 
 export const getStarredUserLaws = createSelector(
-  [ getUserLaws ],
+  [getUserLaws],
   laws => laws.filter(norm => norm.get('starred'))
 );
 
 export const getIndexStars = createSelector(
-  [ getStarredUserLaws ],
+  [getStarredUserLaws],
   (laws) => laws.reduce((map, norm) => {
     const key = norm.get('groupkey');
     const child = norm.get('enumeration') !== '0';
@@ -105,14 +102,14 @@ export const getIndexStars = createSelector(
     } else if ((state === 0 && child) || (state === -1 && !child)) {
       // Set to "root and children".
       return map.set(key, 1);
-    } else {
-      return map;
     }
+
+    return map;
   }, Map({}))
 );
 
 export const getSelectionAnnotations = createSelector(
-  [ getUserLaws, getSelection ],
+  [getUserLaws, getSelection],
   (norms, groupkey) => Map(
     norms.filter(law => law.get('groupkey') === groupkey)
          .map(norm => [norm.get('enumeration'), norm])

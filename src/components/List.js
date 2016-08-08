@@ -14,7 +14,7 @@ class List extends React.Component {
   );
 
   render() {
-    const { children, ...otherProps} = this.props;
+    const { children, ...otherProps } = this.props;
     return this.createList(children, otherProps);
   }
 }

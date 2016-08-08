@@ -14,16 +14,16 @@ export default class ApiClient {
   static NO_CONNECTION_NO_CACHE = 'NO_CONNECTION_NO_CACHE';
 
   static jsonHeaders = {
-    'Accept': 'application/json',
+    Accept: 'application/json',
     'Content-Type': 'application/json',
   };
 
   static resources = {
-    'laws': '/laws',
-    'law': '/laws/:groupkey',
-    'users': '/users/:email',
-    'user_sessions': '/users/:email/sessions',
-    'user_law': '/users/:email/laws/:groupkey/:enumeration',
+    laws: '/laws',
+    law: '/laws/:groupkey',
+    users: '/users/:email',
+    user_sessions: '/users/:email/sessions',
+    user_law: '/users/:email/laws/:groupkey/:enumeration',
   };
 
   static defaultParams = {
@@ -86,7 +86,7 @@ export default class ApiClient {
 
     const skeleton = ApiClient.resources[name];
     const values = { ...ApiClient.defaultParams, ...payload };
-    let params = {};
+    const params = {};
     let path = skeleton.replace(/:(\w+)/g, (match, key) => {
       params[key] = values[key];
       return !isUndefined(values[key]) ? encodeURIComponent(values[key]) : '';
@@ -94,7 +94,7 @@ export default class ApiClient {
 
     const body = omit(payload, ...Object.keys(params));
     if ((method || '').toLowerCase() === 'get') {
-      path = path + obj2query(body, true);
+      path += obj2query(body, true);
     }
 
     return {
@@ -112,9 +112,9 @@ export default class ApiClient {
    *
    * @param {string} token
    */
-  setAuthToken(token) {
+  setAuthToken(token = null) {
     this.headers.authorization = token ? `JWT ${token}` : undefined;
-    this.storage.auth(token ? token : null);
+    this.storage.auth(token);
   }
 
   /**
@@ -145,11 +145,12 @@ export default class ApiClient {
 
       // Handle response accordingly to status.
       switch (status) {
-        case 'error':
-        case 'fail':
-          throw (message || response.statusText);
         case 'success':
           return data;
+        case 'error':
+        case 'fail':
+        default:
+          throw (message || response.statusText);
       }
     });
   }
@@ -167,9 +168,13 @@ export default class ApiClient {
     } = this.parseFetchOptions(options);
 
     let request = fetch(url, {
-      method: method,
+      method,
       body: JSON.stringify(body),
-      headers: {...ApiClient.jsonHeaders, ...this.headers, ...options.headers },
+      headers: {
+        ...ApiClient.jsonHeaders,
+        ...this.headers,
+        ...options.headers,
+      },
     });
 
     // Server responded.
@@ -201,7 +206,7 @@ export default class ApiClient {
 
     // Network error.
     request = request.catch(() => {
-      this.storage.stashRequest(options).then(() =>  this.isConnected(false));
+      this.storage.stashRequest(options).then(() => this.isConnected(false));
       if (!cachable) { throw ApiClient.NO_CONNECTION_NO_CACHE; }
       return this.storage.get({ name, method, ...params });
     });
@@ -209,13 +214,9 @@ export default class ApiClient {
     // If the request has an action type attached dispatch that action here.
     if (action) {
       return request.then(
-        result => {
-          return this.store.dispatch({
-            type: action,
-            payload: result,
-          });
-        }, err => {
-          if (err === ApiClient.NO_CONNECTION_NO_CACHE) { return; }
+        result => this.store.dispatch({ type: action, payload: result }),
+        err => {
+          if (err === ApiClient.NO_CONNECTION_NO_CACHE) return true;
           return this.store.dispatch({
             type: action,
             error: true,
@@ -223,9 +224,9 @@ export default class ApiClient {
           });
         }
       );
-    } else {
-      return request;
     }
+
+    return request;
   }
 
   /**
@@ -289,13 +290,13 @@ export default class ApiClient {
       .then(result => {
         // Fetch all starred laws in a single request and insert them into the
         // redux store. TODO: This logic chunk does not really belong here.
-        this.get({ name: 'law', groupkey: result.laws.map(l => l.groupkey )})
-            .then(laws => !isObject(laws) ? { [laws[0].groupkey]: laws } : laws)
-            .then(laws => Object.keys(laws).forEach(groupkey => {
-              const law = laws[groupkey];
-              this.storage.stash({ method: 'get', name: 'law', groupkey }, law);
-              this.store.dispatch({ type: FETCH_SINGLE, payload: law });
-            }));
+        this.get({ name: 'law', groupkey: result.laws.map(l => l.groupkey) })
+          .then(laws => (!isObject(laws) ? { [laws[0].groupkey]: laws } : laws))
+          .then(laws => Object.keys(laws).forEach(groupkey => {
+            const law = laws[groupkey];
+            this.storage.stash({ method: 'get', name: 'law', groupkey }, law);
+            this.store.dispatch({ type: FETCH_SINGLE, payload: law });
+          }));
         return result;
       });
   }

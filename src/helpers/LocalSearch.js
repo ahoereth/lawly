@@ -6,7 +6,7 @@ class Deferred {
     this.data = data;
     this.promise = new Promise((resolve, reject) => {
       this.resolve = resolve;
-      this.reject  = reject;
+      this.reject = reject;
     });
   }
 }
@@ -42,9 +42,13 @@ class LocalSearch {
             );
             delete this.promises[id];
             break;
+          default:
+            throw new Error('Unexpected LocalSearch command');
         }
         break;
       case 'log':
+      default:
+        /* eslint-disable no-console */
         console.log('worker log', val);
         break;
     }
@@ -54,17 +58,16 @@ class LocalSearch {
     this.worker.postMessage({ cmd: 'indexLaw', args: [norms] });
   }
 
-  parseResult({ result, laws, limit }) {
-    limit = !limit || limit > result.length ? result.length : limit;
+  parseResult({ result, laws, limit = result.length }) {
     // Currently parsing the result outside of the web worker because
     // sending the required laws to the worker is expensive.
     return {
-      total: limit,
+      total: limit > result.length ? result.length : limit,
       results: result.slice(0, limit).map(obj => {
         const [k, n] = obj.ref.split('::');
         return {
           groupkey: k, enumeration: n,
-          title: laws.get(k).find(l => l.get('enumeration') === n).get('title')
+          title: laws.get(k).find(l => l.get('enumeration') === n).get('title'),
         };
       }),
     };

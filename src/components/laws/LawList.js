@@ -14,30 +14,34 @@ import styles from './lawList.sss';
 
 const LawList = ({
   filter, filters,
-  laws, total,
+  laws, total = laws.size,
   page, pageSize, selectPage,
   star, stars,
 }) => {
-  total = total || laws.size;
-  const areAllStarred = !stars ? false : laws.filter(law => stars.get(law.get('groupkey')) >= 0).size === laws.size;
+  const areAllStarred = !!stars
+    ? laws.filter(law => stars.get(law.get('groupkey')) >= 0).size === laws.size
+    : false;
   const starMany = laws => laws.forEach(law => star(law, !areAllStarred));
 
   const rows = laws.map(law => {
     const { groupkey, title } = law.toJS();
     const state = stars ? stars.get(groupkey, -2) : null;
+    /* eslint-disable no-nested-ternary */
     return {
       title, groupkey,
       star: !star ? null : (
-        <Tooltip label={
-          state === -2
-            ? 'Tippen zum Speichern'
-            : state === -1
-              ? 'Beinhaltet markierte Normen, klicken zum Speichern'
-              : state === 0
-                ? 'Tippen zum Löschen'
-                : //state === 1
-                  'Beinhaltet markierte Normen, tippen zum Löschen'
-        }>
+        <Tooltip
+          label={
+            state === -2
+              ? 'Tippen zum Speichern'
+              : state === -1
+                ? 'Beinhaltet markierte Normen, klicken zum Speichern'
+                : state === 0
+                  ? 'Tippen zum Löschen'
+                  : // state === 1
+                    'Beinhaltet markierte Normen, tippen zum Löschen'
+          }
+        >
           <IconButton
             ripple
             colored={state >= 0}
@@ -47,12 +51,12 @@ const LawList = ({
         </Tooltip>
       ),
       action: (
-        <Link to={'/gesetz/' + groupkey}>
+        <Link to={`/gesetz/${groupkey}`}>
           <FABButton mini>
             <Icon name='launch' />
           </FABButton>
         </Link>
-      )
+      ),
     };
   }).toJS();
   // ^TODO: Conversion needed because react-mdl does not like immutable objects.
@@ -69,7 +73,7 @@ const LawList = ({
             name='star' numeric
             tooltip={!filter ? undefined : 'Nur gespeicherte Normen zeigen'}
           >
-            {!filter ? <span/> :
+            {!filter ? <span /> :
               <IconButton
                 ripple
                 name='stars'
@@ -107,7 +111,10 @@ const LawList = ({
         </TableHeader>
         <TableHeader
           name='action' numeric
-          tooltip={total > 50 ? '' : !areAllStarred ? 'Alle speichern' : 'Alle löschen'}
+          tooltip={total <= 50
+            ? (!areAllStarred ? 'Alle speichern' : 'Alle löschen')
+            : ''
+          }
         >
           {total > 50 ? null :
             <FABButton
@@ -123,7 +130,7 @@ const LawList = ({
       {!selectPage ? null :
         <Pagination
           page={page}
-          pages={Math.ceil(total/pageSize)}
+          pages={Math.ceil(total / pageSize)}
           selectPage={selectPage}
         />
       }

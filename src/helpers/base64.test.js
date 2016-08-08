@@ -1,16 +1,11 @@
-import chai from 'chai';
-chai.should();
-
-import {
-  b64decode,
-} from './base64';
-
+import { expect } from 'chai';
+import { b64decode } from './base64';
 
 describe('base64', () => {
   describe('b64decode', () => {
     it('decodes correctly', () => {
-      b64decode('YQ===').should.equal('a');
-      b64decode('4pyTIMOgIGxhIG1vZGU=').should.equal('✓ à la mode');
+      expect(b64decode('YQ===')).to.equal('a');
+      expect(b64decode('4pyTIMOgIGxhIG1vZGU=')).to.equal('✓ à la mode');
     });
   });
 });

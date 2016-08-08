@@ -41,7 +41,7 @@ describe('user', () => {
     it('should handle LOGIN', () => {
       const payload = {
         email: 'mail',
-        laws: { a: { '0': { starred: true } } },
+        laws: { a: { 0: { starred: true } } },
       };
       const state = reducer(undefined, { type: LOGIN, payload });
       expect(state.get('email')).to.equal('mail');
@@ -50,7 +50,7 @@ describe('user', () => {
 
     it('should handle LOGOUT', () => {
       const state = reducer(
-        { loggedin: true, email: 'mail', laws: Map({a: 'a'}) },
+        { loggedin: true, email: 'mail', laws: Map({ a: 'a' }) },
         { type: LOGOUT, payload: null }
       );
       expect(state.get('loggedin')).to.be.false;
@@ -61,7 +61,7 @@ describe('user', () => {
     it('should handle STAR', () => {
       const state = reducer(undefined, {
         type: STAR,
-        payload: { groupkey: 'a', enumeration: '0', starred: true }
+        payload: { groupkey: 'a', enumeration: '0', starred: true },
       });
       expect(state.get('laws').first().get('starred')).to.be.true;
     });
@@ -73,8 +73,8 @@ describe('user', () => {
       const expectedAction = {
         type: LOGIN, payload: {
           email: 'mail',
-          laws: [ { groupkey: 'a' } ],
-        }
+          laws: [{ groupkey: 'a' }],
+        },
       };
       const store = mockStore(initialState);
       mockApi.reset(() => Promise.resolve(expectedAction.payload));
@@ -119,39 +119,39 @@ describe('user', () => {
     });
 
     it('should provide getUserLaws()', () => {
-      const laws = fromJS({ 'a': { groupkey: 'a' }, 'b': { groupkey: 'b' } });
+      const laws = fromJS({ a: { groupkey: 'a' }, b: { groupkey: 'b' } });
       const state = initialState.setIn([SCOPE, 'laws'], Map(laws));
       expect(getUserLaws(state)).to.equal(laws);
     });
 
     it('should provide getStarredUserLaws()', () => {
       const state = initialState.setIn([SCOPE, 'laws'], fromJS([
-        { groupkey: 'a', enumeration: '0',   starred: true  },
+        { groupkey: 'a', enumeration: '0', starred: true },
         { groupkey: 'a', enumeration: '1.3', starred: false },
-        { groupkey: 'c', enumeration: '0',   starred: false },
+        { groupkey: 'c', enumeration: '0', starred: false },
       ]));
-      const starred = [{ groupkey: 'a', enumeration: '0',   starred: true  }];
+      const starred = [{ groupkey: 'a', enumeration: '0', starred: true }];
       expect(getStarredUserLaws(state)).to.equal(fromJS(starred));
     });
 
     it('should provide getIndexStars()', () => {
       const state = initialState.setIn([SCOPE, 'laws'], fromJS([
-        { groupkey: 'a', enumeration: '0',   starred: true  },
+        { groupkey: 'a', enumeration: '0', starred: true },
         { groupkey: 'a', enumeration: '1.3', starred: false },
-        { groupkey: 'a', enumeration: '1.6', starred: true  },
-        { groupkey: 'b', enumeration: '0',   starred: true  },
-        { groupkey: 'c', enumeration: '0',   starred: false },
+        { groupkey: 'a', enumeration: '1.6', starred: true },
+        { groupkey: 'b', enumeration: '0', starred: true },
+        { groupkey: 'c', enumeration: '0', starred: false },
       ]));
       expect(getIndexStars(state)).to.equal(Map({ a: 1, b: 0 }));
     });
 
     it('should provide getSelectionAnnotations()', () => {
-      let state = initialState.setIn([SCOPE, 'laws'], fromJS([
-        { groupkey: 'a', enumeration: '0',   starred: true  },
+      const state = initialState.setIn([SCOPE, 'laws'], fromJS([
+        { groupkey: 'a', enumeration: '0', starred: true },
         { groupkey: 'a', enumeration: '1.3', starred: false },
-        { groupkey: 'a', enumeration: '1.6', starred: true  },
-        { groupkey: 'b', enumeration: '0',   starred: true  },
-        { groupkey: 'c', enumeration: '0',   starred: false },
+        { groupkey: 'a', enumeration: '1.6', starred: true },
+        { groupkey: 'b', enumeration: '0', starred: true },
+        { groupkey: 'c', enumeration: '0', starred: false },
       ])).setIn([lawsSCOPE, 'selected'], 'a');
       let target = state.getIn([SCOPE, 'laws']).take(3);
       target = Map(target.map(norm => norm.get('enumeration')).zip(target));

@@ -3,11 +3,10 @@ import { Link } from 'react-router';
 import {
   Header as MaterialHeader,
   HeaderRow,
-  Navigation
+  Navigation,
 } from 'react-mdl';
 
 import { SearchInput } from 'components';
-
 
 
 const Header = ({ title, links, search, query }) => (

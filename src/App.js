@@ -6,7 +6,7 @@ import {
   Layout,
   Home,
   Search,
-  LawIndex,
+  LawIndex as Index,
   Law,
 } from 'containers';
 
@@ -18,7 +18,7 @@ const App = ({ history, store }) => (
         <IndexRoute component={Home} title='Home' />
         <Route path='suche(/:query)(/:page)' component={Search} title='Suche' />
         <Route path='gesetz/:groupkey' component={Law} title='Gesetz' />
-        <Route path='gesetze(/:a)(/:b)(/:c)' component={LawIndex} title='Index' />
+        <Route path='gesetze(/:a)(/:b)(/:c)' component={Index} title='Index' />
 
         <Redirect from='gesetz' to='gesetze' />
       </Route>

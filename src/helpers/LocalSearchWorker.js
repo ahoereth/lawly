@@ -25,7 +25,7 @@ export default class LocalSearchWorker {
     const newTrimmer = elasticlunr.Pipeline.getRegisteredFunction('trim');
 
     // TODO: Index should be stored in forage because it's creation is expensive.
-    this.index = elasticlunr(function() {
+    this.index = elasticlunr(function () {
       this.addField('groupkey');
       this.addField('title');
       this.addField('body');
@@ -40,24 +40,25 @@ export default class LocalSearchWorker {
   }
 
   indexLaw(norms) {
-    if (isObject(norms)) {
-      norms = Object.keys(norms).reduce((list, key) => {
-        return list.concat(norms[key]);
-      }, []);
+    let normsList = norms;
+    if (isObject(normsList)) {
+      normsList = Object.keys(norms).reduce((list, key) => (
+        list.concat(norms[key])
+      ), []);
     }
 
     norms.forEach(norm => this.index.addDoc({
-      ...norm, id: norm.groupkey + '::' + norm.enumeration
+      ...norm, id: `${norm.groupkey}::${norm.enumeration}`,
     }, false));
   }
 
   search(query) {
     return this.index.search(query, {
       fields: {
-        groupkey: { boost: 10, expand: true  },
+        groupkey: { boost: 10, expand: true },
         title: { boost: 1, expand: true },
-        body: { boost: 1, expand: true  },
-      }
+        body: { boost: 1, expand: true },
+      },
     });
   }
 }

@@ -3,7 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import {
   Card, CardTitle, CardText, CardActions,
-  Textfield, Button
+  Textfield, Button,
 } from 'react-mdl';
 
 import { omit } from 'helpers/utils';
@@ -44,7 +44,7 @@ class LoginForm extends React.Component {
   signup = (e) => {
     e && e.preventDefault();
     const { email, password } = this.state;
-    this.props.login(email, password, /*signup:*/ true);
+    this.props.login(email, password, /* signup: */ true);
   }
 
   input = (e) => {
@@ -63,36 +63,36 @@ class LoginForm extends React.Component {
         <Card shadow={shadow} {...omit(otherProps, 'login', 'user')}>
           <CardTitle>Login</CardTitle>
           <CardText>
-              <Textfield
-                floatingLabel
-                type='email'
-                name='email'
-                label='E-Mail'
-                style={{width: '100%'}}
-                value={email}
-                onChange={this.input}
-              />
-              <Textfield
-                floatingLabel
-                type='password'
-                name='password'
-                label='Passwort'
-                style={{width: '100%'}}
-                value={password}
-                onChange={this.input}
-              />
+            <Textfield
+              floatingLabel
+              type='email'
+              name='email'
+              label='E-Mail'
+              style={{ width: '100%' }}
+              value={email}
+              onChange={this.input}
+            />
+            <Textfield
+              floatingLabel
+              type='password'
+              name='password'
+              label='Passwort'
+              style={{ width: '100%' }}
+              value={password}
+              onChange={this.input}
+            />
           </CardText>
           <CardActions>
             <Button
               ripple raised accent
-              style={{float: 'right'}}
+              style={{ float: 'right' }}
               type='submit'
             >
               Einloggen
             </Button>
             <Button
               ripple raised
-              style={{float: 'right', marginRight: '1em'}}
+              style={{ float: 'right', marginRight: '1em' }}
               onClick={this.signup}
             >
               Registrierieren

@@ -11,13 +11,12 @@ const UserLaw = ({ groupkey, norms, title }) => {
       {title}
       <ul>
         {childNorms.entrySeq().map(([enumeration, norm]) => (
-            <li key={enumeration}>
-              <Link to={`gesetz/${groupkey}/${enumeration}`}>
-                {norm.get('title')}
-              </Link>
-            </li>
-          ))
-        }
+          <li key={enumeration}>
+            <Link to={`gesetz/${groupkey}/${enumeration}`}>
+              {norm.get('title')}
+            </Link>
+          </li>
+        ))}
       </ul>
     </div>
   );

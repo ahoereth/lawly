@@ -5,13 +5,11 @@
  * @return {Function} Redux Middleware
  */
 export default function functionsMiddleware() {
-  return ({ dispatch, getState }) => {
-    return next => action => {
-      if (typeof action !== 'function') {
-        return next(action);
-      }
+  return ({ dispatch, getState }) => next => action => {
+    if (typeof action !== 'function') {
+      return next(action);
+    }
 
-      return action(dispatch, getState);
-    };
+    return action(dispatch, getState);
   };
 }

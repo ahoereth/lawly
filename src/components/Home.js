@@ -9,11 +9,11 @@ import WelcomeMessage from './WelcomeMessage';
 const Home = ({ user, laws, login, logout }) => (
   <Grid>
     <Cell col={4}>
-      <WelcomeMessage {...{user, logout}} />
+      <WelcomeMessage {...{ user, logout }} />
     </Cell>
     {user.get('loggedin') ? null :
       <Cell col={4}>
-        <LoginForm shadow={1} {...{user, login}} />
+        <LoginForm shadow={1} {...{ user, login }} />
       </Cell>
     }
     {!user.get('loggedin') ? null :

@@ -6,7 +6,7 @@ import { LawList } from 'components';
 import SearchInput from './SearchInput';
 
 
-const Search  = ({
+const Search = ({
   page,
   pageSize,
   query,
@@ -22,7 +22,7 @@ const Search  = ({
       <SearchInput
         search={search}
         query={query}
-        style={{width: '100%', textAlign: 'center'}}
+        style={{ width: '100%', textAlign: 'center' }}
       />
     </Cell>
     <Cell col={12}>

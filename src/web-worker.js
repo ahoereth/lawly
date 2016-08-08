@@ -1,22 +1,23 @@
 import LocalSearchWorker from 'helpers/LocalSearchWorker';
 
-(worker => {
-  const search = new LocalSearchWorker();
+/* global self */
+const worker = self;
 
-  worker.onmessage = function(e) {
-    const { type, id, cmd, args } = e.data;
+const search = new LocalSearchWorker();
 
-    // This receives messages in both directions -- ignore outgoing.
-    if (type === 'response') { 
-      return;
-    }
+worker.onmessage = function (e) {
+  const { type, id, cmd, args } = e.data;
 
-    // Currently all incoming messages are directed at the LocalSearchWorker.
-    const val = search[cmd](...args);
+  // This receives messages in both directions -- ignore outgoing.
+  if (type === 'response') {
+    return;
+  }
 
-    // If some id is given, a response is expected.
-    if (id) {
-      worker.postMessage({ type: 'response', cmd, id, val });
-    }
-  };
-})(self); /* global self */
+  // Currently all incoming messages are directed at the LocalSearchWorker.
+  const val = search[cmd](...args);
+
+  // If some id is given, a response is expected.
+  if (id) {
+    worker.postMessage({ type: 'response', cmd, id, val });
+  }
+};

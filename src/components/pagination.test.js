@@ -3,11 +3,12 @@ import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import spies from 'chai-spies';
 
-chai.use(chaiEnzyme());
-chai.use(spies);
-
 import React from 'react';
 import Pagination from './Pagination';
+
+
+chai.use(chaiEnzyme());
+chai.use(spies);
 
 
 describe('Pagination', () => {
@@ -26,8 +27,8 @@ describe('Pagination', () => {
   it('renders correct actions on first page', () => {
     const action = chai.spy(p => p);
 
-    let wrap = shallow(<Pagination pages={5} selectPage={action} />);
-    let actions = wrap.find('div').first().find('Button');
+    const wrap = shallow(<Pagination pages={5} selectPage={action} />);
+    const actions = wrap.find('div').first().find('Button');
 
     actions.at(0).simulate('click'); // Next
     expect(action).to.be.called.once;
@@ -41,8 +42,8 @@ describe('Pagination', () => {
   it('renders correct actions on second page', () => {
     const action = chai.spy(p => p);
 
-    let wrap = shallow(<Pagination page={2} pages={5} selectPage={action} />);
-    let actions = wrap.find('div').first().find('Button');
+    const wrap = shallow(<Pagination page={2} pages={5} selectPage={action} />);
+    const actions = wrap.find('div').first().find('Button');
 
     actions.at(0).simulate('click'); // Prev
     expect(action).to.be.called.once;
@@ -60,8 +61,8 @@ describe('Pagination', () => {
   it('renders correct actions on a centered page', () => {
     const action = chai.spy(p => p);
 
-    let wrap = shallow(<Pagination page={3} pages={5} selectPage={action} />);
-    let actions = wrap.find('div').first().find('Button');
+    const wrap = shallow(<Pagination page={3} pages={5} selectPage={action} />);
+    const actions = wrap.find('div').first().find('Button');
 
     actions.at(0).simulate('click'); // Start
     expect(action).to.be.called.once;
@@ -83,8 +84,8 @@ describe('Pagination', () => {
   it('renders correct actions on pre-last page', () => {
     const action = chai.spy(p => p);
 
-    let wrap = shallow(<Pagination page={4} pages={5} selectPage={action} />);
-    let actions = wrap.find('div').first().find('Button');
+    const wrap = shallow(<Pagination page={4} pages={5} selectPage={action} />);
+    const actions = wrap.find('div').first().find('Button');
 
     actions.at(0).simulate('click'); // Start
     expect(action).to.be.called.once;
@@ -102,8 +103,8 @@ describe('Pagination', () => {
   it('renders correct actions on last page', () => {
     const action = chai.spy(p => p);
 
-    let wrap = shallow(<Pagination page={5} pages={5} selectPage={action} />);
-    let actions = wrap.find('div').first().find('Button');
+    const wrap = shallow(<Pagination page={5} pages={5} selectPage={action} />);
+    const actions = wrap.find('div').first().find('Button');
 
     actions.at(0).simulate('click'); // Start
     expect(action).to.be.called.once;

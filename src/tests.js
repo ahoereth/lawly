@@ -1,6 +1,6 @@
-/* global require, module */
+/* global require */
 
 // Look for `tests.js` files in direct child directories.
-var context = require.context('.', true, /.+\/tests\.js?$/);
+const context = require.context('.', true, /.+\/tests\.js?$/);
 context.keys().forEach(context);
-module.exports = context;
+export default context;

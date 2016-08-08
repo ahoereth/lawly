@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import {
-  Card, CardTitle, CardText
+  Card, CardTitle, CardText,
 } from 'react-mdl';
 
 import UserLaw from './UserLaw';

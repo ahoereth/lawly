@@ -1,4 +1,4 @@
-/* global __dirname, require, module */
+/* eslint-disable import/no-commonjs */
 const process = require('process');
 const path = require('path');
 const {
@@ -26,40 +26,36 @@ let config = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
-    filename: '[name].js'
+    filename: '[name].js',
   },
   resolve: {
-    modules: [ 'node_modules', path.resolve(__dirname, 'src') ],
-    extensions: [ '.js', '.ts', '.tsx' ]
+    modules: ['node_modules', path.resolve(__dirname, 'src')],
+    extensions: ['.js'],
   },
   module: {
     loaders: [
-      { test: /\.js$/, loaders: [ 'babel', 'eslint' ], exclude: /node_modules/},
-      { test: /\.css$/, loaders: [ 'style', 'css', 'postcss' ] },
-      { test: /\.sss$/, loaders: [ 'style', 'css', 'postcss?parser=sugarss' ] },
-      { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' }
-    ]
+      { test: /\.js$/, loaders: ['babel', 'eslint'], exclude: /node_modules/ },
+      { test: /\.css$/, loaders: ['style', 'css', 'postcss'] },
+      { test: /\.sss$/, loaders: ['style', 'css', 'postcss?parser=sugarss'] },
+      { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
+    ],
   },
   externals: {
-    'cheerio': 'window',
+    cheerio: 'window',
     'react/addons': true,
     'react/lib/ExecutionEnvironment': true,
     'react/lib/ReactContext': true,
   },
-  postcss: () => {
-    return [autoprefixer, precss];
-  },
+  postcss: () => [autoprefixer, precss],
   plugins: [
     new HtmlWebpackPlugin({
       template: 'client.ejs',
       title: 'Lawly',
-      chunks: [ 'app' ],
-      minify: { collapseWhitespace: true, }
+      chunks: ['app'],
+      minify: { collapseWhitespace: true },
     }),
   ],
 };
-
-
 
 
 // *****************************************************************************
@@ -77,32 +73,30 @@ if (process.env.NODE_ENV === 'development') {
   config = Object.assign({}, config, {
     watch: true,
     entry: Object.assign({}, config.entry, {
-      app: hotreloading.concat([ config.entry.app ]),
-      tests: hotreloading.concat([ 'mocha!./tests.js' ]),
+      app: hotreloading.concat([config.entry.app]),
+      tests: hotreloading.concat(['mocha!./tests.js']),
     }),
     plugins: config.plugins.concat([
       new HtmlWebpackPlugin({
         filename: 'tests.html',
         title: 'Lawly Tests',
         template: 'client.ejs',
-        chunks: [ 'tests' ],
+        chunks: ['tests'],
       }),
       new HotModuleReplacementPlugin(),
       new NoErrorsPlugin(),
       new DefinePlugin({
         'process.env': {
-          'NODE_ENV': JSON.stringify('development')
+          NODE_ENV: JSON.stringify('development'),
         },
-      })
+      }),
     ]),
     server: {
       host: HOST,
       port: PORT,
-    }
+    },
   });
 }
-
-
 
 
 // *****************************************************************************
@@ -117,18 +111,16 @@ if (process.env.NODE_ENV === 'production') {
         compress: {
           warnings: false,
         },
-        comments: () => false
+        comments: () => false,
       }),
       new DefinePlugin({
         'process.env': {
-          'NODE_ENV': JSON.stringify('production')
+          NODE_ENV: JSON.stringify('production'),
         },
       }),
     ]),
   });
 }
-
-
 
 
 // *****************************************************************************

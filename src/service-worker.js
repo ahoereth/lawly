@@ -22,10 +22,9 @@ toolbox.precache(statics);
 if (process.env.NODE_ENV !== 'production') { /* global process */
   toolbox.options.debug = true;
 
-  toolbox.router.get('/sockjs-node/*', (request, values, options) => {
-    return toolbox.networkOnly(request, values, options)
-                  .catch(() => new Response());
-  });
+  toolbox.router.get('/sockjs-node/*', (request, values, options) => (
+    toolbox.networkOnly(request, values, options).catch(() => new Response())
+  ));
 }
 
 
@@ -39,10 +38,10 @@ toolbox.router.get('/*', (request, values, options) => {
   }
 
   // TODO: Maybe use `fastest` here? Why rely on the server for route redirects?
-  return toolbox.networkFirst(request, values, options).catch(() => {
-    return toolbox.cacheOnly(new Request('/index.html'), values, options)
-                  .catch(() => new Response());
-  });
+  return toolbox.networkFirst(request, values, options).catch(() => (
+    toolbox.cacheOnly(new Request('/index.html'), values, options)
+           .catch(() => new Response())
+  ));
 }, {
   origin: /localhost:8080$/,
   cache: {

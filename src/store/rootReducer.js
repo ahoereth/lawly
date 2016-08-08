@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux-immutablejs';
 import { routerReducer } from 'react-router-redux';
 
+// eslint-disable-next-line camelcase
 import law_index from 'modules/law_index';
 import laws from 'modules/laws';
 import search from 'modules/search';
@@ -11,5 +12,5 @@ export default combineReducers({
   laws,
   search,
   user,
-  routing: routerReducer
+  routing: routerReducer,
 });

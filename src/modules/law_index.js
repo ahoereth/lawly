@@ -50,14 +50,14 @@ export default createReducer(Map({
 // ACTION CREATORS
 export const fetchLawIndex = () => ({
   type: FETCH,
-  promise: api => api.get({ name: 'laws', cachable: true })
+  promise: api => api.get({ name: 'laws', cachable: true }),
 });
 
 export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
-  const initial = getInitial(getState());
-  const collection = getCollectionTitle(getState());
-  const collectionPath = collection ? collection + '/' : '';
-  const initialPath = initial ? initial + '/': '';
+  const initial = getState().getIn([SCOPE, 'initial']);
+  const collection = getState().getIn([SCOPE, 'collection']);
+  const collectionPath = collection ? `${collection}/` : '';
+  const initialPath = initial ? `${initial}/` : '';
   const pagePath = page > 1 ? page : '';
   dispatch({ type: SELECT_PAGE, payload: page || 1 });
   dispatch(push(`/gesetze/${collectionPath}${initialPath}${pagePath}`));
@@ -68,14 +68,14 @@ export const selectLawIndexInitial = (initial = '') => (dispatch) => {
   dispatch(selectLawIndexPage(1));
 };
 
-export const selectCollection = collection => dispatch => {
+export const selectCollection = (collection = '') => dispatch => {
   dispatch({ type: SELECT_COLLECTION, payload: collection });
   dispatch(selectLawIndexInitial(''));
 };
 
 export const filterLawIndex = (filters = {}) => (dispatch) => {
-  filters = pick(filters, 'starred', 'title', 'groupkey');
-  dispatch({ type: FILTER, payload: filters });
+  const payload = pick(filters, 'starred', 'title', 'groupkey');
+  dispatch({ type: FILTER, payload });
   dispatch(selectLawIndexPage(1));
 };
 
@@ -100,14 +100,12 @@ export const getCollectionTitle = state => state.getIn([SCOPE, 'collection']);
 export const getFilters = (state) => state.getIn([SCOPE, 'filters']);
 
 export const getCollectionTitles = createSelector(
-  [ getCollections ],
-  (collections) => {
-    return collections.map(coll => coll.get('title'));
-  }
+  [getCollections],
+  collections => collections.map(coll => coll.get('title'))
 );
 
 export const getCollection = createSelector(
-  [ getCollections, getCollectionTitle ],
+  [getCollections, getCollectionTitle],
   (collections, title) => {
     if (!title) { return Map(); }
     const result = collections.find(coll => coll.get('title') === title);
@@ -116,31 +114,29 @@ export const getCollection = createSelector(
 );
 
 export const getLawsByCollection = createSelector(
-  [ getLawIndex, getCollection ],
+  [getLawIndex, getCollection],
   (laws, collection) => {
     if (!collection.get('laws')) { return laws; }
-    const groupkeys = collection.get('laws').map(groupkey => groupkey.toLowerCase());
-    return laws.filter(law =>
-      groupkeys.indexOf(law.get('groupkey').toLowerCase()) !== -1
-    );
+    const keys = collection.get('laws').map(groupkey => groupkey.toLowerCase());
+    return laws.filter(l => keys.indexOf(l.get('groupkey').toLowerCase()) < 0);
   }
 );
 
 export const getLawsByInitial = createSelector(
-  [ getLawsByCollection, getInitial ],
+  [getLawsByCollection, getInitial],
   (laws, char) => {
     if (!char) { return laws; }
-    return laws.filter(law => law.get('groupkey')[0].toLowerCase() == char);
+    return laws.filter(law => law.get('groupkey')[0].toLowerCase() === char);
   }
 );
 
 // Filter laws of the specified initial by starred if requested.
 // Wrapped in its own selector to utilize memorization.
 export const getStarFilteredLawsByInitial = createSelector(
-  [ getLawsByInitial, getFilters, getIndexStars ],
+  [getLawsByInitial, getFilters, getIndexStars],
   (laws, filters, stars) => {
     if (filters.get('starred')) {
-      laws = laws.filter(law => stars.has(law.get('groupkey')));
+      return laws.filter(law => stars.has(law.get('groupkey')));
     }
 
     return laws;
@@ -151,13 +147,11 @@ export const getStarFilteredLawsByInitial = createSelector(
 // further more by groupkey if requested.
 // Wrapped in its own selector to utilize memorization.
 export const getStarAndKeyFilteredLawsByInitial = createSelector(
-  [ getStarFilteredLawsByInitial, getFilters ],
+  [getStarFilteredLawsByInitial, getFilters],
   (laws, filters) => {
-    if (filters.get('groupkey')) {
-      const needle = filters.get('groupkey', '').toLowerCase();
-      laws = laws.filter(law =>
-        law.get('groupkey').toLowerCase().indexOf(needle) > -1
-      );
+    const k = filters.get('groupkey', '').toLowerCase();
+    if (k) {
+      return laws.filter(l => l.get('groupkey').toLowerCase().indexOf(k) > -1);
     }
 
     return laws;
@@ -168,13 +162,11 @@ export const getStarAndKeyFilteredLawsByInitial = createSelector(
 // and groupkey further more by title if requested.
 // Wrapped in its own selector to utilize memorization.
 export const getFilteredLaws = createSelector(
-  [ getStarAndKeyFilteredLawsByInitial, getFilters ],
+  [getStarAndKeyFilteredLawsByInitial, getFilters],
   (laws, filters) => {
-    if (filters.get('title')) {
-      const needle = filters.get('title', '').toLowerCase();
-      laws = laws.filter(law =>
-        law.get('title').toLowerCase().indexOf(needle) > -1
-      );
+    const t = filters.get('title', '').toLowerCase();
+    if (t) {
+      return laws.filter(l => l.get('title').toLowerCase().indexOf(t) > -1);
     }
 
     return laws;
@@ -184,6 +176,6 @@ export const getFilteredLaws = createSelector(
 export const getFilteredLawsCount = (state) => getFilteredLaws(state).size;
 
 export const getFilteredLawsByPage = createSelector(
-  [ getFilteredLaws, getPage, getPageSize ],
-  (laws, page, size) => laws.slice(size * (page-1), size * page)
+  [getFilteredLaws, getPage, getPageSize],
+  (laws, page, size) => laws.slice(size * (page - 1), size * page)
 );

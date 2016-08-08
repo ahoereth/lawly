@@ -7,9 +7,9 @@ import { Layout } from 'components';
 
 
 const navigation = [
-  {to: '/', text: 'Home'},
-  {to: '/gesetze', text: 'Gesetz Index'},
-  {to: '/suche', text: 'Suche' },
+  { to: '/', text: 'Home' },
+  { to: '/gesetze', text: 'Gesetz Index' },
+  { to: '/suche', text: 'Suche' },
 ];
 
 
@@ -22,10 +22,6 @@ class LayoutContainer extends React.Component {
     title: PropTypes.string.isRequired,
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  }
-
   constructor(props) {
     super(props);
     this.componentWillReceiveProps(props);
@@ -34,6 +30,10 @@ class LayoutContainer extends React.Component {
   componentWillReceiveProps(nextProps) {
     /* global document */
     document.title = nextProps.htmltitle;
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   }
 
   render() {
@@ -58,9 +58,9 @@ function mapStateToProps(state, ownProps) {
   const title = routes[routes.length - 1].title;
 
   return {
-    query: getQuery(state),
     title,
-    htmltitle: title + ' | Lawly'
+    query: getQuery(state),
+    htmltitle: `${title} | Lawly`,
   };
 }
 

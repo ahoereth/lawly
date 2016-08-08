@@ -3,18 +3,19 @@ import { shallow } from 'enzyme';
 import chaiEnzyme from 'chai-enzyme';
 import spies from 'chai-spies';
 
-chai.use(chaiEnzyme());
-chai.use(spies);
-
 import React from 'react';
 import SearchInput from './SearchInput';
+
+
+chai.use(chaiEnzyme());
+chai.use(spies);
 
 
 describe('SearchInput', () => {
   it('passes the query to the search function', () => {
     const action = chai.spy(p => p);
     const wrap = shallow(<SearchInput search={action} />);
-    wrap.simulate('change', { currentTarget: { value: 'text' }});
+    wrap.simulate('change', { currentTarget: { value: 'text' } });
     expect(action).to.be.called.once;
     expect(action).to.be.called.with('text');
   });

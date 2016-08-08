@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 /**
  * Decodes a base 64 encoded string.
  *

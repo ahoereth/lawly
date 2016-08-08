@@ -7,7 +7,7 @@ import { b64decode } from './base64';
  * @return {Boolean}
  */
 export function isString(val) {
-  return toString.call(val) == '[object String]';
+  return toString.call(val) === '[object String]';
 }
 
 
@@ -65,6 +65,7 @@ export function isNumeric(val) {
  * @return {boolean}
  */
 export function startsWith(haystack, needle) {
+  if (!haystack) return false;
   return (haystack.indexOf(needle) === 0);
 }
 
@@ -77,6 +78,7 @@ export function startsWith(haystack, needle) {
  * @return {boolean}
  */
 export function endsWith(haystack, needle) {
+  if (!haystack) return false;
   return (haystack.lastIndexOf(needle) === (haystack.length - needle.length));
 }
 
@@ -88,11 +90,16 @@ export function endsWith(haystack, needle) {
  * @return {number}
  */
 export function toInt(n) {
-  if (isString(n)) {
-    n = startsWith(n, '.') ? '0' + n : n;
-    n = startsWith(n, '-.') ? '-0' + n.slice(1) : n;
+  if (n === true) return 1;
+  if (!n) return 0;
+
+  let cleaned = n;
+  if (isString(cleaned)) {
+    cleaned = startsWith(cleaned, '.') ? `0${cleaned}` : cleaned;
+    cleaned = startsWith(cleaned, '-.') ? `-0${cleaned.slice(1)}` : cleaned;
   }
-  return n === true ? 1 : (!n ? 0 : parseInt(n, 10));
+
+  return parseInt(cleaned, 10);
 }
 
 
@@ -106,10 +113,7 @@ export function toInt(n) {
  * @return {object}
  */
 export function arr2obj(arr, key, constructor = i => i) {
-  return arr.reduce((agg, obj) => {
-    agg[obj[key]] = constructor(obj);
-    return agg;
-  }, {});
+  return arr.reduce((agg, o) => ({ ...agg, [o[key]]: constructor(o) }), {});
 }
 
 
@@ -133,21 +137,15 @@ export function obj2arr(obj) {
  */
 export function obj2query(obj = null, seperator = false) {
   if (!obj) { return ''; }
-  let str = '';
-  for (let key in obj) {
-    if (str !== '') { str += '&'; }
+  const str = Object.keys(obj).map(key => {
     if (typeof obj[key] === 'boolean') {
-      str += encodeURIComponent(key) + (obj[key] === false ? '=0' : '');
-    } else {
-      str += encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]);
+      return encodeURIComponent(key) + (obj[key] === false ? '=0' : '');
     }
-  }
 
-  if (seperator && str.length && str.indexOf('?') === -1) {
-    str = '?' + str;
-  }
+    return `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`;
+  }).join('&');
 
-  return str;
+  return (seperator && str.length && str.indexOf('?') < 0) ? `?${str}` : str;
 }
 
 
@@ -160,18 +158,20 @@ export function obj2query(obj = null, seperator = false) {
  * @param  {string} needles...
  * @return {object/array}
  */
-export function omit(haystack, ...needles) {
-  needles = Array.isArray(needles[0]) ? needles[0] : needles;
+export function omit(haystack, ...rest) {
+  const needles = Array.isArray(rest[0]) ? rest[0] : rest;
   if (isObject(haystack)) {
     // Omit object properties by keys. Generate a list of keys to keep, and
     // then create a new object based on them.
     const keep = Object.keys(haystack).filter(k => (needles.indexOf(k) === -1));
-    return keep.reduce((r, k) => ({...r, [k]: haystack[k] }), {});
+    return keep.reduce((r, k) => ({ ...r, [k]: haystack[k] }), {});
   } else if (Array.isArray(haystack)) {
     // Omit array values by value. Filter array by checking if values are
     // included in the needles.
     return haystack.filter(v => (needles.indexOf(v) === -1));
   }
+
+  return {};
 }
 
 
@@ -183,12 +183,82 @@ export function omit(haystack, ...needles) {
  * @param  {string} needles...
  * @return {object}
  */
-export function pick(haystack, ...needles) {
-  needles = Array.isArray(needles[0]) ? needles[0] : needles;
+export function pick(haystack, ...rest) {
+  const needles = Array.isArray(rest[0]) ? rest[0] : rest;
   return needles.reduce((agg, key) => {
-    if (haystack.hasOwnProperty(key)) { agg[key] = haystack[key]; }
+    // eslint-disable-next-line no-param-reassign
+    if (haystack.hasOwnProperty(key)) agg[key] = haystack[key];
     return agg;
   }, {});
+}
+
+
+/**
+ * Joins a list of strings into a single forward slash seperated path string
+ * with optional trailing slash.
+ *
+ * @param  {string} part1
+ * @param  {string} part2
+ * @param  {string} partN
+ * @param  {boolean} trailingSlash
+ * @return {string}
+ */
+export function joinPath(...args) {
+  let parts = args;
+  let trailingSlash = false;
+  const leadingSlash = startsWith(parts[0], '/');
+  if (isBoolean(parts[parts.length - 1])) {
+    trailingSlash = parts[parts.length - 1];
+    parts = parts.slice(0, -1);
+  }
+
+  const path = parts.map(part => {
+    let clean = part;
+    while (startsWith(clean, '/')) { clean = clean.slice(1); }
+    while (endsWith(clean, '/')) { clean = clean.slice(0, -1); }
+    return clean;
+  }).filter(elem => !!elem).join('/');
+  return `${leadingSlash ? '/' : ''}${path}${trailingSlash ? '/' : ''}`;
+}
+
+
+/**
+ * Parses the header and payload of a JSON webtoken into JavaScript objects.
+ *
+ * @param  {string} token
+ * @return {object}
+ */
+export function parseJWT(token) {
+  const [header, payload/* signature */] = token.split('.');
+  return {
+    header: JSON.parse(b64decode(header)),
+    payload: JSON.parse(b64decode(payload)),
+  };
+}
+
+
+/* eslint-disable quote-props */
+// /* global Intl */
+// const { compare } = Intl ? new Intl.Collator('de')
+//                          : { compare: (a, b) => a - b };
+//
+// const UMLAUTS = { 'ä': 'ae', 'ü': 'ue', 'ö': 'oe',
+//                   'Ä': 'AE', 'Ü': 'UE', 'Ö': 'OE',
+//                   'ß': 'ss' };
+const UMLAUTS = { '\u00e4': 'ae', '\u00fc': 'ue', '\u00f6': 'oe',
+                  '\u00c4': 'AE', '\u00dc': 'UE', '\u00d6': 'OE',
+                  '\u00df': 'ss' };
+/* eslint-enable quote-props */
+
+/**
+ * Replace all german umlauts in a given thing with their corresponding
+ * letter combination.
+ *
+ * @param  {string} str
+ * @return {string}
+ */
+export function umlauts2digraphs(str) {
+  return str.replace(/[äöüÄÖÜß]/g, key => UMLAUTS[key]);
 }
 
 
@@ -204,82 +274,6 @@ export function slugify(str) {
     .toLowerCase()
     .replace(/[^\w]+/ig, '-') // Get rid of none word characters.
     .replace(/^-+|-+$/g, ''); // Get rid of dashes at the beginning and end.
-}
-
-
-/**
- * Joins a list of strings into a single forward slash seperated path string
- * with optional trailing slash.
- *
- * @param  {string} part1
- * @param  {string} part2
- * @param  {string} partN
- * @param  {boolean} trailingSlash
- * @return {string}
- */
-export function joinPath(/* parts, trailingSlash = false */) {
-  let path = arguments[0];
-  let n = arguments.length; n = !isBoolean(arguments[n-1]) ? n : n - 1;
-  const trailingSlash = isBoolean(arguments[n]) ? arguments[n] : false;
-
-  for (let i = 1; i < n; i++) {
-    let next = arguments[i];
-
-    // Remove leading/trailing slashes.
-    while (startsWith(next, '/')) { next = next.slice(1); }
-    while (endsWith(path, '/')) { path = path.slice(0, -1); }
-
-    // Append to path.
-    path += '/' + next;
-  }
-
-  // Remove all trailing and all but one leading slashes.
-  while (endsWith(path, '/')) { path = path.slice(0, -1); }
-  while (startsWith(path, '//')) { path = path.slice(1); }
-
-  // Add a single trailing slash if requested.
-  if ( trailingSlash && !endsWith(path, '/')) { path += '/'; }
-
-  return path;
-}
-
-
-/**
- * Parses the header and payload of a JSON webtoken into JavaScript objects.
- *
- * @param  {string} token
- * @return {object}
- */
-export function parseJWT(token) {
-  const [ header, payload/*, signature*/ ] = token.split('.');
-  return {
-    header: JSON.parse(b64decode(header)),
-    payload: JSON.parse(b64decode(payload)),
-  };
-}
-
-
-// /* global Intl */
-// const { compare } = Intl ? new Intl.Collator('de')
-//                          : { compare: (a, b) => a - b };
-//
-// const UMLAUTS = { 'ä': 'ae', 'ü': 'ue', 'ö': 'oe',
-//                   'Ä': 'AE', 'Ü': 'UE', 'Ö': 'OE',
-//                   'ß': 'ss' };
-
-const UMLAUTS = { '\u00e4': 'ae', '\u00fc': 'ue', '\u00f6': 'oe',
-                  '\u00c4': 'AE', '\u00dc': 'UE', '\u00d6': 'OE',
-                  '\u00df':'ss' };
-
-/**
- * Replace all german umlauts in a given thing with their corresponding
- * letter combination.
- *
- * @param  {string} str
- * @return {string}
- */
-export function umlauts2digraphs(str) {
-  return str.replace(/[äöüÄÖÜß]/g, key => UMLAUTS[key]);
 }
 
 

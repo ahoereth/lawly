@@ -18,7 +18,7 @@ import {
   joinPath,
   parseJWT,
   umlauts2digraphs,
-  localeCompare
+  localeCompare,
 } from './utils';
 
 
@@ -26,11 +26,12 @@ describe('utils', () => {
   describe('isString', () => {
     it('strings are strings', () => {
       expect(isString('some string')).to.be.true;
+      // eslint-disable-next-line no-new-wrappers
       expect(isString(new String('another string'))).to.be.true;
     });
 
     it('nothing else is a string', () => {
-      expect(isString([ 'a', 'r' ])).to.be.false;
+      expect(isString(['a', 'r'])).to.be.false;
       expect(isString({ r: 'a', y: '!' })).to.be.false;
       expect(isString(123)).to.be.false;
       expect(isString(() => {})).to.be.false;
@@ -48,7 +49,7 @@ describe('utils', () => {
 
     it('arrays are no objects', () => {
       expect(isObject([])).to.be.false;
-      expect(isObject([ { a: 1, b: 2 } ])).to.be.false;
+      expect(isObject([{ a: 1, b: 2 }])).to.be.false;
     });
 
     it('functions are no objects', () => {
@@ -60,6 +61,7 @@ describe('utils', () => {
     it('nothing else is an object', () => {
       expect(isObject(null)).to.be.false;
       expect(isObject(3)).to.be.false;
+      // eslint-disable-next-line no-new-wrappers
       expect(isObject(new Number(7))).to.be.false;
       expect(isObject('somestring')).to.be.false;
       expect(isObject(new Date())).to.be.false;
@@ -137,7 +139,8 @@ describe('utils', () => {
     });
 
     it('recognizes functions, undefined or null as not numeric', () => {
-      expect(isNumeric(function(){})).to.be.false;
+      // eslint-disable-next-line prefer-arrow-callback
+      expect(isNumeric(function () {})).to.be.false;
       expect(isNumeric(undefined)).to.be.false;
       expect(isNumeric(null)).to.be.false;
     });
@@ -194,15 +197,15 @@ describe('utils', () => {
   });
 
   const o2a = {
-    c: {a: 'c', b: 'x'},
-    b: {a: 'b', b: 'y'},
-    a: {a: 'a', b: 'z'},
+    c: { a: 'c', b: 'x' },
+    b: { a: 'b', b: 'y' },
+    a: { a: 'a', b: 'z' },
   };
 
   const a2o = [
-    {a: 'c', b: 'x'},
-    {a: 'b', b: 'y'},
-    {a: 'a', b: 'z'}
+    { a: 'c', b: 'x' },
+    { a: 'b', b: 'y' },
+    { a: 'a', b: 'z' },
   ];
 
   describe('arr2obj', () => {
@@ -219,7 +222,7 @@ describe('utils', () => {
 
   describe('obj2query', () => {
     it('encodes special characters in keys and values', () => {
-      expect(obj2query({ m: 'a@b.c', ü: 'ue' })).to.equal('m=a%40b.c&%C3%BC=ue');
+      expect(obj2query({ m: 'a@b.', ü: 'ue' })).to.equal('m=a%40b.&%C3%BC=ue');
     });
 
     it('handles boolean values correctly', () => {
@@ -239,7 +242,7 @@ describe('utils', () => {
     });
 
     it('does not alter the source object', () => {
-      let obj = { a: 1, b: 2 };
+      const obj = { a: 1, b: 2 };
       expect(omit(obj, 'b')).to.deep.equal({ a: 1 });
       expect(obj).to.deep.equal({ a: 1, b: 2 });
     });
@@ -265,7 +268,7 @@ describe('utils', () => {
     });
 
     it('does not alter the source object', () => {
-      let obj = { a: 1, b: 2 };
+      const obj = { a: 1, b: 2 };
       expect(pick(obj, 'b')).to.deep.equal({ b: 2 });
       expect(obj).to.deep.equal({ a: 1, b: 2 });
     });
@@ -278,24 +281,6 @@ describe('utils', () => {
     //   expect(pick([1, 2], 4, 1)).to.deep.equal([1]);
     //   expect(pick([1, 2, 3], 1, 2)).to.deep.equal([1, 2]);
     // });
-  });
-
-  describe('slugify', () => {
-    it('gets rid of whitespace and stuff', () => {
-      expect(slugify('a $$%&/()   b_c d')).to.equal('a-b_c-d');
-    });
-
-    it('converts umlauts to their 2 character equivalents', () => {
-      expect(slugify('äüßö')).to.equal('aeuessoe');
-    });
-
-    it('converts everything to lower case', () => {
-      expect(slugify('ABÄ')).to.equal('abae');
-    });
-
-    it('Takes of dashes from the beginning and end', () => {
-      expect(slugify('$ 123 Some Paragraph--')).to.equal('123-some-paragraph');
-    });
   });
 
   describe('joinPath', () => {
@@ -325,7 +310,7 @@ describe('utils', () => {
 
       const head = { header: 'header content' };
       const load = { payload: 'payload content' };
-      const token = obj2b64(head) + '.' + obj2b64(load) + '.' + 'signature';
+      const token = `${obj2b64(head)}.${obj2b64(load)}.signature`;
       const { header, payload } = parseJWT(token);
 
       expect(header).to.deep.equal(head);
@@ -336,6 +321,24 @@ describe('utils', () => {
   describe('umlauts2digraphs', () => {
     it('converts umlauts to their corresponding 2 letter version', () => {
       expect(umlauts2digraphs('äÄüÜöÖß')).to.equal('aeAEueUEoeOEss');
+    });
+  });
+
+  describe('slugify', () => {
+    it('gets rid of whitespace and stuff', () => {
+      expect(slugify('a $$%&/()   b_c d')).to.equal('a-b_c-d');
+    });
+
+    it('converts umlauts to their 2 character equivalents', () => {
+      expect(slugify('äüßö')).to.equal('aeuessoe');
+    });
+
+    it('converts everything to lower case', () => {
+      expect(slugify('ABÄ')).to.equal('abae');
+    });
+
+    it('Takes of dashes from the beginning and end', () => {
+      expect(slugify('$ 123 Some Paragraph--')).to.equal('123-some-paragraph');
     });
   });
 

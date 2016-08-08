@@ -20,12 +20,13 @@ export default function createReducer(
   handlers,
   constructor = (state) => Immutable.fromJS(state)
 ) {
-  return (state = initialState, action) => {
+  return (rawState = initialState, action) => {
+    let state = rawState;
     if (!Immutable.Iterable.isIterable(state)) {
       state = constructor(state);
     }
 
-    let handler = (action && action.type) ? handlers[action.type] : undefined;
+    const handler = (action && action.type) ? handlers[action.type] : undefined;
     if (!handler) { return state; }
 
     if (action.error === true) {

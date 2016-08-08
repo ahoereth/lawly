@@ -25,14 +25,14 @@ export default class NormList extends React.Component {
     const children = node.get('children', false);
     return (
       <li key={i}>
-        <a href={'#'+slugify(title)}>{title}</a>
+        <a href={`#${slugify(title)}`}>{title}</a>
         {!children ? false : <ul>{children.map(this.listNodes)}</ul>}
       </li>
     );
   }
 
   render() {
-    const { nodes, ...otherProps} = this.props;
+    const { nodes, ...otherProps } = this.props;
     return (
       <ul {...otherProps}>
         {nodes.map(this.listNodes)}

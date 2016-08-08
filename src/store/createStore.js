@@ -1,6 +1,6 @@
 import { createStore as _createStore, applyMiddleware, compose } from 'redux';
 import { browserHistory } from 'react-router';
-import { routerMiddleware, } from 'react-router-redux';
+import { routerMiddleware } from 'react-router-redux';
 import Immutable from 'immutable';
 import createDebounce from 'redux-debounced';
 
@@ -33,7 +33,7 @@ export default function createStore(client, data = {}) {
 
   /* global window, process */
   process.env.NODE_ENV !== 'production' && (window.store = store);
-  
+
   /* global module */
   if (module.hot) {
     module.hot.accept('./rootReducer', () => {

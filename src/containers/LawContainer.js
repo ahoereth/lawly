@@ -26,7 +26,7 @@ class LawContainer extends React.Component {
     annotations: ImmutableTypes.map.isRequired,
     norms: ImmutableTypes.list.isRequired,
     params: PropTypes.shape({
-      groupkey: PropTypes.string.isRequired
+      groupkey: PropTypes.string.isRequired,
     }).isRequired,
     selectLaw: PropTypes.func.isRequired,
     star: PropTypes.func.isRequired,
@@ -37,13 +37,13 @@ class LawContainer extends React.Component {
     norms: Immutable.List(),
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  }
-
   componentWillMount() {
     const { selectLaw, params } = this.props;
     selectLaw(params.groupkey);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   }
 
   render() {

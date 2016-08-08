@@ -66,10 +66,6 @@ class LawIndexContainer extends React.Component {
     total: PropTypes.number.isRequired,
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
-  }
-
   componentWillMount() {
     const {
       fetchIndex,
@@ -82,13 +78,18 @@ class LawIndexContainer extends React.Component {
 
     const { a, b, c } = params;
     const collection = !isNumeric(b) || a.length > 1 ? a : undefined;
-    const initial = isNumeric(b) ? (a.length === 1 ? a : undefined) : b;
+    const firstAsInitial = a && a.length === 1 ? a : undefined;
+    const initial = isNumeric(b) ? firstAsInitial : b;
     const page = isNumeric(b) ? toInt(b) : toInt(c);
 
     total > 0 || fetchIndex();
     selectCollection(collection);
     selectInitial(initial);
     selectPage(page);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   }
 
   render() {
@@ -111,14 +112,16 @@ class LawIndexContainer extends React.Component {
     } = this.props;
 
     return (
-      <LawIndex {...{
-        initials, laws, total,
-        page, pageSize,
-        selectedInitial, selectInitial, selectPage,
-        star, stars,
-        filter, filters,
-        collection, collections, selectCollection,
-      }} />
+      <LawIndex
+        {...{
+          initials, laws, total,
+          page, pageSize,
+          selectedInitial, selectInitial, selectPage,
+          star, stars,
+          filter, filters,
+          collection, collections, selectCollection,
+        }}
+      />
     );
   }
 }

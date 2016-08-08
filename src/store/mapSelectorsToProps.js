@@ -1,3 +1,5 @@
-export const mapSelectorsToProps = map => state => {
-  return Object.keys(map).reduce((a, k) => ({...a, [k]: map[k](state) }), {});
-};
+const mapSelectorsToProps = map => state => (
+  Object.keys(map).reduce((a, k) => ({ ...a, [k]: map[k](state) }), {})
+);
+
+export default mapSelectorsToProps;

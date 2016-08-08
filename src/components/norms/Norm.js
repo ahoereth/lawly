@@ -60,8 +60,8 @@ export default class Norm extends React.Component {
     const enumeration = data.get('enumeration');
     const starred = annotations.getIn([enumeration, 'starred']);
     const lead = enumeration === '0';
-    const level = lead ? 0 : enumeration.split('.').length;
-    const heading = lead ? 1 : (level > 6 ? 6 : level+1);
+    const level = lead ? 1 : enumeration.split('.').length + 1;
+    const heading = level > 6 ? 6 : level;
     const icons = lead ? ['book', 'book'] : ['bookmark', 'bookmark_border'];
 
     const title = !lead ? data.get('title') :
@@ -77,7 +77,7 @@ export default class Norm extends React.Component {
         onMouseLeave={() => this.focus(false)}
       >
         <CardTitle>
-          {React.createElement('h' + heading, null, title)}
+          {React.createElement(`h${heading}`, null, title)}
         </CardTitle>
         <CardMenu>
           <IconButton

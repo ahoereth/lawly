@@ -45,7 +45,7 @@ describe('search', () => {
     });
 
     it('should handle SEARCHED', () => {
-      const payload = { total: 2, results: [ 'a', 'b' ] };
+      const payload = { total: 2, results: ['a', 'b'] };
       const state = reducer({}, { type: SEARCHED, payload });
       expect(state.get('results')).to.equal(List(payload.results));
       expect(state.get('total')).to.equal(payload.total);
@@ -103,7 +103,7 @@ describe('search', () => {
     });
 
     it('should provide getResults()', () => {
-      const results = List([ Map(), Map() ]);
+      const results = List([Map(), Map()]);
       const state = initialState.setIn([SCOPE, 'results'], results);
       expect(getResults(state)).to.equal(results);
     });
@@ -121,7 +121,7 @@ describe('search', () => {
         Map({ groupkey: 'yes', title: 'this as well' }),
       ]);
       const state = initialState.mergeIn([SCOPE], Map({
-        results: results, total: 4, page: 2, pageSize: 2,
+        results, total: 4, page: 2, pageSize: 2,
       }));
       expect(getResultsByPage(state)).to.equal(results.slice(-2));
     });

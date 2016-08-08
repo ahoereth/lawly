@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
+import Redbox from 'redbox-react';
 
 import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
@@ -14,12 +15,16 @@ import 'file?name=[name].[ext]!manifest.json';
 import './index.sss';
 
 const sw = navigator.serviceWorker; /* global navigator */
-sw && sw.register('/service-worker.js', { scope: '/' });
+if (sw) {
+  sw.register('/service-worker.js', { scope: '/' });
+}
 
+/* global window, document */
+/* eslint-disable no-underscore-dangle */
 const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
-const target = document.getElementById('app'); /* global document */
-const store = createStore(client, window.__state); /* global window */
+const target = document.getElementById('app');
+const store = createStore(client, window.__state);
 const history = syncHistoryWithStore(browserHistory, store, {
   selectLocationState: state => state.get('routing'),
 });
@@ -27,13 +32,13 @@ const history = syncHistoryWithStore(browserHistory, store, {
 // Hacky scroll to top on route change. TODO.
 history.listen(location => {
   if (location.action === 'POP') { return; }
-  let elem = document.querySelector('.mdl-layout__inner-container');
+  const elem = document.querySelector('.mdl-layout__inner-container');
   if (elem) { elem.scrollTop = 0; }
 });
 
 
 render(
-  <AppContainer>
+  <AppContainer errorReporter={Redbox}>
     <App store={store} history={history} />
   </AppContainer>,
   target
@@ -51,6 +56,7 @@ if (module.hot) {
   });
 }
 
+/* eslint-disable global-require */
 /* global process, window, require */
 if (process.env.NODE_ENV !== 'production') {
   window.Perf = require('react-addons-perf');

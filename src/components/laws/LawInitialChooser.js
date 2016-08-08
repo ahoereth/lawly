@@ -4,17 +4,18 @@ import { Grid, Cell, Button } from 'react-mdl';
 
 import styles from './lawInitialChooser.sss';
 
+
 const LawInitialChooser = ({ initials, selected, onSelect }) => (
   <Grid noSpacing>
-    {initials.map(initial => (
-      <Cell key={initial} col={12} tablet={8} phone={1} className={styles.cell}>
+    {initials.map(char => (
+      <Cell key={char} col={12} tablet={8} phone={1} className={styles.cell}>
         <Button
           ripple raised
-          accent={selected === initial.toLowerCase()}
+          accent={selected === char.toLowerCase()}
           className={styles.button}
-          onClick={() => onSelect(selected !== initial.toLowerCase() ? initial : '')}
+          onClick={() => onSelect(selected !== char.toLowerCase() ? char : '')}
         >
-          {initial}
+          {char}
         </Button>
       </Cell>
     ))}

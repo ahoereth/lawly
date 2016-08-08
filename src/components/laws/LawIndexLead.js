@@ -3,6 +3,7 @@ import { List } from 'immutable';
 import ImmutableTypes from 'react-immutable-proptypes';
 
 
+/* eslint-disable max-len */
 const LawIndexLead = ({
   total,
   collection,
@@ -16,9 +17,9 @@ const LawIndexLead = ({
       <span>Die Gesetzsammlung <strong>{collection.get('title')}</strong> beinhaltet insgesamt {collection.get('laws', List()).size} Gesetze und Verordnungen.&nbsp;</span>
     }
     <span>
-      Durch den aktuellen Filter werden {total} von diesen angezeigt. Du befindest dich aktuell auf <strong>Seite {page} von {Math.ceil(total/pageSize)}</strong>.
+      Durch den aktuellen Filter werden {total} von diesen angezeigt. Du befindest dich aktuell auf <strong>Seite {page} von {Math.ceil(total / pageSize)}</strong>.
     </span>
-  {/*<p>
+  {/* <p>
     {total === 0
       ? <span>In der Datenbank findet sich insgesamt <strong>ein Gesetz oder eine Verordnung</strong>, welche/s mit dem aktuellen Filter übereinstimmt:&nbsp;</span>
       : <span>In der Datenbank finden sich insgesamt <strong>{total} Gesetze und Verodnungen</strong>, die mit dem aktuellen Filter übereinstimmen:&nbsp;</span>
@@ -40,7 +41,7 @@ const LawIndexLead = ({
           <span>&nbsp;und wurden von dir <strong>markiert</strong></span>
     }.&nbsp;
     Aktuell wird <strong>Seite {page} von {Math.ceil(total/pageSize)}</strong> angezeigt.
-  </p>*/}
+  </p> */}
   </p>
 );
 

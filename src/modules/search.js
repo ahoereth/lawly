@@ -27,8 +27,8 @@ export default createReducer(Map({
   total: 0,
 }), {
   [SEARCH]: (state, { payload = '' }) => state.set('query', payload),
-  [SEARCHED]: (state, { payload: { results = [], total = 0 } }) =>
-    state.merge(Map({ results: fromJS(results), total })),
+  [SEARCHED]: (state, { payload: { results, total } }) =>
+    state.merge(Map({ results: fromJS(results || []), total: total || 0 })),
   [SELECT_PAGE]: (state, { payload = 1 }) => state.set('page', payload),
 });
 
@@ -37,12 +37,11 @@ export default createReducer(Map({
 // ******************************************************************
 // ACTION CREATORS
 export const selectPage = (page = 1) => (dispatch, getState) => {
-  const query = getQuery(getState());
-  const pagePath = page > 1 ? '/' + page : '';
+  const query = getState().getIn([SCOPE, 'query'], '');
+  const pagePath = page > 1 ? `/${page}` : '';
   dispatch({ type: SELECT_PAGE, payload: page || 1 });
   dispatch(push(`/suche/${query}${pagePath}`));
 };
-
 
 export const search = (query = '') => (dispatch) => {
   dispatch({ type: SEARCH, payload: query });
@@ -54,6 +53,7 @@ export const search = (query = '') => (dispatch) => {
     promise: api => api.search(query),
   });
 };
+
 
 
 // ******************************************************************
@@ -69,6 +69,6 @@ export const getResults = state => state.getIn([SCOPE, 'results'], List());
 export const getTotal = state => state.getIn([SCOPE, 'total'], 0);
 
 export const getResultsByPage = createSelector(
-  [ getResults, getPage, getPageSize ],
-  (results, page, size) => results.slice(size * (page-1), size * page)
+  [getResults, getPage, getPageSize],
+  (results, page, size) => results.slice(size * (page - 1), size * page)
 );

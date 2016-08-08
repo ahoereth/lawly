@@ -18,7 +18,6 @@ const Norms = ({ annotations, nodes, star }) => (
   </div>
 );
 
-
 Norms.propTypes = {
   annotations: ImmutableTypes.mapOf(ImmutableTypes.map).isRequired,
   nodes: ImmutableTypes.listOf(ImmutableTypes.mapContains({
