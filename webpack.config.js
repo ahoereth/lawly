@@ -10,6 +10,9 @@ const {
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 const precss = require('precss');
+const Dashboard = require('webpack-dashboard');
+const DashboardPlugin = require('webpack-dashboard/plugin');
+
 
 
 // *****************************************************************************
@@ -64,6 +67,7 @@ if (process.env.NODE_ENV === 'development') {
   const HOST = 'localhost';
   const PORT = 8080;
 
+  const dashboard = new Dashboard();
   const hotreloading = [
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://${HOST}:${PORT}/`,
@@ -90,6 +94,7 @@ if (process.env.NODE_ENV === 'development') {
           NODE_ENV: JSON.stringify('development'),
         },
       }),
+      new DashboardPlugin(dashboard.setData),
     ]),
     server: {
       host: HOST,
