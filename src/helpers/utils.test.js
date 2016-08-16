@@ -275,11 +275,11 @@ describe('utils', () => {
 
     // Not implemented currently.
     // it('picks array values as expected by value', () => {
-    //   expect(pick(['some value'], 'some value')).to.deep.equal(['some value']);
-    //   expect(pick(['some value'], 'woop')).to.deep.equal([]);
-    //   expect(pick([1, 2], 2)).to.deep.equal([2]);
-    //   expect(pick([1, 2], 4, 1)).to.deep.equal([1]);
-    //   expect(pick([1, 2, 3], 1, 2)).to.deep.equal([1, 2]);
+    // expect(pick(['some value'], 'some value')).to.deep.equal(['some value']);
+    // expect(pick(['some value'], 'woop')).to.deep.equal([]);
+    // expect(pick([1, 2], 2)).to.deep.equal([2]);
+    // expect(pick([1, 2], 4, 1)).to.deep.equal([1]);
+    // expect(pick([1, 2, 3], 1, 2)).to.deep.equal([1, 2]);
     // });
   });
 

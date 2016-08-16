@@ -181,11 +181,11 @@ export default class ApiClient {
     request = request.then(res => {
       this.isConnected(true);
       // if (!this.isConnected()) {
-      //   // TODO: Here not only the connection status is updated, but
-      //   // additionally the current triggering request performed again.
-      //   // Reasoning is, that one of the previously stashed requests
-      //   // might undo the triggering one which is undesired behavior.
-      //   this.storage.stashRequest(options).then(() => this.isConnected(true));
+      // // TODO: Here not only the connection status is updated, but
+      // // additionally the current triggering request performed again.
+      // // Reasoning is, that one of the previously stashed requests
+      // // might undo the triggering one which is undesired behavior.
+      // this.storage.stashRequest(options).then(() => this.isConnected(true));
       // } else {
       //   this.isConnected(true);
       // }

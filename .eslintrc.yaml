@@ -14,10 +14,13 @@ rules:
       tabWidth: 2
       ignoreComments: false
       ignoreTrailingComments: false
-      ignorePattern: // # TOD: Add string literal regex.
       ignoreUrls: true
-  func-names: off
-  jsx-quotes: [1, "prefer-single"]
+      # ignoreStringLiterals: true # https://github.com/eslint/eslint/issues/5805
+  func-names: off # TODO: airbnb link?
+  spaced-comment: warn
+  jsx-quotes:
+    - warn
+    - prefer-single # https://github.com/airbnb/javascript#strings--quotes
   object-property-newline: off
   no-unused-expressions: off # For chaijs tests.
   new-cap:
@@ -26,15 +29,15 @@ rules:
       - Map
       - List
   no-shadow: off
-  no-nested-ternary: warn
-  no-prototype-builtins: off
+  no-nested-ternary: warn # https://github.com/airbnb/javascript#comparison--nested-ternaries
+  no-prototype-builtins: off # https://github.com/airbnb/javascript#objects--prototype-builtins
   no-extra-boolean-cast: off # https://github.com/airbnb/javascript#coercion--booleans
   no-multiple-empty-lines:
     - warn
     - max: 3
-  no-global-assign: off # TODO: rule definition not found -- 160816
+  no-global-assign: off # TODO: rule definition not found -- 160816.
+  react/require-extension: off # TODO: deprecation warning -- 160816.
   react/jsx-filename-extension: off
-  react/require-extension: off # TODO: deprecation warning.
   import/no-extraneous-dependencies: off
   import/no-commonjs: error
   import/no-amd: error

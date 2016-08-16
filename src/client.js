@@ -19,12 +19,12 @@ if (sw) {
   sw.register('/service-worker.js', { scope: '/' });
 }
 
-/* global window, document */
-/* eslint-disable no-underscore-dangle */
 const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
-const target = document.getElementById('app');
-const store = createStore(client, window.__state);
+
+// eslint-disable-next-line no-underscore-dangle
+const store = createStore(client, window.__state); /* global window */
+const target = document.getElementById('app'); /* global document */
 const history = syncHistoryWithStore(browserHistory, store, {
   selectLocationState: state => state.get('routing'),
 });
@@ -56,8 +56,8 @@ if (module.hot) {
   });
 }
 
-/* eslint-disable global-require */
 /* global process, window, require */
 if (process.env.NODE_ENV !== 'production') {
+  // eslint-disable-next-line global-require
   window.Perf = require('react-addons-perf');
 }

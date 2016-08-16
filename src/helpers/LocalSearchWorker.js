@@ -24,7 +24,7 @@ export default class LocalSearchWorker {
     const oldTrimmer = elasticlunr.Pipeline.getRegisteredFunction('trimmer');
     const newTrimmer = elasticlunr.Pipeline.getRegisteredFunction('trim');
 
-    // TODO: Index should be stored in forage because it's creation is expensive.
+    // TODO: Index should be stored in forage because it's creation is expensive
     this.index = elasticlunr(function () {
       this.addField('groupkey');
       this.addField('title');
