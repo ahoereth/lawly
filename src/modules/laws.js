@@ -44,8 +44,9 @@ export const selectLaw = groupkey => dispatch => {
   return dispatch(fetchLaw(groupkey));
 };
 
+/* global encodeURIComponent */
 export const viewLaw = groupkey => (
-  push(`/gesetz/${groupkey}`)
+  push(`/gesetz/${encodeURIComponent(groupkey)}`)
 );
 
 
