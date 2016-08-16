@@ -1,23 +1,17 @@
-/* eslint-disable import/no-commonjs */
-const process = require('process');
-const path = require('path');
-const {
-  HotModuleReplacementPlugin,
-  NoErrorsPlugin,
-  optimize,
-  DefinePlugin,
-} = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const autoprefixer = require('autoprefixer');
-const precss = require('precss');
-const Dashboard = require('webpack-dashboard');
-const DashboardPlugin = require('webpack-dashboard/plugin');
-
+/* eslint-disable no-var, vars-on-top, import/no-commonjs */
+/* global process */
+var path = require('path');
+var webpack = require('webpack');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var autoprefixer = require('autoprefixer');
+var precss = require('precss');
+var Dashboard = require('webpack-dashboard');
+var DashboardPlugin = require('webpack-dashboard/plugin');
 
 
 // *****************************************************************************
 // Base
-let config = {
+var config = {
   devtool: '#cheap-module-eval-source-map',
   target: 'web',
   context: path.resolve(__dirname, 'src'),
@@ -32,8 +26,7 @@ let config = {
     filename: '[name].js',
   },
   resolve: {
-    modules: ['node_modules', path.resolve(__dirname, 'src')],
-    extensions: ['.js'],
+    modules: ['node_modules', 'src'],
   },
   module: {
     loaders: [
@@ -63,12 +56,12 @@ let config = {
 
 // *****************************************************************************
 // Development
-if (process.env.NODE_ENV === 'development') {
-  const HOST = 'localhost';
-  const PORT = 8080;
+if (process && process.env.NODE_ENV === 'development') {
+  var HOST = 'localhost';
+  var PORT = 8080;
 
-  const dashboard = new Dashboard();
-  const hotreloading = [
+  var dashboard = new Dashboard();
+  var hotreloading = [
     'react-hot-loader/patch',
     `webpack-dev-server/client?http://${HOST}:${PORT}/`,
     'webpack/hot/only-dev-server',
@@ -87,9 +80,9 @@ if (process.env.NODE_ENV === 'development') {
         template: 'client.ejs',
         chunks: ['tests'],
       }),
-      new HotModuleReplacementPlugin(),
-      new NoErrorsPlugin(),
-      new DefinePlugin({
+      new webpack.HotModuleReplacementPlugin(),
+      new webpack.NoErrorsPlugin(),
+      new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify('development'),
         },
@@ -106,19 +99,19 @@ if (process.env.NODE_ENV === 'development') {
 
 // *****************************************************************************
 // Production
-if (process.env.NODE_ENV === 'production') {
+if (process && process.env.NODE_ENV === 'production') {
   config = Object.assign({}, config, {
     devtool: 'source-map',
     plugins: config.plugins.concat([
-      new optimize.DedupePlugin(),
-      new optimize.UglifyJsPlugin({
+      new webpack.optimize.DedupePlugin(),
+      new webpack.optimize.UglifyJsPlugin({
         mangle: true,
         compress: {
           warnings: false,
         },
         comments: () => false,
       }),
-      new DefinePlugin({
+      new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify('production'),
         },
@@ -130,5 +123,4 @@ if (process.env.NODE_ENV === 'production') {
 
 // *****************************************************************************
 // Export
-const CONFIG = config;
-module.exports = CONFIG;
+module.exports = config;

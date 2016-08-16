@@ -1,6 +1,8 @@
 parser: babel-eslint
 extends:
- - airbnb
+  - airbnb
+  - plugin:import/errors
+  - plugin:import/warnings
 settings:
   import/resolver: webpack
 env:
@@ -23,19 +25,19 @@ rules:
     - capIsNewExceptions: # Exceptions for ImmutableJS.
       - Map
       - List
-  no-shadow: 0
-  no-nested-ternary: 1
-  no-prototype-builtins: 0
-  no-extra-boolean-cast: 0 # https://github.com/airbnb/javascript#coercion--booleans
+  no-shadow: off
+  no-nested-ternary: warn
+  no-prototype-builtins: off
+  no-extra-boolean-cast: off # https://github.com/airbnb/javascript#coercion--booleans
   no-multiple-empty-lines:
-    - 1
+    - warn
     - max: 3
+  no-global-assign: off # TODO: rule definition not found -- 160816
   react/jsx-filename-extension: off
   react/require-extension: off # TODO: deprecation warning.
   import/no-extraneous-dependencies: off
   import/no-commonjs: error
   import/no-amd: error
-  import/no-unresolved: off # TODO: Webpack resolver for webpack2.
   import/imports-first:
     - error
     - absolute-first: false
