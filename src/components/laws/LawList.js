@@ -56,8 +56,7 @@ const LawList = ({
         </FABButton>
       ),
     };
-  }).toJS();
-  // ^TODO: Conversion needed because react-mdl does not like immutable objects.
+  });
 
   return (
     <div>
