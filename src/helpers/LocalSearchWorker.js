@@ -47,7 +47,7 @@ export default class LocalSearchWorker {
       ), []);
     }
 
-    norms.forEach(norm => this.index.addDoc({
+    normsList.forEach(norm => this.index.addDoc({
       ...norm, id: `${norm.groupkey}::${norm.enumeration}`,
     }, false));
   }
