@@ -9,12 +9,10 @@ import {
   fetchLawIndex,
   selectCollection, selectLawIndexInitial, selectLawIndexPage, filterLawIndex,
 } from 'modules/law_index';
-import {
-  getIndexStars,
-  star,
-} from 'modules/user';
+import { viewLaw } from 'modules/laws';
+import { getIndexStars, star } from 'modules/user';
 import { LawIndex } from 'components';
-import { isNumeric, toInt } from 'helpers/utils';
+import { pick, isNumeric, toInt } from 'helpers/utils';
 
 
 const mapStateToProps = state => ({
@@ -38,6 +36,7 @@ const mapDispatchToProps = {
   filter: filterLawIndex,
   selectCollection,
   star,
+  viewLaw,
 };
 
 
@@ -64,6 +63,7 @@ class LawIndexContainer extends React.Component {
     star: PropTypes.func.isRequired,
     stars: ImmutableTypes.map.isRequired,
     total: PropTypes.number.isRequired,
+    viewLaw: PropTypes.func.isRequired,
   };
 
   componentWillMount() {
@@ -93,36 +93,8 @@ class LawIndexContainer extends React.Component {
   }
 
   render() {
-    const {
-      collection,
-      collections,
-      filter,
-      filters,
-      initials,
-      laws,
-      page,
-      pageSize,
-      selectCollection,
-      selectedInitial,
-      selectInitial,
-      selectPage,
-      star,
-      stars,
-      total,
-    } = this.props;
-
-    return (
-      <LawIndex
-        {...{
-          initials, laws, total,
-          page, pageSize,
-          selectedInitial, selectInitial, selectPage,
-          star, stars,
-          filter, filters,
-          collection, collections, selectCollection,
-        }}
-      />
-    );
+    const props = pick(this.props, Object.keys(LawIndex.propTypes));
+    return <LawIndex {...props} />;
   }
 }
 

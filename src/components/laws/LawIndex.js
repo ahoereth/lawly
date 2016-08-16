@@ -24,6 +24,7 @@ const LawIndex = ({
   star,
   stars,
   total,
+  viewLaw,
 }) => (
   <Grid>
     <Cell col={12} tablet={8} phone={4}>
@@ -55,6 +56,7 @@ const LawIndex = ({
         pageSize={pageSize}
         total={total}
         selectPage={selectPage}
+        viewLaw={viewLaw}
         star={star}
         stars={stars}
         filter={filter}
@@ -82,6 +84,7 @@ LawIndex.propTypes = {
   star: PropTypes.func.isRequired,
   stars: ImmutableTypes.map.isRequired,
   total: PropTypes.number.isRequired,
+  viewLaw: PropTypes.func.isRequired,
 };
 
 

@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map, List, fromJS } from 'immutable';
+import { push } from 'react-router-redux';
 
 import createReducer from 'store/createReducer';
 import { isObject } from 'helpers/utils';
@@ -42,6 +43,10 @@ export const selectLaw = groupkey => dispatch => {
   dispatch({ type: SELECT, payload: groupkey });
   return dispatch(fetchLaw(groupkey));
 };
+
+export const viewLaw = groupkey => (
+  push(`/gesetz/${groupkey}`)
+);
 
 
 

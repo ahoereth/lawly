@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
-import { Link } from 'react-router';
 import {
   DataTable, TableHeader,
   IconButton, Icon, Tooltip,
@@ -15,7 +14,8 @@ import styles from './lawList.sss';
 const LawList = ({
   filter, filters,
   laws, total = laws.size,
-  page, pageSize, selectPage,
+  page, pageSize,
+  selectPage, viewLaw,
   star, stars,
 }) => {
   const areAllStarred = !!stars
@@ -51,11 +51,9 @@ const LawList = ({
         </Tooltip>
       ),
       action: (
-        <Link to={`/gesetz/${groupkey}`}>
-          <FABButton mini>
-            <Icon name='launch' />
-          </FABButton>
-        </Link>
+        <FABButton mini onClick={() => viewLaw(groupkey)}>
+          <Icon name='launch' />
+        </FABButton>
       ),
     };
   }).toJS();
@@ -151,6 +149,7 @@ LawList.propTypes = {
   star: PropTypes.func,
   stars: ImmutableTypes.mapOf(PropTypes.number),
   total: PropTypes.number,
+  viewLaw: PropTypes.func.isRequired,
 };
 
 LawList.defaultProps = {
