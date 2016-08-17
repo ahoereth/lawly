@@ -30,7 +30,7 @@ var config = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
-    filename: '[name].[hash:8].js',
+    filename: '[name].js',
   },
   resolve: {
     modules: ['node_modules', 'src'],
@@ -44,12 +44,7 @@ var config = {
       { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
     ],
   },
-  externals: {
-    cheerio: 'window',
-    'react/addons': true,
-    'react/lib/ExecutionEnvironment': true,
-    'react/lib/ReactContext': true,
-  },
+  externals: {},
   postcss: function () {
     return [
       precss,
@@ -73,7 +68,7 @@ if (process && process.env.NODE_ENV !== 'production') {
   var dashboard = new Dashboard();
   var hotreloading = [
     'react-hot-loader/patch',
-    'webpack-dev-server/client?http://' + DEV_HOST + ':' + DEV_PORT + '}/',
+    'webpack-dev-server/client?http://' + DEV_HOST + ':' + DEV_PORT + '/',
     'webpack/hot/only-dev-server',
   ];
 
@@ -93,6 +88,13 @@ if (process && process.env.NODE_ENV !== 'production') {
           loaders: ['style', 'css', 'postcss?parser=sugarss'],
         },
       ]),
+    }),
+    externals: Object.assign({}, config.externals, {
+      // See https://github.com/airbnb/enzyme/issues/47
+      cheerio: true,
+      'react/addons': true,
+      'react/lib/ExecutionEnvironment': true,
+      'react/lib/ReactContext': true,
     }),
     plugins: config.plugins.concat([
       new HtmlWebpackPlugin({
