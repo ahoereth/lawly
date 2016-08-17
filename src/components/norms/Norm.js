@@ -18,11 +18,11 @@ export default class Norm extends React.Component {
       starred: PropTypes.bool,
     }).isRequired).isRequired,
     data: ImmutableTypes.mapContains({
-      enumeration: PropTypes.string.isRequired,
+      enumeration: PropTypes.string,
       groupkey: PropTypes.string.isRequired,
       title: PropTypes.string.isRequired,
-      body: PropTypes.string.isRequired,
-      foot: PropTypes.string.isRequired,
+      body: PropTypes.string,
+      foot: PropTypes.string,
     }).isRequired,
     descendants: ImmutableTypes.list.isRequired,
     star: PropTypes.func,
@@ -57,8 +57,8 @@ export default class Norm extends React.Component {
     const { annotations, data, descendants, star } = this.props;
     const { expanded, focus } = this.state;
 
-    const enumeration = data.get('enumeration');
-    const starred = annotations.getIn([enumeration, 'starred']);
+    const enumeration = data.get('enumeration', '0');
+    const starred = annotations.getIn([enumeration, 'starred'], false);
     const lead = enumeration === '0';
     const level = lead ? 1 : enumeration.split('.').length + 1;
     const heading = level > 6 ? 6 : level;
@@ -88,8 +88,8 @@ export default class Norm extends React.Component {
           />
         </CardMenu>
         <CardText>
-          <Html>{data.get('body')}</Html>
-          <Html>{data.get('foot')}</Html>
+          <Html>{data.get('body', '')}</Html>
+          <Html>{data.get('foot', '')}</Html>
           {expanded || descendants.isEmpty() ? (
             <Norms nodes={descendants} star={star} annotations={annotations} />
           ) : (

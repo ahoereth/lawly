@@ -34,9 +34,9 @@ export default createReducer(Map({
   filters: Map(),
 }), {
   [FETCH]: (state, { payload }) => state.merge({
-    initials: List(payload.initials),
-    laws: Immutable.fromJS(payload.index),
-    collections: Immutable.fromJS(payload.collections),
+    initials: List(payload.initials || []),
+    laws: Immutable.fromJS(payload.index || []),
+    collections: Immutable.fromJS(payload.collections || []),
   }),
   [SELECT_COLLECTION]: (state, { payload }) => state.set('collection', payload),
   [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),

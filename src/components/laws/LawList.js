@@ -51,7 +51,7 @@ const LawList = ({
         </Tooltip>
       ),
       action: (
-        <FABButton mini onClick={() => viewLaw(groupkey)}>
+        <FABButton mini onClick={() => viewLaw(law)}>
           <Icon name='launch' />
         </FABButton>
       ),

@@ -10,7 +10,6 @@ export default class NormList extends React.Component {
     nodes: ImmutableTypes.listOf(ImmutableTypes.mapContains({
       norm: ImmutableTypes.mapContains({
         title: PropTypes.string.isRequired,
-        enumeration: PropTypes.string.isRequired,
       }).isRequired,
       children: ImmutableTypes.list,
     })).isRequired,

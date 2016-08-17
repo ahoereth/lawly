@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { Map, List, fromJS } from 'immutable';
 import { push } from 'react-router-redux';
-import { isPlainObject } from 'lodash';
+import { isPlainObject, isString } from 'lodash';
 
 import createReducer from 'store/createReducer';
 
@@ -46,10 +46,15 @@ export const selectLaw = groupkey => dispatch => {
 };
 
 /* global encodeURIComponent */
-export const viewLaw = groupkey => (
-  push(`/gesetz/${encodeURIComponent(groupkey)}`)
-);
-
+export const viewLaw = law => dispatch => {
+  let groupkey = isString(law) ? law : undefined;
+  if (Map.isMap(law)) {
+    // Send the data we've got right away to avoid a blank screen.
+    dispatch({ type: FETCH_SINGLE, payload: [law.toObject()] });
+    groupkey = law.get('groupkey');
+  }
+  dispatch(push(`/gesetz/${encodeURIComponent(groupkey)}`));
+};
 
 
 // ******************************************************************
@@ -66,7 +71,7 @@ export const getNormHierarchy = createSelector(
     let nodes = List();
     let path = List();
     norms.forEach(norm => {
-      const depth = norm.get('enumeration').split('.').length - 1;
+      const depth = norm.get('enumeration', '0').split('.').length - 1;
       if ((depth * 2) > path.size) {
         path = path.push(nodes.getIn(path).size - 1, 'children');
       } else {
