@@ -41,8 +41,6 @@ var config = {
     ],
     loaders: [
       { test: /\.js$/, loader: 'babel', include: SRC },
-      { test: /\.css$/, loaders: ['style', 'css', 'postcss'] },
-      { test: /\.sss$/, loaders: ['style', 'css', 'postcss?parser=sugarss'] },
       { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
     ],
   },
@@ -52,15 +50,20 @@ var config = {
     'react/lib/ExecutionEnvironment': true,
     'react/lib/ReactContext': true,
   },
-  postcss: () => [autoprefixer, precss],
-  plugins: [
-    new HtmlWebpackPlugin({
-      template: 'client.ejs',
-      title: 'Lawly',
-      chunks: ['app'],
-      minify: { collapseWhitespace: true },
-    }),
-  ],
+  postcss: function () {
+    return [
+      precss,
+      autoprefixer({
+        browsers: [
+          '>1%',
+          'last 4 versions',
+          'Firefox ESR',
+          'not ie < 9', // React doesn't support IE8 anyway
+        ],
+      }),
+    ];
+  },
+  plugins: [],
 };
 
 
@@ -80,7 +83,23 @@ if (process && process.env.NODE_ENV !== 'production') {
       app: hotreloading.concat([config.entry.app]),
       tests: hotreloading.concat(['mocha!./tests.js']),
     }),
+    output: Object.assign({}, config.output, {
+      pathinfo: true,
+    }),
+    module: Object.assign({}, config.module, {
+      loaders: config.module.loaders.concat([
+        {
+          test: /\.c|sss$/,
+          loaders: ['style', 'css', 'postcss?parser=sugarss'],
+        },
+      ]),
+    }),
     plugins: config.plugins.concat([
+      new HtmlWebpackPlugin({
+        template: 'client.ejs',
+        title: 'Lawly',
+        chunks: ['app'],
+      }),
       new HtmlWebpackPlugin({
         filename: 'tests.html',
         title: 'Lawly Tests',
@@ -109,7 +128,25 @@ if (process && process.env.NODE_ENV !== 'production') {
 if (process && process.env.NODE_ENV === 'production') {
   config = Object.assign({}, config, {
     devtool: 'source-map',
+    module: Object.assign({}, config.module, {
+      loaders: config.module.loaders.concat([
+        {
+          test: /\.s|css$/,
+          loader: ExtractTextPlugin.extract({
+            // TODO: Fix minification.
+            loader: ['css?-minimize', 'postcss?parser=sugarss'],
+            fallbackLoader: 'style',
+          }),
+        },
+      ]),
+    }),
     plugins: config.plugins.concat([
+      new HtmlWebpackPlugin({
+        template: 'client.ejs',
+        title: 'Lawly',
+        minify: { collapseWhitespace: true },
+        excludeChunks: ['web-worker', 'service-worker'],
+      }),
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({
         compress: {
@@ -129,6 +166,7 @@ if (process && process.env.NODE_ENV === 'production') {
           NODE_ENV: JSON.stringify('production'),
         },
       }),
+      new ExtractTextPlugin('[name].[contenthash:8].css'),
     ]),
   });
 }
