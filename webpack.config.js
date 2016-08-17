@@ -1,20 +1,27 @@
-/* eslint-disable no-var, vars-on-top, import/no-commonjs */
+/* eslint-disable no-var, vars-on-top, import/no-commonjs, object-shorthand */
+/* eslint-disable prefer-template */
 /* global process */
 var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var autoprefixer = require('autoprefixer');
 var precss = require('precss');
 var Dashboard = require('webpack-dashboard');
 var DashboardPlugin = require('webpack-dashboard/plugin');
 
 
+var SRC = path.resolve(__dirname, 'src');
+var DEV_HOST = 'localhost';
+var DEV_PORT = 8080;
+
+
 // *****************************************************************************
 // Base
 var config = {
-  devtool: '#cheap-module-eval-source-map',
+  devtool: 'cheap-module-source-map',
   target: 'web',
-  context: path.resolve(__dirname, 'src'),
+  context: SRC,
   entry: {
     app: 'client',
     'web-worker': 'web-worker',
@@ -23,14 +30,17 @@ var config = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
-    filename: '[name].js',
+    filename: '[name].[hash:8].js',
   },
   resolve: {
     modules: ['node_modules', 'src'],
   },
   module: {
+    preLoaders: [
+      { test: /\.js$/, loader: 'eslint', include: SRC },
+    ],
     loaders: [
-      { test: /\.js$/, loaders: ['babel', 'eslint'], exclude: /node_modules/ },
+      { test: /\.js$/, loader: 'babel', include: SRC },
       { test: /\.css$/, loaders: ['style', 'css', 'postcss'] },
       { test: /\.sss$/, loaders: ['style', 'css', 'postcss?parser=sugarss'] },
       { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
@@ -56,14 +66,11 @@ var config = {
 
 // *****************************************************************************
 // Development
-if (process && process.env.NODE_ENV === 'development') {
-  var HOST = 'localhost';
-  var PORT = 8080;
-
+if (process && process.env.NODE_ENV !== 'production') {
   var dashboard = new Dashboard();
   var hotreloading = [
     'react-hot-loader/patch',
-    `webpack-dev-server/client?http://${HOST}:${PORT}/`,
+    'webpack-dev-server/client?http://' + DEV_HOST + ':' + DEV_PORT + '}/',
     'webpack/hot/only-dev-server',
   ];
 
@@ -90,8 +97,8 @@ if (process && process.env.NODE_ENV === 'development') {
       new DashboardPlugin(dashboard.setData),
     ]),
     server: {
-      host: HOST,
-      port: PORT,
+      host: DEV_HOST,
+      port: DEV_PORT,
     },
   });
 }
@@ -105,11 +112,17 @@ if (process && process.env.NODE_ENV === 'production') {
     plugins: config.plugins.concat([
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({
-        mangle: true,
         compress: {
+          screw_ie8: true, // React doesn't support IE8
           warnings: false,
         },
-        comments: () => false,
+        mangle: {
+          screw_ie8: true,
+        },
+        output: {
+          comments: false,
+          screw_ie8: true,
+        },
       }),
       new webpack.DefinePlugin({
         'process.env': {
