@@ -1,49 +1,5 @@
 import { b64decode } from './base64';
-
-/**
- * Check if given value is a string.
- *
- * @param  {any}  val
- * @return {Boolean}
- */
-export function isString(val) {
-  return toString.call(val) === '[object String]';
-}
-
-
-/**
- * Check if given value is a javascript object.
- *
- * @see http://stackoverflow.com/a/22482737
- * @param  {any}  val
- * @return {Boolean}
- */
-export function isObject(val) {
-  return !Array.isArray(val) &&
-          Object.prototype.toString.call(val) === '[object Object]';
-}
-
-
-/**
- * Check if given varaible is undefined.
- *
- * @param  {any} x
- * @return {Boolean}
- */
-export function isUndefined(x) {
-  return (typeof x === 'undefined');
-}
-
-
-/**
- * Check if given varaible is a boolean.
- *
- * @param  {any} x
- * @return {Boolean}
- */
-export function isBoolean(x) {
-  return (typeof x === 'boolean');
-}
+import { isBoolean, endsWith } from 'lodash';
 
 
 /**
@@ -58,77 +14,6 @@ export function isNumeric(val) {
 
 
 /**
- * Check if a string starts with a specific substring.
- *
- * @param  {string} haystack
- * @param  {string} needle
- * @return {boolean}
- */
-export function startsWith(haystack, needle) {
-  if (!haystack) return false;
-  return (haystack.indexOf(needle) === 0);
-}
-
-
-/**
- * Checks if a string ends with a specific substring.
- *
- * @param  {string} haystack
- * @param  {string/array} needle
- * @return {boolean}
- */
-export function endsWith(haystack, needle) {
-  if (!haystack) return false;
-  return (haystack.lastIndexOf(needle) === (haystack.length - needle.length));
-}
-
-
-/**
- * Converts passed variable to integer.
- *
- * @param  {string} n [description]
- * @return {number}
- */
-export function toInt(n) {
-  if (n === true) return 1;
-  if (!n) return 0;
-
-  let cleaned = n;
-  if (isString(cleaned)) {
-    cleaned = startsWith(cleaned, '.') ? `0${cleaned}` : cleaned;
-    cleaned = startsWith(cleaned, '-.') ? `-0${cleaned.slice(1)}` : cleaned;
-  }
-
-  return parseInt(cleaned, 10);
-}
-
-
-/**
- * Convert an array of objects to an object of objects using a specific key
- * of the original objects as key for the new object. CAUTION: Objects further
- * down in the array overwrite earlier objects with the same key value.
- *
- * @param  {array} arr
- * @param  {string} key
- * @return {object}
- */
-export function arr2obj(arr, key, constructor = i => i) {
-  return arr.reduce((agg, o) => ({ ...agg, [o[key]]: constructor(o) }), {});
-}
-
-
-/**
- * Convert an object to an array. Inverse function of `arr2obj`.
- *
- * @param  {object} obj
- * @return {array}
- */
-export function obj2arr(obj) {
-  return Object.keys(obj).map(key => obj[key]);
-}
-
-
-/**
  * Encodes a JavaScript object into a url query string of key=value pairs
  * delimited with &.
  *
@@ -138,58 +23,19 @@ export function obj2arr(obj) {
 export function obj2query(obj = null, seperator = false) {
   if (!obj) { return ''; }
   const str = Object.keys(obj).map(key => {
-    if (typeof obj[key] === 'boolean') {
+    if (isBoolean(obj[key])) {
       return encodeURIComponent(key) + (obj[key] === false ? '=0' : '');
     }
-
     return `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`;
   }).join('&');
 
-  return (seperator && str.length && str.indexOf('?') < 0) ? `?${str}` : str;
-}
-
-
-/**
- * Returns a copy of the haystack..
- * ..object stripped from the specified properties.
- * ..array stripped from the specified values.
- *
- * @param  {object/array} haystack
- * @param  {string} needles...
- * @return {object/array}
- */
-export function omit(haystack, ...rest) {
-  const needles = Array.isArray(rest[0]) ? rest[0] : rest;
-  if (isObject(haystack)) {
-    // Omit object properties by keys. Generate a list of keys to keep, and
-    // then create a new object based on them.
-    const keep = Object.keys(haystack).filter(k => (needles.indexOf(k) === -1));
-    return keep.reduce((r, k) => ({ ...r, [k]: haystack[k] }), {});
-  } else if (Array.isArray(haystack)) {
-    // Omit array values by value. Filter array by checking if values are
-    // included in the needles.
-    return haystack.filter(v => (needles.indexOf(v) === -1));
+  if (!seperator && str.indexOf('?') > -1) {
+    return str.slice(1);
+  } else if (seperator && str.indexOf('?') < 0) {
+    return `?${str}`;
   }
 
-  return {};
-}
-
-
-/**
- * Returns an object with the specified properties copied over from the
- * provided haystack object.
- *
- * @param  {object} haystack
- * @param  {string} needles...
- * @return {object}
- */
-export function pick(haystack, ...rest) {
-  const needles = Array.isArray(rest[0]) ? rest[0] : rest;
-  return needles.reduce((agg, key) => {
-    // eslint-disable-next-line no-param-reassign
-    if (haystack.hasOwnProperty(key)) agg[key] = haystack[key];
-    return agg;
-  }, {});
+  return str;
 }
 
 
@@ -206,7 +52,7 @@ export function pick(haystack, ...rest) {
 export function joinPath(...args) {
   let parts = args;
   let trailingSlash = false;
-  const leadingSlash = startsWith(parts[0], '/');
+  const leadingSlash = parts[0].indexOf('/') === 0;
   if (isBoolean(parts[parts.length - 1])) {
     trailingSlash = parts[parts.length - 1];
     parts = parts.slice(0, -1);
@@ -214,10 +60,11 @@ export function joinPath(...args) {
 
   const path = parts.map(part => {
     let clean = part;
-    while (startsWith(clean, '/')) { clean = clean.slice(1); }
+    while (clean.indexOf('/') === 0) { clean = clean.slice(1); }
     while (endsWith(clean, '/')) { clean = clean.slice(0, -1); }
     return clean;
   }).filter(elem => !!elem).join('/');
+
   return `${leadingSlash ? '/' : ''}${path}${trailingSlash ? '/' : ''}`;
 }
 
