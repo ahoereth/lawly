@@ -13,9 +13,9 @@
   "dependencies": {
     "classnames": "^2.2.3",
     "elasticlunr": "^0.9.0",
-    "isomorphic-fetch": "^2.2.1",
     "json-stable-stringify": "^1.0.1",
     "localforage": "^1.4.2",
+    "promise": "^7.1.1",
     "react": "^15.0.0",
     "react-addons-shallow-compare": "^15.1.0",
     "react-dom": "^15.0.0",
@@ -27,16 +27,21 @@
     "redux-actions": "^0.10.0",
     "redux-debounced": "^0.3.0",
     "reselect": "^2.3.0",
-    "sw-toolbox": "^3.2.1"
+    "sw-toolbox": "^3.2.1",
+    "whatwg-fetch": "^1.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.6",
     "babel-core": "^6.7.5",
     "babel-eslint": "^6.0.2",
     "babel-loader": "^6.2.4",
+    "babel-plugin-syntax-async-functions": "^6.13.0",
     "babel-plugin-transform-class-properties": "^6.6.0",
     "babel-plugin-transform-export-extensions": "^6.5.0",
     "babel-plugin-transform-object-rest-spread": "^6.6.5",
+    "babel-plugin-transform-react-constant-elements": "^6.9.1",
+    "babel-plugin-transform-regenerator": "^6.11.4",
+    "babel-plugin-transform-runtime": "^6.12.0",
     "babel-preset-es2015": "^6.13.2",
     "babel-preset-react": "^6.5.0",
     "chai": "^3.5.0",

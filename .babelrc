@@ -5,9 +5,24 @@
   ],
 
   "plugins": [
+    "syntax-async-functions",
     "transform-class-properties",
     "transform-export-extensions",
     "transform-object-rest-spread",
+    "transform-regenerator",
+    ["transform-runtime", {
+      "helpers": false,
+      "polyfill": false,
+      "regenerator": true,
+    }],
     "react-hot-loader/babel"
-  ]
+  ],
+
+  "env": {
+    "production": {
+      "plugins": [
+        "transform-react-constant-elements"
+      ]
+    }
+  }
 }

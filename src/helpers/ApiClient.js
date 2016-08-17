@@ -1,5 +1,3 @@
-import fetch from 'isomorphic-fetch';
-
 import DataClient from './DataClient';
 import localSearch from './LocalSearch';
 import {

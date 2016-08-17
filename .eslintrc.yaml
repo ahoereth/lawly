@@ -7,6 +7,8 @@ settings:
   import/resolver: webpack
 env:
   mocha: true
+globals:
+  fetch: true # Polyfilled in src/polyfills.js
 rules:
   max-len:
     - warn
