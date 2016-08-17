@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import React from 'react';
+import { isUndefined } from 'lodash';
 
 import { shallowRender } from 'helpers/testUtils';
 import List from './List';
@@ -31,10 +32,10 @@ function testListLevel(ul) {
   ul.props.children.forEach(li => {
     expect(li.type).to.equal('li');
     const children = li.props.children;
-    if (typeof children === 'undefined') { return; }
+    if (isUndefined(children)) { return; }
 
     children.forEach(child => {
-      if (typeof child.type === 'undefined') {
+      if (isUndefined(child.type)) {
         expect(child).to.be.a('boolean');
         expect(child).to.be.false;
       } else if (child.type === 'ul') {

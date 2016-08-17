@@ -1,4 +1,4 @@
-import { isUndefined, isPlainObject, omit } from 'lodash';
+import { isUndefined, isPlainObject, isError, omit } from 'lodash';
 
 import DataClient from './DataClient';
 import localSearch from './LocalSearch';
@@ -219,7 +219,7 @@ export default class ApiClient {
           return this.store.dispatch({
             type: action,
             error: true,
-            payload: err instanceof Error ? err.toString() : err,
+            payload: isError(err) ? err.toString() : err,
           });
         }
       );

@@ -1,4 +1,5 @@
 import * as Immutable from 'immutable';
+import { isFunction } from 'lodash';
 
 
 /**
@@ -30,7 +31,7 @@ export default function createReducer(
     if (!handler) { return state; }
 
     if (action.error === true) {
-      if (typeof handler === 'function' || !handler.hasOwnProperty('throw')) {
+      if (isFunction(handler) || !handler.hasOwnProperty('throw')) {
         // Does not have a throw property, we handle the error right here.
         state = state.set('error', action.payload);
       } else {
@@ -41,7 +42,7 @@ export default function createReducer(
       // Unset the error property.
       state = state.set('error', undefined);
 
-      if (typeof handler === 'function') {
+      if (isFunction(handler)) {
         // Handler is a function itself..
         state = handler(state, action);
       } else if (handler.hasOwnProperty('next')) {

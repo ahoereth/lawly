@@ -1,6 +1,6 @@
 import localforage from 'localforage';
 import stringify from 'json-stable-stringify';
-import { isPlainObject } from 'lodash';
+import { isPlainObject, isUndefined } from 'lodash';
 
 import localSearch from './LocalSearch';
 
@@ -34,7 +34,7 @@ export default class DataClient {
   auth(token = undefined) {
     if (token === null) { // Unset token.
       return this.forage.removeItem('auth');
-    } else if (typeof token !== 'undefined') { // Set token.
+    } else if (!isUndefined(token)) { // Set token.
       return this.forage.setItem('auth', token);
     }
 

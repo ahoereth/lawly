@@ -1,6 +1,9 @@
+import { isFunction } from 'lodash';
+
+
 export default function fetchMiddleware(client) {
   return ({ dispatch, getState }) => next => action => {
-    if (typeof action === 'function') {
+    if (isFunction(action)) {
       return action(dispatch, getState);
     }
 
