@@ -40,7 +40,12 @@ var config = {
       { test: /\.js$/, loader: 'eslint', include: SRC },
     ],
     loaders: [
-      { test: /\.js$/, loader: 'babel', include: SRC },
+      {
+        test: /\.js$/,
+        loader: 'babel',
+        include: SRC,
+        query: { cacheDirectory: true },
+      },
       { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
     ],
   },
