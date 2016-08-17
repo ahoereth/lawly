@@ -9,6 +9,8 @@ var autoprefixer = require('autoprefixer');
 var precss = require('precss');
 var Dashboard = require('webpack-dashboard');
 var DashboardPlugin = require('webpack-dashboard/plugin');
+var LodashPlugin = require('lodash-webpack-plugin');
+
 
 
 var SRC = path.resolve(__dirname, 'src');
@@ -63,7 +65,9 @@ var config = {
       }),
     ];
   },
-  plugins: [],
+  plugins: [
+    new LodashPlugin(),
+  ],
 };
 
 
