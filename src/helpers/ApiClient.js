@@ -1,9 +1,8 @@
+import { isUndefined, isPlainObject, omit } from 'lodash';
+
 import DataClient from './DataClient';
 import localSearch from './LocalSearch';
-import {
-  isObject, isUndefined, startsWith,
-  joinPath, parseJWT, obj2query, omit,
-} from './utils';
+import { joinPath, parseJWT, obj2query } from './utils';
 import { login } from 'modules/user';
 import { FETCH_SINGLE, getLaws } from 'modules/laws';
 
@@ -90,7 +89,7 @@ export default class ApiClient {
       return !isUndefined(values[key]) ? encodeURIComponent(values[key]) : '';
     });
 
-    const body = omit(payload, ...Object.keys(params));
+    const body = omit(payload, Object.keys(params));
     if ((method || '').toLowerCase() === 'get') {
       path += obj2query(body, true);
     }
@@ -127,14 +126,16 @@ export default class ApiClient {
    */
   parseResponse(response) {
     const type = response.headers.get('content-type');
-    if (!startsWith(type, 'application/json')) {
+    if (type.indexOf('application/json') === -1) {
       // We should not end up here. All responses should be JSON!
       return response.text();
     }
 
     return response.json().then(result => {
       const { status, message, data, token } = result;
-      if (!status) { // We just received the data, its not wrapped as expected.
+
+      if (!status) {
+        // Seems like we just received the raw data, unwrapped.
         return result;
       }
 
@@ -289,7 +290,9 @@ export default class ApiClient {
         // Fetch all starred laws in a single request and insert them into the
         // redux store. TODO: This logic chunk does not really belong here.
         this.get({ name: 'law', groupkey: result.laws.map(l => l.groupkey) })
-          .then(laws => (!isObject(laws) ? { [laws[0].groupkey]: laws } : laws))
+          .then(laws => (
+            !isPlainObject(laws) ? { [laws[0].groupkey]: laws } : laws
+          ))
           .then(laws => Object.keys(laws).forEach(groupkey => {
             const law = laws[groupkey];
             this.storage.stash({ method: 'get', name: 'law', groupkey }, law);

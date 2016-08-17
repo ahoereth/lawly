@@ -1,8 +1,8 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
 import Immutable, { List, Map } from 'immutable';
+import { pick } from 'lodash';
 
-import { pick } from 'helpers/utils';
 import createReducer from 'store/createReducer';
 import { getIndexStars } from './user';
 
@@ -74,7 +74,7 @@ export const selectCollection = (collection = '') => dispatch => {
 };
 
 export const filterLawIndex = (filters = {}) => (dispatch) => {
-  const payload = pick(filters, 'starred', 'title', 'groupkey');
+  const payload = pick(filters, ['starred', 'title', 'groupkey']);
   dispatch({ type: FILTER, payload });
   dispatch(selectLawIndexPage(1));
 };

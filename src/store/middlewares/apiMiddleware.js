@@ -1,4 +1,4 @@
-import { isObject } from 'helpers/utils';
+import { isPlainObject } from 'lodash';
 
 
 /**
@@ -14,7 +14,7 @@ export default function apiMiddleware(client) {
     const { api, type, payload } = action;
 
     // Check wheather this is the correct middleware to handle this action.
-    if (!api || !type || !isObject(api)) {
+    if (!api || !type || !isPlainObject(api)) {
       return next(action);
     }
 

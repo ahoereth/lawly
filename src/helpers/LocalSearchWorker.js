@@ -1,6 +1,5 @@
 import elasticlunr from 'elasticlunr';
-
-import { isObject } from 'helpers/utils';
+import { isPlainObject } from 'lodash';
 
 
 export default class LocalSearchWorker {
@@ -41,7 +40,7 @@ export default class LocalSearchWorker {
 
   indexLaw(norms) {
     let normsList = norms;
-    if (isObject(normsList)) {
+    if (isPlainObject(normsList)) {
       normsList = Object.keys(norms).reduce((list, key) => (
         list.concat(norms[key])
       ), []);

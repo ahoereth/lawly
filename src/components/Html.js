@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
-
-import { isString } from 'helpers/utils';
+import { isString } from 'lodash';
 
 
 export function handleHtml(content, i) {

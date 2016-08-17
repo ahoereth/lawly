@@ -1,5 +1,5 @@
-const mapSelectorsToProps = map => state => (
-  Object.keys(map).reduce((a, k) => ({ ...a, [k]: map[k](state) }), {})
-);
+import { mapValues } from 'lodash';
 
-export default mapSelectorsToProps;
+export default function mapSelectorsToProps(map) {
+  return state => mapValues(map, sel => sel(state));
+}

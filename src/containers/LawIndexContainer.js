@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
+import { pick, toInteger } from 'lodash';
 
 import {
   getFilteredLawsByPage, getInitial, getInitials, getPage, getPageSize,
@@ -12,7 +13,7 @@ import {
 import { viewLaw } from 'modules/laws';
 import { getIndexStars, star } from 'modules/user';
 import { LawIndex } from 'components';
-import { pick, isNumeric, toInt } from 'helpers/utils';
+import { isNumeric } from 'helpers/utils';
 
 
 const mapStateToProps = state => ({
@@ -77,10 +78,10 @@ class LawIndexContainer extends React.Component {
     } = this.props;
 
     const { a, b, c } = params;
-    const collection = !isNumeric(b) || a.length > 1 ? a : undefined;
+    const collection = (!isNumeric(b) || a.length > 1) ? a : undefined;
     const firstAsInitial = a && a.length === 1 ? a : undefined;
     const initial = isNumeric(b) ? firstAsInitial : b;
-    const page = isNumeric(b) ? toInt(b) : toInt(c);
+    const page = isNumeric(b) ? toInteger(b) : toInteger(c);
 
     total > 0 || fetchIndex();
     selectCollection(collection);

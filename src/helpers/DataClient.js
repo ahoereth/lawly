@@ -1,8 +1,8 @@
 import localforage from 'localforage';
 import stringify from 'json-stable-stringify';
+import { isPlainObject } from 'lodash';
 
 import localSearch from './LocalSearch';
-import { isObject } from './utils';
 
 
 export default class DataClient {
@@ -20,7 +20,7 @@ export default class DataClient {
   }
 
   stash(key, data) {
-    if (isObject(key) && key.name === 'law') {
+    if (isPlainObject(key) && key.name === 'law') {
       localSearch.indexLaw(data);
     }
 

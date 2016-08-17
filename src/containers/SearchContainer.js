@@ -2,8 +2,8 @@ import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
+import { pick } from 'lodash';
 
-import { pick } from 'helpers/utils';
 import {
   search,
   selectPage,

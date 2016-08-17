@@ -1,12 +1,12 @@
 import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
+import { omit } from 'lodash';
 import {
   Card, CardTitle, CardText, CardActions,
   Textfield, Button,
 } from 'react-mdl';
 
-import { omit } from 'helpers/utils';
 
 
 class LoginForm extends React.Component {
@@ -60,7 +60,7 @@ class LoginForm extends React.Component {
 
     return (
       <form onSubmit={this.submit}>
-        <Card shadow={shadow} {...omit(otherProps, 'login', 'user')}>
+        <Card shadow={shadow} {...omit(otherProps, ['login', 'user'])}>
           <CardTitle>Login</CardTitle>
           <CardText>
             <Textfield

@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
 import { Map, List, fromJS } from 'immutable';
 import { push } from 'react-router-redux';
+import { isPlainObject } from 'lodash';
 
 import createReducer from 'store/createReducer';
-import { isObject } from 'helpers/utils';
 
 
 export const SCOPE = 'laws';
@@ -25,7 +25,8 @@ export default createReducer(Map({
 }), {
   [SELECT]: (state, { payload }) => state.set('selected', payload),
   [FETCH_SINGLE]: (state, { payload }) => {
-    const arr = isObject(payload) ? payload[Object.keys(payload)[0]] : payload;
+    const arr = isPlainObject(payload) ? payload[Object.keys(payload)[0]]
+                                       : payload;
     return state.setIn(['laws', arr[0].groupkey], fromJS(arr));
   },
 });
