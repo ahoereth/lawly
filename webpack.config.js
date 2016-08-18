@@ -27,10 +27,6 @@ var config = {
   target: 'web',
   context: SRC,
   entry: {
-    // Currently compiling everything everytime for a complete assets.json
-    'static/app': 'client',
-    'web-worker': 'web-worker',
-    'service-worker': 'service-worker',
   },
   output: {
     path: DST,
@@ -73,10 +69,30 @@ var config = {
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
     new LodashPlugin(),
-    new AssetsPlugin({ filename: 'assets.json', prettyPrint: true, path: DST }),
     // new StaticSiteGeneratorPlugin('shells', ['/gesetze'], {}),
   ],
 };
+
+
+// *****************************************************************************
+// Development and production
+if (process.env.NODE_ENV !== 'node') {
+  config = Object.assign({}, config, {
+    entry: Object.assign({}, config.entry, {
+      // Currently compiling everything everytime for a complete assets.json
+      'static/app': 'client',
+      'web-worker': 'web-worker',
+      'service-worker': 'service-worker',
+    }),
+    plugins: config.plugins.concat([
+      new AssetsPlugin({
+        filename: 'assets.json',
+        prettyPrint: true,
+        path: DST,
+      }),
+    ]),
+  });
+}
 
 
 // *****************************************************************************
