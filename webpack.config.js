@@ -26,7 +26,12 @@ var config = {
   devtool: 'cheap-module-source-map',
   target: 'web',
   context: SRC,
-  entry: {},
+  entry: {
+    // Currently compiling everything everytime for a complete assets.json
+    'static/app': 'client',
+    'web-worker': 'web-worker',
+    'service-worker': 'service-worker',
+  },
   output: {
     path: DST,
     publicPath: '/',
@@ -67,22 +72,9 @@ var config = {
   plugins: [
     new LodashPlugin(),
     new AssetsPlugin({ filename: 'assets.json', prettyPrint: true, path: DST }),
+    // new StaticSiteGeneratorPlugin('shells', ['/gesetze'], {}),
   ],
 };
-
-
-// *****************************************************************************
-// Client side
-if (process.env.NODE_ENV !== 'node') {
-  config = Object.assign({}, config, {
-    entry: Object.assign({}, config.entry, {
-      app: 'client',
-      // shells: 'shells',
-      'web-worker': 'web-worker',
-      'service-worker': 'service-worker',
-    }),
-  });
-}
 
 
 // *****************************************************************************
