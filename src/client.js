@@ -10,7 +10,7 @@ import { isUndefined } from 'lodash';
 
 import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
-import App from './App';
+import AppClient from './AppClient';
 
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
@@ -41,17 +41,17 @@ history.listen(location => {
 
 render(
   <AppContainer errorReporter={Redbox}>
-    <App store={store} history={history} />
+    <AppClient store={store} history={history} />
   </AppContainer>,
   target
 );
 
 /* global module */
 if (module.hot) {
-  module.hot.accept('./App', () => {
+  module.hot.accept('./AppClient', () => {
     render(
       <AppContainer>
-        <App store={store} history={history} />
+        <AppClient store={store} history={history} />
       </AppContainer>,
       target
     );
