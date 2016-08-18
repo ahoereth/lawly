@@ -90,8 +90,8 @@ if (process.env.NODE_ENV === 'development') {
   config = Object.assign({}, config, {
     watch: true,
     entry: Object.assign({}, config.entry, {
-      app: hotreloading.concat([config.entry.app]),
-      tests: hotreloading.concat(['mocha!./tests.js']),
+      'static/app': hotreloading.concat([config.entry['static/app']]),
+      'static/tests': hotreloading.concat(['mocha!./tests.js']),
     }),
     output: Object.assign({}, config.output, {
       pathinfo: true,
@@ -115,13 +115,13 @@ if (process.env.NODE_ENV === 'development') {
       new HtmlWebpackPlugin({
         template: 'client.ejs',
         title: 'Lawly',
-        chunks: ['app'],
+        chunks: ['static/app'],
       }),
       new HtmlWebpackPlugin({
         filename: 'tests.html',
         title: 'Lawly Tests',
         template: 'client.ejs',
-        chunks: ['tests'],
+        chunks: ['static/tests'],
       }),
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NoErrorsPlugin(),

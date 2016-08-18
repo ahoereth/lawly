@@ -3,8 +3,10 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const config = require('../webpack.config');
 
+
 // When changing something here, also change webpack.config.
 const { host, port } = config.server;
+
 
 new WebpackDevServer(webpack(config), {
   publicPath: config.output.publicPath,

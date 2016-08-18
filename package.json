@@ -5,7 +5,7 @@
   "author": "Alexander Hoereth",
   "scripts": {
     "start": "npm run dev",
-    "dev": "NODE_ENV=development node src/server-dev.js",
+    "dev": "NODE_ENV=development node scripts/devserver.js",
     "build": "npm run lint && NODE_ENV=production webpack --progress",
     "lint": "NODE_ENV=production eslint src scripts",
     "test": "echo 'Tests viewable on /tests.html' && npm run dev",
