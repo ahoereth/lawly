@@ -24,9 +24,6 @@ class LocalSearch {
     this.worker = new Worker('/web-worker.js');
     this.promises = {};
     this.worker.onmessage = e => this.messageHandler(e);
-
-    /* global window, process */
-    process.env.NODE_ENV !== 'production' && (window.work = this.worker);
   }
 
   messageHandler(e) {

@@ -31,9 +31,6 @@ export default function createStore(client, data = {}) {
 
   client.init(store);
 
-  /* global window, process */
-  process.env.NODE_ENV !== 'production' && (window.store = store);
-
   /* global module */
   if (module.hot) {
     module.hot.accept('./rootReducer', () => {

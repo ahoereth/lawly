@@ -6,6 +6,7 @@ import { browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
 import Redbox from 'redbox-react';
+import { isUndefined } from 'lodash';
 
 import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
@@ -59,7 +60,7 @@ if (module.hot) {
 }
 
 /* global process, window, require */
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && !isUndefined(window)) {
   // eslint-disable-next-line global-require
   window.Perf = require('react-addons-perf');
 }
