@@ -62,7 +62,7 @@ http.createServer((req, res) => {
 
     if (renderProps) {
       const page = renderToString(
-        <AppHtml js={js} css={css}>
+        <AppHtml js={js} css={css} state={store.getState()}>
           <AppServer renderProps={renderProps} store={store} />
         </AppHtml>
       );

@@ -1,10 +1,12 @@
 import React, { PropTypes } from 'react';
+import ImmutableTypes from 'react-immutable-proptypes';
 
 
 const AppHtml = ({
   children,
   css,
   js,
+  state,
 }) => (
   <html lang='de-DE'>
     <head>
@@ -18,6 +20,12 @@ const AppHtml = ({
     </head>
     <body>
       <div id='app'>{children}</div>
+      <script
+        type='text/javascript'
+        dangerouslySetInnerHTML={{
+          __html: `window.__state=${JSON.stringify(state.toJS())}`,
+        }}
+      />
       {js.map(src => <script src={src} type='text/javascript' />)}
     </body>
   </html>
@@ -33,6 +41,7 @@ AppHtml.propTypes = {
     PropTypes.string,
     PropTypes.array,
   ]).isRequired,
+  state: ImmutableTypes.map.isRequired,
 };
 
 
