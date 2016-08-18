@@ -6,7 +6,7 @@ import {
   Navigation,
 } from 'react-mdl';
 
-import { SearchInput } from 'components';
+import { SearchInput } from '~/components';
 
 
 const Header = ({ title, links, search, query }) => (

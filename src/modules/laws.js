@@ -3,7 +3,7 @@ import { Map, List, fromJS } from 'immutable';
 import { push } from 'react-router-redux';
 import { isPlainObject, isString } from 'lodash';
 
-import createReducer from 'store/createReducer';
+import createReducer from '~/store/createReducer';
 
 
 export const SCOPE = 'laws';

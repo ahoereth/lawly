@@ -3,9 +3,9 @@ import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
-import { login, logout, getUser, getUserLaws } from 'modules/user';
-import { viewLaw } from 'modules/laws';
-import { Home } from 'components';
+import { login, logout, getUser, getUserLaws } from '~/modules/user';
+import { viewLaw } from '~/modules/laws';
+import { Home } from '~/components';
 
 
 class HomeContainer extends React.Component {

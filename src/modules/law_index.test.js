@@ -2,7 +2,7 @@ import chai, { expect } from 'chai';
 import chaiImmutable from 'chai-immutable';
 import { List, Map, fromJS } from 'immutable';
 
-import mockStore, { mockApi } from 'store/mockStore';
+import mockStore, { mockApi } from '~/store/mockStore';
 import reducer, {
   SCOPE,
 

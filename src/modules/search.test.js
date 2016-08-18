@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Map, List } from 'immutable';
 
-import mockStore, { mockApi } from 'store/mockStore';
+import mockStore, { mockApi } from '~/store/mockStore';
 import reducer, {
   SCOPE,
 

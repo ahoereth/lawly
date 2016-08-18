@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import React from 'react';
 import { isUndefined } from 'lodash';
 
-import { shallowRender } from 'helpers/testUtils';
+import { shallowRender } from '~/helpers/testUtils';
 import List from './List';
 
 

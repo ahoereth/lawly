@@ -3,7 +3,7 @@ import { push } from 'react-router-redux';
 import Immutable, { List, Map } from 'immutable';
 import { pick } from 'lodash';
 
-import createReducer from 'store/createReducer';
+import createReducer from '~/store/createReducer';
 import { getIndexStars } from './user';
 
 

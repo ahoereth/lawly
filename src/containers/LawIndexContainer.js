@@ -9,11 +9,11 @@ import {
   getFilters, getFilteredLawsCount, getCollection, getCollectionTitles,
   fetchLawIndex,
   selectCollection, selectLawIndexInitial, selectLawIndexPage, filterLawIndex,
-} from 'modules/law_index';
-import { viewLaw } from 'modules/laws';
-import { getIndexStars, star } from 'modules/user';
-import { LawIndex } from 'components';
-import { isNumeric } from 'helpers/utils';
+} from '~/modules/law_index';
+import { viewLaw } from '~/modules/laws';
+import { getIndexStars, star } from '~/modules/user';
+import { LawIndex } from '~/components';
+import { isNumeric } from '~/helpers/utils';
 
 
 const mapStateToProps = state => ({

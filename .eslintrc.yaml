@@ -40,6 +40,7 @@ rules:
   no-global-assign: off # TODO: rule definition not found -- 160816.
   react/require-extension: off # TODO: deprecation warning -- 160816.
   react/jsx-filename-extension: off
+  import/no-unresolved: off # TODO: Handle webpack resolve.alias!
   import/no-extraneous-dependencies: off
   import/no-commonjs: error
   import/no-amd: error

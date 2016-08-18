@@ -3,8 +3,8 @@ import { isUndefined, isPlainObject, isError, omit } from 'lodash';
 import DataClient from './DataClient';
 import localSearch from './LocalSearch';
 import { joinPath, parseJWT, obj2query } from './utils';
-import { login } from 'modules/user';
-import { FETCH_SINGLE, getLaws } from 'modules/laws';
+import { login } from '~/modules/user';
+import { FETCH_SINGLE, getLaws } from '~/modules/laws';
 
 
 export default class ApiClient {

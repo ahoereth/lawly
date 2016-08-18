@@ -2,8 +2,8 @@ import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import { connect } from 'react-redux';
 
-import { search, getQuery } from 'modules/search';
-import { Layout } from 'components';
+import { search, getQuery } from '~/modules/search';
+import { Layout } from '~/components';
 
 
 const navigation = [

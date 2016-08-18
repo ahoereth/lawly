@@ -1,4 +1,4 @@
-import LocalSearchWorker from 'helpers/LocalSearchWorker';
+import LocalSearchWorker from './helpers/LocalSearchWorker';
 
 /* global self */
 const worker = self;

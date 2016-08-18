@@ -4,8 +4,8 @@ import React from 'react';
 import { fromJS } from 'immutable';
 import { renderToStaticMarkup as staticRender } from 'react-dom/server';
 
-import { shallowRender } from 'helpers/testUtils';
-import { slugify } from 'helpers/utils';
+import { shallowRender } from '~/helpers/testUtils';
+import { slugify } from '~/helpers/utils';
 import NormList from './NormList';
 
 const props = {

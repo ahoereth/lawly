@@ -36,6 +36,7 @@ var config = {
   },
   resolve: {
     modules: ['node_modules', 'src'],
+    alias: { '~': SRC },
   },
   module: {
     preLoaders: [

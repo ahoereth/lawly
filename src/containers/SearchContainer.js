@@ -12,12 +12,12 @@ import {
   getQuery,
   getResultsByPage,
   getTotal,
-} from 'modules/search';
+} from '~/modules/search';
 import {
   star,
   getIndexStars,
-} from 'modules/user';
-import { Search } from 'components';
+} from '~/modules/user';
+import { Search } from '~/components';
 
 
 const mapStateToProps = state => ({

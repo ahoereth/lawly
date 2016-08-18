@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Grid, Cell } from 'react-mdl';
 
-import { NormList, Norms } from 'components';
+import { NormList, Norms } from '~/components';
 
 
 const Law = ({ annotations, norms, star }) => (

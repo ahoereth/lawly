@@ -7,8 +7,8 @@ import {
   Button, IconButton,
 } from 'react-mdl';
 
-import { slugify } from 'helpers/utils';
-import { Html, Norms } from 'components';
+import { slugify } from '~/helpers/utils';
+import { Html, Norms } from '~/components';
 import styles from './norm.sss';
 
 

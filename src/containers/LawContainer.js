@@ -4,9 +4,9 @@ import Immutable from 'immutable';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
-import { selectLaw, getNormHierarchy } from 'modules/laws';
-import { getSelectionAnnotations, star } from 'modules/user';
-import { Law } from 'components';
+import { selectLaw, getNormHierarchy } from '~/modules/laws';
+import { getSelectionAnnotations, star } from '~/modules/user';
+import { Law } from '~/components';
 
 
 const mapStateToProps = state => ({
