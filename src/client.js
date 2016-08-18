@@ -10,7 +10,7 @@ import { isUndefined } from 'lodash';
 
 import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
-import AppClient from './AppClient';
+import AppClient from './components/AppClient';
 
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
@@ -48,7 +48,7 @@ render(
 
 /* global module */
 if (module.hot) {
-  module.hot.accept('./AppClient', () => {
+  module.hot.accept('./components/AppClient', () => {
     render(
       <AppContainer>
         <AppClient store={store} history={history} />

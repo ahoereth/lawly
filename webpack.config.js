@@ -10,10 +10,12 @@ var precss = require('precss');
 var Dashboard = require('webpack-dashboard');
 var DashboardPlugin = require('webpack-dashboard/plugin');
 var LodashPlugin = require('lodash-webpack-plugin');
+var AssetsPlugin = require('assets-webpack-plugin');
 
 
 
 var SRC = path.resolve(__dirname, 'src');
+var DST = path.resolve(__dirname, 'dist');
 var DEV_HOST = 'localhost';
 var DEV_PORT = 8080;
 
@@ -24,13 +26,9 @@ var config = {
   devtool: 'cheap-module-source-map',
   target: 'web',
   context: SRC,
-  entry: {
-    app: 'client',
-    'web-worker': 'web-worker',
-    'service-worker': 'service-worker',
-  },
+  entry: {},
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: DST,
     publicPath: '/',
     filename: '[name].js',
   },
@@ -68,13 +66,28 @@ var config = {
   },
   plugins: [
     new LodashPlugin(),
+    new AssetsPlugin({ filename: 'assets.json', prettyPrint: true, path: DST }),
   ],
 };
 
 
 // *****************************************************************************
+// Client side
+if (process.env.NODE_ENV !== 'node') {
+  config = Object.assign({}, config, {
+    entry: Object.assign({}, config.entry, {
+      app: 'client',
+      // shells: 'shells',
+      'web-worker': 'web-worker',
+      'service-worker': 'service-worker',
+    }),
+  });
+}
+
+
+// *****************************************************************************
 // Development
-if (process && process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'development') {
   var dashboard = new Dashboard();
   var hotreloading = [
     'react-hot-loader/patch',
@@ -101,7 +114,7 @@ if (process && process.env.NODE_ENV !== 'production') {
     }),
     externals: Object.assign({}, config.externals, {
       // See https://github.com/airbnb/enzyme/issues/47
-      cheerio: true,
+      cheerio: 'window',
       'react/addons': true,
       'react/lib/ExecutionEnvironment': true,
       'react/lib/ReactContext': true,
@@ -136,8 +149,8 @@ if (process && process.env.NODE_ENV !== 'production') {
 
 
 // *****************************************************************************
-// Production
-if (process && process.env.NODE_ENV === 'production') {
+// Production and node
+if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
   config = Object.assign({}, config, {
     devtool: 'source-map',
     module: Object.assign({}, config.module, {
@@ -160,6 +173,22 @@ if (process && process.env.NODE_ENV === 'production') {
         excludeChunks: ['web-worker', 'service-worker'],
       }),
       new webpack.optimize.DedupePlugin(),
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: JSON.stringify('production'),
+        },
+      }),
+      new ExtractTextPlugin('[name].[contenthash:8].css'),
+    ]),
+  });
+}
+
+
+// *****************************************************************************
+// Production
+if (process.env.NODE_ENV === 'production') {
+  config = Object.assign({}, config, {
+    plugins: config.plugins.concat([
       new webpack.optimize.UglifyJsPlugin({
         compress: {
           screw_ie8: true, // React doesn't support IE8
@@ -173,13 +202,23 @@ if (process && process.env.NODE_ENV === 'production') {
           screw_ie8: true,
         },
       }),
-      new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify('production'),
-        },
-      }),
-      new ExtractTextPlugin('[name].[contenthash:8].css'),
     ]),
+  });
+}
+
+
+// *****************************************************************************
+// Node
+if (process.env.NODE_ENV === 'node') {
+  config = Object.assign({}, config, {
+    entry: Object.assign({}, config.entry, {
+      server: 'server',
+    }),
+    target: 'node',
+    node: {
+      __dirname: false,
+      __filename: false,
+    },
   });
 }
 

@@ -6,9 +6,11 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "NODE_ENV=development node src/server-dev.js",
-    "build": "NODE_ENV=production webpack --progress",
-    "lint": "eslint src",
-    "test": "echo 'Tests viewable on /tests.html' && npm run dev"
+    "build": "npm run lint && NODE_ENV=production webpack --progress",
+    "lint": "NODE_ENV=production eslint src scripts",
+    "test": "echo 'Tests viewable on /tests.html' && npm run dev",
+    "build:server": "NODE_ENV=node webpack --progress",
+    "serv": "node dist/server.js"
   },
   "dependencies": {
     "classnames": "^2.2.3",
@@ -32,6 +34,7 @@
     "whatwg-fetch": "^1.0.0"
   },
   "devDependencies": {
+    "assets-webpack-plugin": "^3.4.0",
     "autoprefixer": "^6.3.6",
     "babel-core": "^6.7.5",
     "babel-eslint": "^6.0.2",
