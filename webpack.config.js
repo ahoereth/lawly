@@ -53,6 +53,7 @@ var config = {
         query: { cacheDirectory: true },
       },
       { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
+      { test: /\.json$/, loader: 'json' },
     ],
   },
   externals: {},
@@ -70,6 +71,7 @@ var config = {
     ];
   },
   plugins: [
+    new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
     new LodashPlugin(),
     new AssetsPlugin({ filename: 'assets.json', prettyPrint: true, path: DST }),
     // new StaticSiteGeneratorPlugin('shells', ['/gesetze'], {}),

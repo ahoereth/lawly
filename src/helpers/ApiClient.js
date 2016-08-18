@@ -1,3 +1,4 @@
+import fetch from 'isomorphic-fetch';
 import { isUndefined, isPlainObject, isError, omit } from 'lodash';
 
 import DataClient from './DataClient';
