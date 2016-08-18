@@ -3,8 +3,8 @@ import fs from 'fs';
 import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { match } from 'react-router';
-import { createMemoryHistory } from 'history';
+import { match, createMemoryHistory } from 'react-router';
+import { syncHistoryWithStore } from 'react-router-redux';
 import { find, endsWith, mapValues } from 'lodash';
 
 import createStore from './store/createStore';
@@ -16,7 +16,6 @@ import routes from './routes';
 
 const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
-const store = createStore(client, {});
 const assetsPath = path.resolve(__dirname, 'assets.json');
 const assets = JSON.parse(fs.readFileSync(assetsPath, 'utf8'));
 const { js, css } = mapValues(find(assets, (val, key) => endsWith(key, 'app')),
@@ -42,17 +41,20 @@ http.createServer((req, res) => {
   }
 
   // Dynamic routes.
-  const history = createMemoryHistory();
-  const location = history.createLocation(url);
-  match({ routes, location }, (error, redirectLocation, renderProps) => {
+  const memoryHistory = createMemoryHistory(url);
+  const store = createStore(memoryHistory, client, {});
+  const history = syncHistoryWithStore(memoryHistory, store, {
+    selectLocationState: state => state.get('routing'),
+  });
+  match({ history, routes, location: url }, (error, redirect, renderProps) => {
     if (error) {
       res.writeHead(500, { 'Content-Type': 'text/plain; charset=UTF-8' });
       res.end(error.message);
       return;
     }
 
-    if (redirectLocation) {
-      const { pathname, search } = redirectLocation;
+    if (redirect) {
+      const { pathname, search } = redirect;
       res.writeHead(302, { Location: pathname + search });
       res.end();
       return;
@@ -66,7 +68,7 @@ http.createServer((req, res) => {
       );
 
       res.writeHead(200, { 'Content-Type': 'text/html; charset=UTF-8' });
-      res.end(page);
+      res.end(`<!doctype html>\n${page}\n`);
       return;
     }
 

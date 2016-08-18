@@ -2,12 +2,13 @@ import './polyfills';
 
 import React from 'react';
 import { render } from 'react-dom';
-import { browserHistory } from 'react-router';
+import { match, browserHistory as hist } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
 import Redbox from 'redbox-react';
 import { isUndefined } from 'lodash';
 
+import routes from './routes';
 import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
 import AppClient from './components/AppClient';
@@ -24,10 +25,11 @@ if (sw) {
 const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
 
+
 // eslint-disable-next-line no-underscore-dangle
-const store = createStore(client, window.__state); /* global window */
+const store = createStore(hist, client, window.__state); /* global window */
 const target = document.getElementById('app'); /* global document */
-const history = syncHistoryWithStore(browserHistory, store, {
+const history = syncHistoryWithStore(hist, store, {
   selectLocationState: state => state.get('routing'),
 });
 
@@ -38,13 +40,14 @@ history.listen(location => {
   if (elem) { elem.scrollTop = 0; }
 });
 
-
-render(
-  <AppContainer errorReporter={Redbox}>
-    <AppClient store={store} history={history} />
-  </AppContainer>,
-  target
-);
+match({ history, routes }, (error, redirectLocation, renderProps) => {
+  render(
+    <AppContainer errorReporter={Redbox}>
+      <AppClient store={store} renderProps={renderProps} />
+    </AppContainer>,
+    target
+  );
+});
 
 /* global module */
 if (module.hot) {

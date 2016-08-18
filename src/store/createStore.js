@@ -1,5 +1,4 @@
 import { createStore as _createStore, applyMiddleware, compose } from 'redux';
-import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
 import Immutable from 'immutable';
 import createDebounce from 'redux-debounced';
@@ -14,14 +13,14 @@ import {
 } from './middlewares';
 
 
-export default function createStore(client, data = {}) {
+export default function createStore(history, client, data = {}) {
   const middlewares = [
     createDebounce(),
     functionsMiddleware(),
     apiMiddleware(client),
     promiseMiddleware(client),
     fetchMiddleware(client),
-    routerMiddleware(browserHistory),
+    routerMiddleware(history),
   ];
 
   let devToolsExtension = f => f;
