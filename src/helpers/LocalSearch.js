@@ -1,5 +1,7 @@
 import stringify from 'json-stable-stringify';
 
+import getWorker from './WorkerShim';
+
 
 class Deferred {
   constructor(data) {
@@ -21,7 +23,7 @@ class LocalSearch {
 
   constructor() {
     /* global Worker */
-    this.worker = new Worker('/web-worker.js');
+    this.worker = getWorker('/web-worker.js');
     this.promises = {};
     this.worker.onmessage = e => this.messageHandler(e);
   }
