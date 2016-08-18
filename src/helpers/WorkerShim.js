@@ -1,13 +1,10 @@
 import { isUndefined } from 'lodash';
 
+// TODO: Actually run local search when WebWorker is not available?
 // import LocalSearchWorker from './LocalSearchWorker';
 
 
 class WorkerMock {
-  constructor() {
-    console.log('using workermock');
-  }
-
   onmessage() {
     return;
   }
@@ -20,10 +17,8 @@ class WorkerMock {
 
 export default function getWorker(path) {
   if (!isUndefined(global.window) && !isUndefined(global.window.Worker)) {
-    console.log('using worker');
     return new global.window.Worker(path);
   }
 
-  console.log('using worker mock');
   return new WorkerMock(path);
 }

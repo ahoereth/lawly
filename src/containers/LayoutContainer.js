@@ -22,15 +22,16 @@ class LayoutContainer extends React.Component {
     title: PropTypes.string.isRequired,
   };
 
-  constructor(props) {
-    super(props);
-    this.componentWillReceiveProps(props);
-  }
+  // constructor(props) {
+  //   super(props);
+  //   this.componentWillReceiveProps(props);
+  // }
 
-  componentWillReceiveProps(nextProps) {
-    /* global document */
-    document.title = nextProps.htmltitle;
-  }
+  // componentWillReceiveProps(nextProps) {
+  //  /* global document */
+  //  // TODO: Better approach for this.
+  //  document.title = nextProps.htmltitle;
+  // }
 
   shouldComponentUpdate(nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState);

@@ -3,6 +3,7 @@ import { browserHistory } from 'react-router';
 import { routerMiddleware } from 'react-router-redux';
 import Immutable from 'immutable';
 import createDebounce from 'redux-debounced';
+import { isUndefined as undef } from 'lodash';
 
 import rootReducer from './rootReducer';
 import {
@@ -13,7 +14,6 @@ import {
 } from './middlewares';
 
 
-/* global window */
 export default function createStore(client, data = {}) {
   const middlewares = [
     createDebounce(),
@@ -23,9 +23,15 @@ export default function createStore(client, data = {}) {
     fetchMiddleware(client),
     routerMiddleware(browserHistory),
   ];
+
+  let devToolsExtension = f => f;
+  if (!undef(global.window) && !undef(global.window.devToolsExtension)) {
+    devToolsExtension = global.window.devToolsExtension();
+  }
+
   const finalCreateStore = compose(
     applyMiddleware(...middlewares),
-    window && window.devToolsExtension ? window.devToolsExtension() : f => f
+    devToolsExtension
   )(_createStore);
   const store = finalCreateStore(rootReducer, Immutable.fromJS(data));
 
