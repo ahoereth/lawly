@@ -5,6 +5,7 @@ import Header from './Header';
 // import Drawer from './Drawer';
 import Content from './Content';
 import Footer from './Footer';
+import './layout.sss';
 
 
 const Layout = ({ title, children, navigation, search, query }) => (
