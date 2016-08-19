@@ -12,6 +12,14 @@ import { Pagination, DataTable } from '~/components';
 import styles from './lawList.sss';
 
 
+
+const shell = Map({
+  star: <IconButton disabled name='collections_bookmark' />,
+  action: <FABButton mini disabled><Icon name='launch' /></FABButton>,
+  title: { type: 'shell', lines: [1, 2] },
+});
+
+
 const LawList = ({
   filter, filters,
   laws, total = laws.size,

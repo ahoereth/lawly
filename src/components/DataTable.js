@@ -2,10 +2,11 @@ import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { List } from 'immutable';
 import classNames from 'classnames';
-import { range, sample, isFunction } from 'lodash';
+import { range, sample, isPlainObject as isObj } from 'lodash';
 import styles from './dataTable.sss';
 
 
+// TODO: Extract those helpers and their related styles to their own module.
 const widths = ['a', 'b', 'c', 'd', 'e'];
 
 
@@ -16,12 +17,13 @@ class DataTable extends React.Component {
   }
 
   renderCell({ name, numeric }, row) {
-    const className = numeric ? 'mdl-data-table__cell--non-numeric' : '';
+    const className = !numeric ? 'mdl-data-table__cell--non-numeric' : '';
     let val = row.get(name, '');
-    if (!val) {
-      val = <span className={`${styles.rowshell} ${sample(widths)}`} />;
-    } else if (isFunction(val)) {
-      val = <span className={styles.rowshell}>{val(widths)}</span>;
+    if ((!val || (isObj(val) && val.type === 'shell')) && row.get('shell')) {
+      const lines = val.lines ? val.lines : [1];
+      val = range(sample(lines)).map((val, idx) => (
+        <span className={`${styles.rowshell} ${sample(widths)}`} key={idx} />
+      ));
     }
 
     return <td key={name} className={className}>{val}</td>;
