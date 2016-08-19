@@ -4,6 +4,7 @@ import Immutable, { List, Map } from 'immutable';
 import { pick } from 'lodash';
 
 import createReducer from '~/store/createReducer';
+import { isNumeric } from '~/helpers/utils';
 import { getIndexStars } from './user';
 
 
@@ -54,12 +55,14 @@ export const fetchLawIndex = () => ({
 });
 
 export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
+  const pageInt = isNumeric(page) ? parseInt(page, 10) : 1;
   const initial = getState().getIn([SCOPE, 'initial']);
   const collection = getState().getIn([SCOPE, 'collection']);
   const collectionPath = collection ? `${collection}/` : '';
   const initialPath = initial ? `${initial}/` : '';
-  const pagePath = page > 1 ? page : '';
-  dispatch({ type: SELECT_PAGE, payload: page || 1 });
+  // Hack for numeric initials: When initial is set, always show page.
+  const pagePath = pageInt > 1 || initial ? pageInt : '';
+  dispatch({ type: SELECT_PAGE, payload: pageInt });
   dispatch(push(`/gesetze/${collectionPath}${initialPath}${pagePath}`));
 };
 

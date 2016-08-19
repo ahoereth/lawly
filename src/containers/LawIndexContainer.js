@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
-import { pick, toInteger } from 'lodash';
+import { pick, isUndefined } from 'lodash';
 
 import {
   getFilteredLawsByPage, getInitial, getInitials, getPage, getPageSize,
@@ -13,7 +13,7 @@ import {
 import { viewLaw } from '~/modules/laws';
 import { getIndexStars, star } from '~/modules/user';
 import { LawIndex } from '~/components';
-import { isNumeric } from '~/helpers/utils';
+import { isNumeric as isNum } from '~/helpers/utils';
 
 
 const mapStateToProps = state => ({
@@ -77,11 +77,17 @@ class LawIndexContainer extends React.Component {
       params,
     } = this.props;
 
+    // eslint-disable-next-line one-var, one-var-declaration-per-line
+    let collection, initial, page;
     const { a, b, c } = params;
-    const collection = (!isNumeric(b) || a.length > 1) ? a : undefined;
-    const firstAsInitial = a && a.length === 1 ? a : undefined;
-    const initial = isNumeric(b) ? firstAsInitial : b;
-    const page = isNumeric(b) ? toInteger(b) : toInteger(c);
+    if (!isUndefined(a)) {
+      collection = !isNum(a) && a.length > 1 ? a : undefined;
+      // Hack for numeric initials: When initial is set, page is always defined.
+      const aAsInitial = !isNum(a) && a.length === 1 ? a : undefined;
+      initial = isUndefined(b) || isUndefined(c) ? aAsInitial : b;
+      // eslint-disable-next-line no-nested-ternary
+      page = isNum(c) ? c : (isNum(b) ? b : (isNum(a) ? a : undefined));
+    }
 
     total > 0 || fetchIndex();
     selectCollection(collection);
