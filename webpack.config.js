@@ -11,6 +11,7 @@ var Dashboard = require('webpack-dashboard');
 var DashboardPlugin = require('webpack-dashboard/plugin');
 var LodashPlugin = require('lodash-webpack-plugin');
 var AssetsPlugin = require('assets-webpack-plugin');
+var StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin');
 
 
 
@@ -68,7 +69,6 @@ var config = {
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
     new LodashPlugin(),
-    // new StaticSiteGeneratorPlugin('shells', ['/gesetze'], {}),
   ],
 };
 
@@ -229,12 +229,26 @@ if (process.env.NODE_ENV === 'node') {
     devtool: 'eval',
     entry: Object.assign({}, config.entry, {
       server: 'server',
+      shells: 'shells',
+    }),
+    output: Object.assign({}, config.output, {
+      libraryTarget: 'umd',
     }),
     target: 'node',
     node: {
       __dirname: false,
       __filename: false,
     },
+    plugins: config.plugins.concat([
+      new StaticSiteGeneratorPlugin('shells', ['/gesetze'], {}),
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: JSON.stringify('development'),
+          DIST_PATH: JSON.stringify(path.resolve(DST, 'assets.json')),
+          ASSETS_PATH: JSON.stringify(path.resolve(DST, 'assets.json')),
+        },
+      }),
+    ]),
   });
 }
 

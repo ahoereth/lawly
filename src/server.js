@@ -15,11 +15,9 @@ import routes from './routes';
 import settle from './helpers/settle';
 import { fetchLawIndex } from './modules/law_index';
 
-const dir = path.resolve(__dirname, '..', 'dist');
 const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
-const assetsPath = path.resolve(dir, 'assets.json');
-const assets = JSON.parse(fs.readFileSync(assetsPath, 'utf8'));
+const assets = JSON.parse(fs.readFileSync(process.env.ASSETS_PATH, 'utf8'));
 const { js, css } = mapValues(find(assets, (val, key) => endsWith(key, 'app')),
   val => (Array.isArray(val) ? val : [val])
 );
@@ -29,7 +27,7 @@ http.createServer((req, res) => {
 
   // Static routes.
   if (url.indexOf('/static') === 0) {
-    fs.readFile(path.join(dir, url), (err, data) => {
+    fs.readFile(path.join(process.env.DIST_PATH, url), (err, data) => {
       if (err) {
         res.writeHead(404);
         res.end(JSON.stringify(err));
