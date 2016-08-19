@@ -64,7 +64,8 @@ const LawList = ({
       <DataTable
         rows={rows}
         className={styles.datatable}
-        rowKeyAttr='groupkey'
+        keyProp='groupkey'
+        shell={shell}
       >
         {!star ? null :
           <TableHeader
