@@ -6,7 +6,7 @@ import { match, browserHistory as hist } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
 import Redbox from 'redbox-react';
-import { isUndefined } from 'lodash';
+import { isUndefined as undef } from 'lodash';
 
 import routes from './routes';
 import ApiClient from './helpers/ApiClient';
@@ -17,14 +17,13 @@ import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
 import 'file?name=[name].[ext]!manifest.json';
 
-const sw = navigator.serviceWorker; /* global navigator */
-if (sw) {
-  sw.register('/service-worker.js', { scope: '/' });
+
+if (!undef(global.navigator) && !undef(global.navigator.serviceWorker)) {
+  global.navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
 }
 
 const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
-
 
 // eslint-disable-next-line no-underscore-dangle
 const store = createStore(hist, client, window.__state); /* global window */
@@ -62,7 +61,7 @@ if (module.hot) {
 }
 
 /* global process, window, require */
-if (process.env.NODE_ENV !== 'production' && !isUndefined(window)) {
+if (process.env.NODE_ENV !== 'production' && !undef(window)) {
   // eslint-disable-next-line global-require
   window.Perf = require('react-addons-perf');
 }
