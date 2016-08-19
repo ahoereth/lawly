@@ -26,8 +26,7 @@ var config = {
   devtool: 'cheap-module-source-map',
   target: 'web',
   context: SRC,
-  entry: {
-  },
+  entry: {},
   output: {
     path: DST,
     publicPath: '/',
@@ -46,7 +45,7 @@ var config = {
         test: /\.js$/,
         loader: 'babel',
         include: SRC,
-        query: { cacheDirectory: true },
+        query: { cacheDirectory: path.resolve(DST, 'cache') },
       },
       { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
       { test: /\.json$/, loader: 'json' },
@@ -83,6 +82,10 @@ if (process.env.NODE_ENV !== 'node') {
       'static/app': 'client',
       'web-worker': 'web-worker',
       'service-worker': 'service-worker',
+    }),
+    output: Object.assign({}, config.output, {
+       // TODO: Add hash. Figure out how to not break service- & web-worker.
+      filename: '[name].js', // .[hash:8].js',
     }),
     plugins: config.plugins.concat([
       new AssetsPlugin({
@@ -176,18 +179,14 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
       ]),
     }),
     plugins: config.plugins.concat([
-      new HtmlWebpackPlugin({
-        template: 'client.ejs',
-        title: 'Lawly',
-        minify: { collapseWhitespace: true },
-        excludeChunks: ['web-worker', 'service-worker'],
-      }),
       new webpack.optimize.DedupePlugin(),
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify('production'),
         },
       }),
+      // TODO: Stop generating a file when in node environment.
+      // See: https://github.com/webpack/extract-text-webpack-plugin/issues/164
       new ExtractTextPlugin('[name].[contenthash:8].css'),
     ]),
   });
@@ -199,6 +198,12 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
 if (process.env.NODE_ENV === 'production') {
   config = Object.assign({}, config, {
     plugins: config.plugins.concat([
+      new HtmlWebpackPlugin({
+        template: 'client.ejs',
+        title: 'Lawly',
+        minify: { collapseWhitespace: true },
+        excludeChunks: ['web-worker', 'service-worker'],
+      }),
       new webpack.optimize.UglifyJsPlugin({
         compress: {
           screw_ie8: true, // React doesn't support IE8
@@ -221,6 +226,7 @@ if (process.env.NODE_ENV === 'production') {
 // Node
 if (process.env.NODE_ENV === 'node') {
   config = Object.assign({}, config, {
+    devtool: 'eval',
     entry: Object.assign({}, config.entry, {
       server: 'server',
     }),
