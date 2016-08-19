@@ -83,7 +83,7 @@ class LawIndexContainer extends React.Component {
     if (!isUndefined(a)) {
       collection = !isNum(a) && a.length > 1 ? a : undefined;
       // Hack for numeric initials: When initial is set, page is always defined.
-      const aAsInitial = !isNum(a) && a.length === 1 ? a : undefined;
+      const aAsInitial = a.length === 1 ? a : undefined;
       initial = isUndefined(b) || isUndefined(c) ? aAsInitial : b;
       // eslint-disable-next-line no-nested-ternary
       page = isNum(c) ? c : (isNum(b) ? b : (isNum(a) ? a : undefined));
