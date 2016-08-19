@@ -15,7 +15,7 @@ const AppHtml = ({
       <link rel='manifest' href='/manifest.json' />
       <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i' />
       <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons' />
-      {css.map(src => <link rel='stylesheet' href={src} />)}
+      {css.map(src => <link rel='stylesheet' href={src} key={src} />)}
       <title>Lawly</title>
     </head>
     <body>
@@ -25,7 +25,7 @@ const AppHtml = ({
           __html: `window.__state=${JSON.stringify(state.toJS())}`,
         }}
       />
-      {js.map(src => <script src={src} />)}
+      {js.map(src => <script src={src} key={src} />)}
     </body>
   </html>
 );
