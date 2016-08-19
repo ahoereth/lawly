@@ -11,6 +11,7 @@
     "test": "echo 'Tests viewable on /tests.html' && npm run dev",
     "build:client": "NODE_ENV=production webpack --progress",
     "build:server": "NODE_ENV=node webpack --progress",
+    "server": "NODE_ENV=babel babel-node src/server.js",
     "serv": "node dist/server.js"
   },
   "dependencies": {
