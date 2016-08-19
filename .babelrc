@@ -16,8 +16,7 @@
       "regenerator": true,
     }],
     "react-hot-loader/babel",
-    "lodash",
-    "./scripts/babel-plugin-home-import.js"
+    "lodash"
   ],
 
   "env": {
