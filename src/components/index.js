@@ -1,6 +1,10 @@
 export * from './laws';
 export * from './norms';
 
+export AppClient from './AppClient';
+export AppHtml from './AppHtml';
+export AppServer from './AppServer';
+export DataTable from './DataTable';
 export Home from './Home';
 export Html from './Html';
 export Layout from './layout';
