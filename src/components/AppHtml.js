@@ -21,12 +21,11 @@ const AppHtml = ({
     <body>
       <div id='app'>{children}</div>
       <script
-        type='text/javascript'
         dangerouslySetInnerHTML={{
           __html: `window.__state=${JSON.stringify(state.toJS())}`,
         }}
       />
-      {js.map(src => <script src={src} type='text/javascript' />)}
+      {js.map(src => <script src={src} />)}
     </body>
   </html>
 );

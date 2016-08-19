@@ -12,6 +12,8 @@ import ApiClient from './helpers/ApiClient';
 import AppHtml from './components/AppHtml';
 import AppServer from './components/AppServer';
 import routes from './routes';
+import settle from './helpers/settle';
+import { fetchLawIndex } from './modules/law_index';
 
 
 const APIURL = 'http://localhost:3000/v0';
@@ -21,7 +23,6 @@ const assets = JSON.parse(fs.readFileSync(assetsPath, 'utf8'));
 const { js, css } = mapValues(find(assets, (val, key) => endsWith(key, 'app')),
   val => (Array.isArray(val) ? val : [val])
 );
-
 
 http.createServer((req, res) => {
   const { url } = req;
@@ -61,14 +62,20 @@ http.createServer((req, res) => {
     }
 
     if (renderProps) {
-      const page = renderToString(
-        <AppHtml js={js} css={css} state={store.getState()}>
-          <AppServer renderProps={renderProps} store={store} />
-        </AppHtml>
-      );
+      const deps = [
+        store.dispatch(fetchLawIndex()),
+      ];
 
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=UTF-8' });
-      res.end(`<!doctype html>\n${page}\n`);
+      Promise.all(deps.map(settle)).then(() => {
+        const page = renderToString(
+          <AppHtml js={js} css={css} state={store.getState()}>
+            <AppServer renderProps={renderProps} store={store} />
+          </AppHtml>
+        );
+
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=UTF-8' });
+        res.end(`<!doctype html>\n${page}\n`);
+      });
       return;
     }
 
