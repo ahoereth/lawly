@@ -23,7 +23,7 @@ export default class NormList extends React.Component {
     const title = node.getIn(['norm', 'title']);
     const children = node.get('children', false);
     return (
-      <li key={i}>
+      <li key={node.getIn(['norm', 'enumeration'], i)}>
         <a href={`#${slugify(title)}`}>{title}</a>
         {!children ? false : <ul>{children.map(this.listNodes)}</ul>}
       </li>

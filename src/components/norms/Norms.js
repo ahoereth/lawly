@@ -8,7 +8,7 @@ const Norms = ({ annotations, nodes, star }) => (
   <div>
     {nodes.map((node, i) =>
       <Norm
-        key={i}
+        key={node.getIn(['norm', 'enumeration'], i)}
         data={node.get('norm')}
         descendants={node.get('children')}
         annotations={annotations}
