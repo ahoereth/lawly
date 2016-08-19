@@ -14,7 +14,7 @@ import styles from './lawList.sss';
 
 
 const shell = Map({
-  star: <IconButton disabled name='collections_bookmark' />,
+  star: <IconButton disabled name='book' />,
   action: <FABButton mini disabled><Icon name='launch' /></FABButton>,
   title: { type: 'shell', lines: [1, 2] },
 });

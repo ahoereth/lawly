@@ -3,11 +3,7 @@ import ImmutableTypes from 'react-immutable-proptypes';
 import { List } from 'immutable';
 import classNames from 'classnames';
 import { range, sample, isPlainObject as isObj } from 'lodash';
-import styles from './dataTable.sss';
-
-
-// TODO: Extract those helpers and their related styles to their own module.
-const widths = ['a', 'b', 'c', 'd', 'e'];
+import { getTextblock } from '~/helpers/shells';
 
 
 class DataTable extends React.Component {
@@ -20,10 +16,7 @@ class DataTable extends React.Component {
     const className = !numeric ? 'mdl-data-table__cell--non-numeric' : '';
     let val = row.get(name, '');
     if ((!val || (isObj(val) && val.type === 'shell')) && row.get('shell')) {
-      const lines = val.lines ? val.lines : [1];
-      val = range(sample(lines)).map((val, idx) => (
-        <span className={`${styles.rowshell} ${sample(widths)}`} key={idx} />
-      ));
+      val = getTextblock(val.lines ? sample(val.lines) : 1);
     }
 
     return <td key={name} className={className}>{val}</td>;
