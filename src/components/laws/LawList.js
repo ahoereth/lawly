@@ -1,13 +1,14 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
+import { Map } from 'immutable';
 import {
-  DataTable, TableHeader,
+  TableHeader,
   IconButton, Icon, Tooltip,
   FABButton,
   Textfield,
 } from 'react-mdl';
 
-import { Pagination } from '~/components';
+import { Pagination, DataTable } from '~/components';
 import styles from './lawList.sss';
 
 
@@ -24,11 +25,11 @@ const LawList = ({
   const starMany = laws => laws.forEach(law => star(law, !areAllStarred));
 
   const rows = laws.map(law => {
-    const { groupkey, title } = law.toJS();
-    const state = stars ? stars.get(groupkey, -2) : null;
+    const state = stars ? stars.get(law.get('groupkey'), -2) : null;
     /* eslint-disable no-nested-ternary */
-    return {
-      title, groupkey,
+    return Map({
+      title: law.get('title'),
+      groupkey: law.get('groupkey'),
       star: !star ? null : (
         <Tooltip
           label={
@@ -55,7 +56,7 @@ const LawList = ({
           <Icon name='launch' />
         </FABButton>
       ),
-    };
+    });
   });
 
   return (
@@ -63,7 +64,7 @@ const LawList = ({
       <DataTable
         rows={rows}
         className={styles.datatable}
-        rowKeyColumn='groupkey'
+        rowKeyAttr='groupkey'
       >
         {!star ? null :
           <TableHeader
