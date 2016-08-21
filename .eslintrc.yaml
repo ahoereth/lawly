@@ -31,6 +31,11 @@ rules:
       - Map
       - List
   no-shadow: off
+  comma-spacing: warn
+  prefer-const: warn
+  no-unused-vars: warn
+  semi: warn
+  comma-dangle: warn
   no-nested-ternary: warn # https://github.com/airbnb/javascript#comparison--nested-ternaries
   no-prototype-builtins: off # https://github.com/airbnb/javascript#objects--prototype-builtins
   no-extra-boolean-cast: off # https://github.com/airbnb/javascript#coercion--booleans
