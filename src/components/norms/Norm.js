@@ -9,6 +9,7 @@ import {
 
 import { slugify } from '~/helpers/utils';
 import { Html, Norms } from '~/components';
+import { getTextblock, getTextline } from '~/helpers/shells';
 import styles from './norm.sss';
 
 
@@ -19,8 +20,8 @@ export default class Norm extends React.Component {
     }).isRequired).isRequired,
     data: ImmutableTypes.mapContains({
       enumeration: PropTypes.string,
-      groupkey: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
+      groupkey: PropTypes.string,
+      title: PropTypes.string,
       body: PropTypes.string,
       foot: PropTypes.string,
     }).isRequired,
@@ -35,6 +36,9 @@ export default class Norm extends React.Component {
 
   constructor(props) {
     super(props);
+    this.shell = props.data.get('enumeration', '0') === '0' ? [
+      getTextline('title'), getTextblock(8),
+    ] : [null, null];
     this.state = {
       expanded: false,
       focus: false,
@@ -64,10 +68,22 @@ export default class Norm extends React.Component {
     const heading = level > 6 ? 6 : level;
     const icons = lead ? ['book', 'book'] : ['bookmark', 'bookmark_border'];
 
-    const title = !lead ? data.get('title') :
-      [<span key='key'>{data.get('groupkey')}</span>, data.get('title')];
+    let title = data.get('title');
+    let groupkey = <span key='groupkey'>{data.get('groupkey')}</span>;
+    let body = <Html>{data.get('body', '')}</Html>;
+    if (!data.has('title') && !data.has('groupkey')) {
+      [title, body] = this.shell;
+      groupkey = null;
+    }
 
-    const slug = slugify(data.get('title'));
+    const head = lead ? [groupkey, title] : title;
+    const slug = slugify(data.get('title', ''));
+    const more = descendants.isEmpty() ? null : (
+      <Button raised ripple onClick={this.expand}>
+        Untergeordnete Normen anzeigen
+      </Button>
+    );
+
     return (
       <Card
         className={styles.norm}
@@ -77,7 +93,7 @@ export default class Norm extends React.Component {
         onMouseLeave={() => this.focus(false)}
       >
         <CardTitle>
-          {React.createElement(`h${heading}`, null, title)}
+          {React.createElement(`h${heading}`, null, head)}
         </CardTitle>
         <CardMenu>
           <IconButton
@@ -88,14 +104,10 @@ export default class Norm extends React.Component {
           />
         </CardMenu>
         <CardText>
-          <Html>{data.get('body', '')}</Html>
+          {body}
           <Html>{data.get('foot', '')}</Html>
-          {expanded || descendants.isEmpty() ? (
+          {!expanded ? more : (
             <Norms nodes={descendants} star={star} annotations={annotations} />
-          ) : (
-            <Button raised ripple onClick={this.expand}>
-              Untergeordnete Normen anzeigen
-            </Button>
           )}
         </CardText>
       </Card>

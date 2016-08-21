@@ -37,9 +37,16 @@ class LawContainer extends React.Component {
     norms: Immutable.List(),
   };
 
+  constructor(props) {
+    super(props);
+    this.state = { loading: true };
+  }
+
   componentWillMount() {
     const { selectLaw, params } = this.props;
-    selectLaw(params.groupkey);
+    selectLaw(params.groupkey).then(() => {
+      this.setState({ loading: false });
+    });
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -47,13 +54,16 @@ class LawContainer extends React.Component {
   }
 
   render() {
+    const { loading } = this.state;
     const { norms, star, annotations } = this.props;
-
-    if (norms.isEmpty()) {
-      return <div>Loading...</div>;
-    }
-
-    return <Law norms={norms} annotations={annotations} star={star} />;
+    return (
+      <Law
+        annotations={annotations}
+        loading={loading}
+        norms={norms}
+        star={star}
+      />
+    );
   }
 }
 

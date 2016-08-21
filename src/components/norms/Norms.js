@@ -1,12 +1,20 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
+import { List, Map } from 'immutable';
 
 import Norm from './Norm';
 
 
-const Norms = ({ annotations, nodes, star }) => (
+const shell = List([
+  Map({
+    norm: Map(),
+  }),
+]);
+
+
+const Norms = ({ annotations, nodes, star, loading }) => (
   <div>
-    {nodes.map((node, i) =>
+    {(!loading ? nodes : shell).map((node, i) =>
       <Norm
         key={node.getIn(['norm', 'enumeration'], i)}
         data={node.get('norm')}
@@ -20,11 +28,16 @@ const Norms = ({ annotations, nodes, star }) => (
 
 Norms.propTypes = {
   annotations: ImmutableTypes.mapOf(ImmutableTypes.map).isRequired,
+  loading: PropTypes.bool,
   nodes: ImmutableTypes.listOf(ImmutableTypes.mapContains({
     norm: ImmutableTypes.map.isRequired,
     children: ImmutableTypes.list,
   })).isRequired,
   star: PropTypes.func.isRequired,
+};
+
+Norms.defaultProps = {
+  loading: false,
 };
 
 

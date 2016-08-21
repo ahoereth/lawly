@@ -9,7 +9,7 @@ import { getTextblock } from '~/helpers/shells';
 class DataTable extends React.Component {
   getRows(rows, shellBase) {
     const shell = shellBase.set('shell', true);
-    return rows.size > 10 ? rows : List(range(10)).map(() => shell);
+    return rows.size ? rows : List(range(10)).map(() => shell);
   }
 
   renderCell({ name, numeric }, row) {
