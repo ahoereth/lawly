@@ -16,8 +16,10 @@ import settle from './helpers/settle';
 import { fetchLawIndex } from './modules/law_index';
 
 const APIURL = 'http://localhost:3000/v0';
+const ASSETS_PATH = path.resolve(__dirname, 'assets.json');
+
 const client = new ApiClient(APIURL);
-const assets = JSON.parse(fs.readFileSync(process.env.ASSETS_PATH, 'utf8'));
+const assets = JSON.parse(fs.readFileSync(ASSETS_PATH, 'utf8'));
 const { js, css } = mapValues(find(assets, (val, key) => endsWith(key, 'app')),
   val => (Array.isArray(val) ? val : [val])
 );
@@ -27,7 +29,7 @@ http.createServer((req, res) => {
 
   // Static routes.
   if (url.indexOf('/static') === 0) {
-    fs.readFile(path.join(process.env.DIST_PATH, url), (err, data) => {
+    fs.readFile(path.resolve(__dirname, url.slice(1)), (err, data) => {
       if (err) {
         res.writeHead(404);
         res.end(JSON.stringify(err));
@@ -61,7 +63,7 @@ http.createServer((req, res) => {
 
     if (renderProps) {
       const deps = [
-        store.dispatch(fetchLawIndex()),
+        store.dispatch(fetchLawIndex({ limit: true, cachable: false })),
       ];
 
       Promise.all(deps.map(settle)).then(() => {

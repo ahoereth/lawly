@@ -243,9 +243,7 @@ if (process.env.NODE_ENV === 'node') {
       new StaticSiteGeneratorPlugin('shells', ['/gesetze'], {}),
       new webpack.DefinePlugin({
         'process.env': {
-          NODE_ENV: JSON.stringify('development'),
-          DIST_PATH: JSON.stringify(path.resolve(DST, 'assets.json')),
-          ASSETS_PATH: JSON.stringify(path.resolve(DST, 'assets.json')),
+          NODE_ENV: JSON.stringify('node'),
         },
       }),
     ]),
