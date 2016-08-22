@@ -25,13 +25,14 @@ const { js, css } = mapValues(find(assets, (val, key) => endsWith(key, 'app')),
 
 // eslint-disable-next-line import/no-commonjs
 module.exports = function render({ path }, callback) {
-  const memoryHistory = createMemoryHistory(path);
+  const location = path.replace('.html', '');
+  const memoryHistory = createMemoryHistory(location);
   const store = createStore(memoryHistory, client, {});
   const history = syncHistoryWithStore(memoryHistory, store, {
     selectLocationState: state => state.get('routing'),
   });
 
-  match({ history, routes, location: path }, (error, redirect, renderProps) => {
+  match({ history, routes, location }, (error, redirect, renderProps) => {
     if (error) {
       throw new Error(error.message);
     }

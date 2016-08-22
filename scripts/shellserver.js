@@ -15,9 +15,9 @@ http.createServer((req, res) => {
   if (url.indexOf('/static') === 0) {
     file = url.slice(1);
   } else if (url.indexOf('/gesetze') === 0) {
-    file = 'gesetze/index.html';
+    file = 'gesetze.html';
   } else if (url.indexOf('/gesetz') === 0) {
-    file = 'gesetz/index.html';
+    file = 'gesetz.html';
   }
 
   fs.readFile(path.resolve(PATH, file), (err, data) => {

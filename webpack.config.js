@@ -78,7 +78,6 @@ var config = {
 if (process.env.NODE_ENV !== 'node') {
   config = Object.assign({}, config, {
     entry: Object.assign({}, config.entry, {
-      // Currently compiling everything everytime for a complete assets.json
       'static/app': 'client',
       'web-worker': 'web-worker',
       'service-worker': 'service-worker',
@@ -198,12 +197,6 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
 if (process.env.NODE_ENV === 'production') {
   config = Object.assign({}, config, {
     plugins: config.plugins.concat([
-      new HtmlWebpackPlugin({
-        template: 'client.ejs',
-        title: 'Lawly',
-        minify: { collapseWhitespace: true },
-        excludeChunks: ['web-worker', 'service-worker'],
-      }),
       new webpack.optimize.UglifyJsPlugin({
         compress: {
           screw_ie8: true, // React doesn't support IE8
@@ -241,8 +234,9 @@ if (process.env.NODE_ENV === 'node') {
     },
     plugins: config.plugins.concat([
       new StaticSiteGeneratorPlugin('shells', [
-        '/gesetze',
-        '/gesetz',
+        '/',
+        '/gesetz.html',
+        '/gesetze.html',
       ], {}),
       new webpack.DefinePlugin({
         'process.env': {
