@@ -4,14 +4,15 @@
   "description": "Web client for Lawly.",
   "author": "Alexander Hoereth",
   "scripts": {
-    "start": "npm run dev",
-    "dev": "NODE_ENV=development node scripts/devserver.js",
-    "build": "npm run lint && npm run build:client && npm run build:server",
+    "start": "npm run server:dev",
     "lint": "NODE_ENV=production eslint src scripts",
     "test": "echo 'Tests viewable on /tests.html' && npm run dev",
+    "build": "npm run lint && npm run build:client && npm run build:server",
     "build:client": "NODE_ENV=production webpack --progress",
     "build:server": "NODE_ENV=node webpack --progress",
-    "serv": "node dist/server.js"
+    "server:dev": "NODE_ENV=development node scripts/devserver.js",
+    "server:shell": "node scripts/shellserver.js",
+    "server:ssr": "node dist/server.js"
   },
   "dependencies": {
     "classnames": "^2.2.3",
