@@ -240,7 +240,10 @@ if (process.env.NODE_ENV === 'node') {
       __filename: false,
     },
     plugins: config.plugins.concat([
-      new StaticSiteGeneratorPlugin('shells', ['/gesetze'], {}),
+      new StaticSiteGeneratorPlugin('shells', [
+        '/gesetze',
+        '/gesetz',
+      ], {}),
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify('node'),

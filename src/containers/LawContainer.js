@@ -3,19 +3,23 @@ import shallowCompare from 'react-addons-shallow-compare';
 import Immutable from 'immutable';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
+import { push } from 'react-router-redux';
 
 import { selectLaw, getNormHierarchy } from '~/modules/laws';
 import { getSelectionAnnotations, star } from '~/modules/user';
+import { getShellMode } from '~/modules/shells';
 import { Law } from '~/components';
 
 
 const mapStateToProps = state => ({
-  norms: getNormHierarchy(state),
   annotations: getSelectionAnnotations(state),
+  norms: getNormHierarchy(state),
+  shell: getShellMode(state),
 });
 
 
 const mapDispatchToProps = {
+  push,
   selectLaw,
   star,
 };
@@ -26,9 +30,11 @@ class LawContainer extends React.Component {
     annotations: ImmutableTypes.map.isRequired,
     norms: ImmutableTypes.list.isRequired,
     params: PropTypes.shape({
-      groupkey: PropTypes.string.isRequired,
+      groupkey: PropTypes.string,
     }).isRequired,
+    push: PropTypes.func.isRequired,
     selectLaw: PropTypes.func.isRequired,
+    shell: PropTypes.bool.isRequired,
     star: PropTypes.func.isRequired,
   };
 
@@ -43,10 +49,16 @@ class LawContainer extends React.Component {
   }
 
   componentWillMount() {
-    const { selectLaw, params } = this.props;
-    selectLaw(params.groupkey).then(() => {
-      this.setState({ loading: false });
-    });
+    const { selectLaw, params, shell } = this.props;
+    if (!shell) {
+      if (params.groupkey) {
+        selectLaw(params.groupkey).then(() => {
+          this.setState({ loading: false });
+        });
+      } else {
+        push('/gesetze');
+      }
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {

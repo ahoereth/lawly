@@ -38,11 +38,11 @@ module.exports = function render({ path }, callback) {
 
     if (redirect) {
       const { pathname, search } = redirect;
-      throw new Error(`redirect to ${pathname}${search}!`);
+      throw new Error(`Redirect to ${pathname}${search}`);
     }
 
     if (!renderProps) {
-      throw new Error('404: Not found.');
+      throw new Error(`404: Not found: ${path}`);
     }
 
     store.dispatch(renderShells(true));
