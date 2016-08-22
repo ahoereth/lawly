@@ -1,13 +1,12 @@
-// Square single letter buttons.
-:local(.button)
-  min-width: auto
-  width: 36px
-  height: 36px
-  padding: 0
-  margin: 0 auto
-
-
-// Centered buttons.
 :local(.cell)
   margin-bottom: .5em !important // Need to overwrite MDL style
   text-align: center
+
+  &:first-child
+    margin-top: 0 !important
+
+  button
+    width: 100%
+    min-width: auto
+    padding: 0
+    margin: 0 auto
