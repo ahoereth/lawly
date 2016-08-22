@@ -2,9 +2,9 @@ import { createStore as _createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware } from 'react-router-redux';
 import Immutable from 'immutable';
 import createDebounce from 'redux-debounced';
-import { isUndefined as undef } from 'lodash';
+import { isUndefined as isUndef } from 'lodash';
 
-import rootReducer from './rootReducer';
+import rootReducer from '~/modules';
 import {
   functionsMiddleware,
   apiMiddleware,
@@ -24,7 +24,7 @@ export default function createStore(history, client, data = {}) {
   ];
 
   let devToolsExtension = f => f;
-  if (!undef(global.window) && !undef(global.window.devToolsExtension)) {
+  if (!isUndef(global.window) && !isUndef(global.window.devToolsExtension)) {
     devToolsExtension = global.window.devToolsExtension();
   }
 
@@ -38,7 +38,7 @@ export default function createStore(history, client, data = {}) {
 
   /* global module */
   if (module.hot) {
-    module.hot.accept('./rootReducer', () => {
+    module.hot.accept('~/modules', () => {
       store.replaceReducer(rootReducer);
     });
   }

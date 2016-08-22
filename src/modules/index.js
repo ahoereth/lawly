@@ -16,3 +16,10 @@ export default combineReducers({
   shells,
   routing: routerReducer,
 });
+
+// eslint-disable-next-line camelcase
+export law_index from '~/modules/law_index';
+export laws from '~/modules/laws';
+export search from '~/modules/search';
+export shells from '~/modules/shells';
+export user from '~/modules/user';
