@@ -5,6 +5,7 @@ import { routerReducer } from 'react-router-redux';
 import law_index from '~/modules/law_index';
 import laws from '~/modules/laws';
 import search from '~/modules/search';
+import shells from '~/modules/shells';
 import user from '~/modules/user';
 
 export default combineReducers({
@@ -12,5 +13,6 @@ export default combineReducers({
   laws,
   search,
   user,
+  shells,
   routing: routerReducer,
 });

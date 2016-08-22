@@ -3,6 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 import { pick, isUndefined } from 'lodash';
+import { List } from 'immutable';
 
 import {
   getFilteredLawsByPage, getInitial, getInitials, getPage, getPageSize,
@@ -12,6 +13,7 @@ import {
 } from '~/modules/law_index';
 import { viewLaw } from '~/modules/laws';
 import { getIndexStars, star } from '~/modules/user';
+import { getShellMode } from '~/modules/shells';
 import { LawIndex } from '~/components';
 import { isNumeric as isNum } from '~/helpers/utils';
 
@@ -23,6 +25,7 @@ const mapStateToProps = state => ({
   page: getPage(state),
   pageSize: getPageSize(state),
   selectedInitial: getInitial(state),
+  shells: getShellMode(state),
   stars: getIndexStars(state),
   filters: getFilters(state),
   collections: getCollectionTitles(state),
@@ -61,6 +64,7 @@ class LawIndexContainer extends React.Component {
     selectInitial: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     selectedInitial: PropTypes.string,
+    shells: PropTypes.bool.isRequired,
     star: PropTypes.func.isRequired,
     stars: ImmutableTypes.map.isRequired,
     total: PropTypes.number.isRequired,
@@ -89,6 +93,7 @@ class LawIndexContainer extends React.Component {
       page = isNum(c) ? c : (isNum(b) ? b : (isNum(a) ? a : undefined));
     }
 
+    // TODO: Fetch if incomplete data available.
     total > 0 || fetchIndex();
     selectCollection(collection);
     selectInitial(initial);
@@ -101,7 +106,8 @@ class LawIndexContainer extends React.Component {
 
   render() {
     const props = pick(this.props, Object.keys(LawIndex.propTypes));
-    return <LawIndex {...props} />;
+    const laws = this.props.shells ? List() : this.props.laws;
+    return <LawIndex {...props} laws={laws} />;
   }
 }
 

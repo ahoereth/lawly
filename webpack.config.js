@@ -244,6 +244,7 @@ if (process.env.NODE_ENV === 'node') {
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify('node'),
+          DIST_PATH: JSON.stringify(DST),
         },
       }),
     ]),

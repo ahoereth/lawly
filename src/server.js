@@ -15,6 +15,7 @@ import routes from './routes';
 import settle from './helpers/settle';
 import { fetchLawIndex } from './modules/law_index';
 
+
 const APIURL = 'http://localhost:3000/v0';
 const ASSETS_PATH = path.resolve(__dirname, 'assets.json');
 
@@ -62,11 +63,11 @@ http.createServer((req, res) => {
     }
 
     if (renderProps) {
-      const deps = [
+      const asyncDeps = [
         store.dispatch(fetchLawIndex({ limit: true, cachable: false })),
       ];
 
-      Promise.all(deps.map(settle)).then(() => {
+      Promise.all(asyncDeps.map(settle)).then(() => {
         const page = renderToString(
           <AppHtml js={js} css={css} state={store.getState()}>
             <AppServer renderProps={renderProps} store={store} />
