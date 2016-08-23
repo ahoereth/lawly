@@ -18,7 +18,7 @@ class WorkerMock {
 export default function getWorker() {
   const { Worker, __assets } = global.window || {};
   if (!isUndefined(Worker) && !isUndefined(__assets)) {
-    const { js } = __assets['web-worker'];
+    const { js } = __assets['web-worker'] || {};
     if (!isUndefined(js)) {
       return new global.window.Worker(js);
     }

@@ -37,7 +37,7 @@ module.exports = function render({ path }, callback) {
       assets: [css, js, assets['web-worker'].js, '/static/manifest.json'],
       fallback: {
         '/': '/static/home.html',
-        '/suche': '/index.html', // TODO: Needs shell.
+        '/suche': '/static/index.html', // TODO: Needs shell.
         '/gesetz': '/static/gesetz.html',
         '/gesetze': '/static/gesetze.html',
       },

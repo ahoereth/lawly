@@ -10,12 +10,9 @@ const PATH = path.resolve(__dirname, '..', 'dist');
 http.createServer((req, res) => {
   const { url } = req;
 
-  let file = 'index.html';
-  const statics = [
-    'index.html',
-  ];
+  let file = 'static/index.html';
 
-  if (statics.includes(url.slice(1)) || url.indexOf('/static') === 0) {
+  if (url.indexOf('/static') === 0) {
     file = url.slice(1);
   } else if (url.indexOf('/gesetze') === 0) {
     file = 'static/gesetze.html';

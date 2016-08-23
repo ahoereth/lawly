@@ -82,8 +82,7 @@ if (process.env.NODE_ENV !== 'node') {
     }),
     output: Object.assign({}, config.output, {
       path: path.resolve(DST, 'static'),
-      publicPath: '/static/',
-      filename: '[name].[chunkhash:8].js',
+      publicPath: '/',
     }),
     plugins: config.plugins.concat([
       new AssetsPlugin({
@@ -114,6 +113,7 @@ if (process.env.NODE_ENV === 'development') {
     }),
     output: Object.assign({}, config.output, {
       pathinfo: true,
+      filename: '[name].[hash:8].js',
     }),
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
@@ -164,6 +164,9 @@ if (process.env.NODE_ENV === 'development') {
 if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
   config = Object.assign({}, config, {
     devtool: 'source-map',
+    output: Object.assign({}, config.output, {
+      filename: '[name].[chunkhash:8].js',
+    }),
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
         {
@@ -195,6 +198,9 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
 // Production
 if (process.env.NODE_ENV === 'production') {
   config = Object.assign({}, config, {
+    output: Object.assign({}, config.output, {
+      publicPath: '/static/',
+    }),
     plugins: config.plugins.concat([
       new webpack.optimize.UglifyJsPlugin({
         compress: {
@@ -224,6 +230,7 @@ if (process.env.NODE_ENV === 'node') {
       shells: 'shells',
     }),
     output: Object.assign({}, config.output, {
+      filename: '[name].js',
       path: DST,
       publicPath: '/',
       libraryTarget: 'umd',
@@ -235,7 +242,7 @@ if (process.env.NODE_ENV === 'node') {
     },
     plugins: config.plugins.concat([
       new StaticSiteGeneratorPlugin('shells', [
-        '/',
+        '/static/',
         '/static/manifest.appcache',
         '/static/home.html',
         '/static/gesetz.html',

@@ -5,7 +5,6 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { match, createMemoryHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
-import { find, endsWith, mapValues } from 'lodash';
 
 import createStore from './store/createStore';
 import ApiClient from './helpers/ApiClient';
@@ -21,9 +20,8 @@ const ASSETS_PATH = path.resolve(__dirname, 'assets.json');
 
 const client = new ApiClient(APIURL);
 const assets = JSON.parse(fs.readFileSync(ASSETS_PATH, 'utf8'));
-const { js, css } = mapValues(find(assets, (val, key) => endsWith(key, 'app')),
-  val => (Array.isArray(val) ? val : [val])
-);
+const { js, css } = assets.app;
+
 
 http.createServer((req, res) => {
   const { url } = req;
@@ -69,7 +67,7 @@ http.createServer((req, res) => {
 
       Promise.all(asyncDeps.map(settle)).then(() => {
         const page = renderToString(
-          <AppHtml js={js} css={css} state={store.getState()}>
+          <AppHtml js={js} css={css} state={store.getState()} assets={assets}>
             <AppServer renderProps={renderProps} store={store} />
           </AppHtml>
         );
