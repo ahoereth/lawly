@@ -19,13 +19,6 @@ import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
 import 'file?name=[name].[ext]!./manifest.json';
 
-/*
-import 'file?name=[name].[ext]!./service-worker.js'
-if (!isUndef(global.navigator) && !isUndef(global.navigator.serviceWorker)) {
-  global.navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
-}
-*/
-
 
 const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
