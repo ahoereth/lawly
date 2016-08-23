@@ -47,7 +47,7 @@ var config = {
         query: { cacheDirectory: path.resolve(DST, 'cache') },
       },
       { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
-      { test: /\.json$/, loader: 'json' },
+      { test: /\.json$/, loader: 'json', exclude: /manifest.json$/ },
       { test: /\.ejs$/, loader: 'ejs' },
     ],
   },
@@ -236,10 +236,10 @@ if (process.env.NODE_ENV === 'node') {
     plugins: config.plugins.concat([
       new StaticSiteGeneratorPlugin('shells', [
         '/',
-        '/manifest.appcache',
-        '/home.html',
-        '/gesetz.html',
-        '/gesetze.html',
+        '/static/manifest.appcache',
+        '/static/home.html',
+        '/static/gesetz.html',
+        '/static/gesetze.html',
       ], {}),
       new webpack.DefinePlugin({
         'process.env': {

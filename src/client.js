@@ -17,7 +17,7 @@ import { updateAvailable, renderShells } from './modules/core';
 
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
-import 'file?name=../[name].[ext]!./manifest.json';
+import 'file?name=[name].[ext]!./manifest.json';
 
 /*
 import 'file?name=[name].[ext]!./service-worker.js'

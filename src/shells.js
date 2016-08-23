@@ -4,6 +4,7 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { match, createMemoryHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
+import { endsWith } from 'lodash';
 
 import createStore from './store/createStore';
 import ApiClient from './helpers/ApiClient';
@@ -31,20 +32,20 @@ module.exports = function render({ path }, callback) {
     return;
   }
 
-  if (path === '/manifest.appcache') {
+  if (endsWith(path, 'manifest.appcache')) {
     const manifest = appcache({
-      assets: [css, js, assets['web-worker'].js],
+      assets: [css, js, assets['web-worker'].js, '/static/manifest.json'],
       fallback: {
-        '/': '/home.html',
-        '/suche': '/index.html',
-        '/gesetz': '/gesetz.html',
-        '/gesetze': '/gesetze.html',
+        '/': '/static/home.html',
+        '/suche': '/index.html', // TODO: Needs shell.
+        '/gesetz': '/static/gesetz.html',
+        '/gesetze': '/static/gesetze.html',
       },
     });
     callback(null, manifest);
   }
 
-  let location = path.replace('.html', '');
+  let location = path.replace('.html', '').replace('/static', '');
   location = location !== '/home' ? location : '/';
   const memoryHistory = createMemoryHistory(location);
   const store = createStore(memoryHistory, client, {});

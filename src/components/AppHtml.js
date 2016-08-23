@@ -25,11 +25,11 @@ const AppHtml = ({
   js,
   state,
 }) => (
-  <html lang='de-DE' manifest='/manifest.appcache'>
+  <html lang='de-DE' manifest='/static/manifest.appcache'>
     <head>
       <meta charSet='utf-8' />
       <meta name='viewport' content='width=device-width, minimum-scale=1.0' />
-      <link rel='manifest' href='/manifest.json' />
+      <link rel='manifest' href='/static/manifest.json' />
       <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i' />
       <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons' />
       {(Array.isArray(css) ? js : [css]).map(src =>
