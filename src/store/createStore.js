@@ -5,7 +5,6 @@ import createDebounce from 'redux-debounced';
 import { isUndefined as isUndef } from 'lodash';
 
 import rootReducer from '~/modules';
-import { renderShells } from '~/modules/shells';
 import {
   functionsMiddleware,
   apiMiddleware,
@@ -34,7 +33,6 @@ export default function createStore(history, client, data = {}) {
     devToolsExtension
   )(_createStore);
   const store = finalCreateStore(rootReducer, Immutable.fromJS(data));
-  store.dispatch(renderShells(false)); // Turn shell-only rendering off ASAP.
 
   client.init(store);
 

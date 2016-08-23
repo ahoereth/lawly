@@ -12,7 +12,7 @@ import AppServer from './components/AppServer';
 import routes from './routes';
 import settle from './helpers/settle';
 import { fetchLawIndex } from './modules/law_index';
-import { renderShells } from './modules/shells';
+import { renderShells } from './modules/core';
 import appcache from './appcache.ejs';
 
 const APIURL = 'http://localhost:3000/v0';

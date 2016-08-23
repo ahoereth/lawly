@@ -1,26 +1,45 @@
 import React, { PropTypes } from 'react';
-import { Layout as MaterialLayout } from 'react-mdl';
+import { isUndefined } from 'lodash';
+import {
+  Layout as MaterialLayout,
+  Content,
+  Snackbar,
+} from 'react-mdl';
 
 import Header from './Header';
 // import Drawer from './Drawer';
-import Content from './Content';
 import Footer from './Footer';
 import './layout.sss';
 
 
-const Layout = ({ title, children, navigation, search, query }) => (
+function reload() {
+  if (!isUndefined(global.location)) {
+    global.location.reload(true);
+  }
+}
+
+
+const Layout = ({ title, children, outdated, navigation, search, query }) => (
   <MaterialLayout>
     <Header title={title} links={navigation} search={search} query={query} />
     {/* <Drawer title={title} primary={navigation} /> */}
-    <Content>
-      {children}
-    </Content>
+    <Content>{children}</Content>
     <Footer primary={navigation} />
+    <Snackbar
+      active={outdated}
+      onClick={reload}
+      onTimeout={() => {}}
+      timeout={15000}
+      action='Jetzt laden'
+    >
+      Neue Version verfügbar, Aktualisieren empfohlen.
+    </Snackbar>
   </MaterialLayout>
 );
 
 Layout.propTypes = {
   children: PropTypes.node,
+  outdated: PropTypes.bool.isRequired,
   navigation: PropTypes.arrayOf(PropTypes.shape({
     to: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,

@@ -1,3 +1,4 @@
+/* global document, window */
 import './polyfills';
 
 import React from 'react';
@@ -6,12 +7,13 @@ import { match, browserHistory as hist } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
 import Redbox from 'redbox-react';
-import { isUndefined as isUndef } from 'lodash';
+import { isUndefined } from 'lodash';
 
 import routes from './routes';
 import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
 import AppClient from './components/AppClient';
+import { updateAvailable, renderShells } from './modules/core';
 
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
@@ -24,12 +26,13 @@ if (!isUndef(global.navigator) && !isUndef(global.navigator.serviceWorker)) {
 }
 */
 
+
 const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
 
 // eslint-disable-next-line no-underscore-dangle
-const store = createStore(hist, client, window.__state); /* global window */
-const target = document.getElementById('app'); /* global document */
+const store = createStore(hist, client, window.__state);
+const target = document.getElementById('app');
 const history = syncHistoryWithStore(hist, store, {
   selectLocationState: state => state.get('routing'),
 });
@@ -40,6 +43,18 @@ history.listen(location => {
   const elem = document.querySelector('.mdl-layout__inner-container');
   if (elem) { elem.scrollTop = 0; }
 });
+
+
+// Turn shell-only rendering off ASAP on the client side.
+store.dispatch(renderShells(false));
+
+// Application Cache event handling.
+if (!isUndefined(window.applicationCache)) {
+  const appcache = window.applicationCache;
+  appcache.addEventListener('updateready', () => {
+    store.dispatch(updateAvailable());
+  }, false);
+}
 
 match({ history, routes }, (error, redirectLocation, renderProps) => {
   render(
@@ -62,8 +77,8 @@ if (module.hot) {
   });
 }
 
-/* global process, window, require */
-if (process.env.NODE_ENV !== 'production' && !isUndef(window)) {
+/* global process, require */
+if (process.env.NODE_ENV !== 'production') {
   // eslint-disable-next-line global-require
   window.Perf = require('react-addons-perf');
 }

@@ -3,6 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare';
 import { connect } from 'react-redux';
 
 import { search, getQuery } from '~/modules/search';
+import { isUpdateAvailable } from '~/modules/core';
 import { Layout } from '~/components';
 
 
@@ -17,6 +18,7 @@ class LayoutContainer extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     htmltitle: PropTypes.string.isRequired,
+    outdated: PropTypes.bool.isRequired,
     query: PropTypes.string,
     search: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
@@ -38,7 +40,7 @@ class LayoutContainer extends React.Component {
   }
 
   render() {
-    const { children, query, search, title } = this.props;
+    const { children, outdated, query, search, title } = this.props;
 
     return (
       <Layout
@@ -46,6 +48,7 @@ class LayoutContainer extends React.Component {
         navigation={navigation}
         search={search}
         query={query}
+        outdated={outdated}
       >
         {children}
       </Layout>
@@ -60,6 +63,7 @@ function mapStateToProps(state, ownProps) {
 
   return {
     title,
+    outdated: isUpdateAvailable(state),
     query: getQuery(state),
     htmltitle: `${title} | Lawly`,
   };

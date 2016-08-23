@@ -13,7 +13,7 @@ import {
 } from '~/modules/law_index';
 import { viewLaw } from '~/modules/laws';
 import { getIndexStars, star } from '~/modules/user';
-import { getShellMode } from '~/modules/shells';
+import { getShellMode } from '~/modules/core';
 import { LawIndex } from '~/components';
 import { isNumeric as isNum } from '~/helpers/utils';
 
