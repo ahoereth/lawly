@@ -4,7 +4,7 @@
   "description": "Web client for Lawly.",
   "author": "Alexander Hoereth",
   "scripts": {
-    "start": "npm run server:dev",
+    "start": "webpack-dashboard -- npm run server:dev",
     "lint": "NODE_ENV=production eslint src scripts",
     "test": "echo 'Tests viewable on /tests.html' && npm run dev",
     "build": "npm run lint && npm run build:client && npm run build:server",
@@ -87,7 +87,7 @@
     "style-loader": "^0.13.1",
     "sugarss": "^0.1.2",
     "webpack": "^2.1.0-beta.4",
-    "webpack-dashboard": "0.1.6",
+    "webpack-dashboard": "^0.1.6",
     "webpack-dev-server": "^2.1.0-beta.0"
   }
 }

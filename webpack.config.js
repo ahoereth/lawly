@@ -7,11 +7,10 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var autoprefixer = require('autoprefixer');
 var precss = require('precss');
-var Dashboard = require('webpack-dashboard');
-var DashboardPlugin = require('webpack-dashboard/plugin');
 var LodashPlugin = require('lodash-webpack-plugin');
 var AssetsPlugin = require('assets-webpack-plugin');
 var StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin');
+var DashboardPlugin = require('webpack-dashboard/plugin');
 
 
 
@@ -98,7 +97,6 @@ if (process.env.NODE_ENV !== 'node') {
 // *****************************************************************************
 // Development
 if (process.env.NODE_ENV === 'development') {
-  var dashboard = new Dashboard();
   var hotreloading = [
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://' + DEV_HOST + ':' + DEV_PORT + '/',
@@ -149,7 +147,7 @@ if (process.env.NODE_ENV === 'development') {
           NODE_ENV: JSON.stringify('development'),
         },
       }),
-      new DashboardPlugin(dashboard.setData),
+      new DashboardPlugin(),
     ]),
     server: {
       host: DEV_HOST,
