@@ -1,4 +1,4 @@
-/* global document, window */
+/* global document, window, navigator */
 import './polyfills';
 
 import React from 'react';
@@ -47,6 +47,11 @@ if (!isUndefined(window.applicationCache)) {
   appcache.addEventListener('updateready', () => {
     store.dispatch(updateAvailable());
   }, false);
+}
+
+// Service Worker registration. TODO: Path outdated.
+if (!isUndefined(navigator) && !isUndefined(navigator.serviceWorker)) {
+  navigator.serviceWorker.register('/service-worker.js', { scope: '/' });
 }
 
 match({ history, routes }, (error, redirectLocation, renderProps) => {
