@@ -29,8 +29,6 @@ var config = {
   context: SRC,
   entry: {},
   output: {
-    path: DST,
-    publicPath: '/',
     filename: '[name].js',
   },
   resolve: {
@@ -50,6 +48,7 @@ var config = {
       },
       { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
       { test: /\.json$/, loader: 'json' },
+      { test: /\.ejs$/, loader: 'ejs' },
     ],
   },
   externals: {},
@@ -78,13 +77,13 @@ var config = {
 if (process.env.NODE_ENV !== 'node') {
   config = Object.assign({}, config, {
     entry: Object.assign({}, config.entry, {
-      'static/app': 'client',
+      app: 'client',
       'web-worker': 'web-worker',
-      'service-worker': 'service-worker',
     }),
     output: Object.assign({}, config.output, {
-       // TODO: Add hash. Figure out how to not break service- & web-worker.
-      filename: '[name].js', // .[hash:8].js',
+      path: path.resolve(DST, 'static'),
+      publicPath: '/static/',
+      filename: '[name].[chunkhash:8].js',
     }),
     plugins: config.plugins.concat([
       new AssetsPlugin({
@@ -110,8 +109,8 @@ if (process.env.NODE_ENV === 'development') {
   config = Object.assign({}, config, {
     watch: true,
     entry: Object.assign({}, config.entry, {
-      'static/app': hotreloading.concat([config.entry['static/app']]),
-      'static/tests': hotreloading.concat(['mocha!./tests.js']),
+      app: hotreloading.concat([config.entry.app]),
+      tests: hotreloading.concat(['mocha!./tests.js']),
     }),
     output: Object.assign({}, config.output, {
       pathinfo: true,
@@ -135,13 +134,13 @@ if (process.env.NODE_ENV === 'development') {
       new HtmlWebpackPlugin({
         template: 'client.ejs',
         title: 'Lawly',
-        chunks: ['static/app'],
+        chunks: ['app'],
       }),
       new HtmlWebpackPlugin({
         filename: 'tests.html',
         title: 'Lawly Tests',
         template: 'client.ejs',
-        chunks: ['static/tests'],
+        chunks: ['tests'],
       }),
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NoErrorsPlugin(),
@@ -225,6 +224,8 @@ if (process.env.NODE_ENV === 'node') {
       shells: 'shells',
     }),
     output: Object.assign({}, config.output, {
+      path: DST,
+      publicPath: '/',
       libraryTarget: 'umd',
     }),
     target: 'node',
@@ -235,6 +236,8 @@ if (process.env.NODE_ENV === 'node') {
     plugins: config.plugins.concat([
       new StaticSiteGeneratorPlugin('shells', [
         '/',
+        '/manifest.appcache',
+        '/home.html',
         '/gesetz.html',
         '/gesetze.html',
       ], {}),

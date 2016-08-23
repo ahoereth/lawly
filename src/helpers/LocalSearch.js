@@ -23,7 +23,7 @@ class LocalSearch {
 
   constructor() {
     /* global Worker */
-    this.worker = getWorker('/web-worker.js');
+    this.worker = getWorker();
     this.promises = {};
     this.worker.onmessage = e => this.messageHandler(e);
   }

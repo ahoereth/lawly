@@ -1,0 +1,12 @@
+CACHE MANIFEST
+
+CACHE:
+<% assets.forEach(asset => { %><%= asset %>
+<% }) %>
+
+FALLBACK:
+<% Object.keys(fallback).forEach(asset => { %><%= asset %> <%= fallback[asset] %>
+<% }) %>
+
+NETWORK:
+*

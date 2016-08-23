@@ -4,7 +4,6 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { match, createMemoryHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
-import { find, endsWith, mapValues } from 'lodash';
 
 import createStore from './store/createStore';
 import ApiClient from './helpers/ApiClient';
@@ -14,25 +13,45 @@ import routes from './routes';
 import settle from './helpers/settle';
 import { fetchLawIndex } from './modules/law_index';
 import { renderShells } from './modules/shells';
+import appcache from './appcache.ejs';
 
 const APIURL = 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
 const ASSETS_PATH = path.resolve(process.env.DIST_PATH, 'assets.json');
 const assets = JSON.parse(fs.readFileSync(ASSETS_PATH, 'utf8'));
-const { js, css } = mapValues(find(assets, (val, key) => endsWith(key, 'app')),
-  val => (Array.isArray(val) ? val : [val])
-);
+const { js, css } = assets.app;
 
 // eslint-disable-next-line import/no-commonjs
 module.exports = function render({ path }, callback) {
-  const location = path.replace('.html', '');
+  if (path === '/') {
+    const page = renderToString(
+      <AppHtml js={js} css={css} assets={assets} />
+    );
+    callback(null, `<!doctype html>\n${page}\n`);
+    return;
+  }
+
+  if (path === '/manifest.appcache') {
+    const manifest = appcache({
+      assets: [css, js, assets['web-worker'].js],
+      fallback: {
+        '/': '/home.html',
+        '/suche': '/index.html',
+        '/gesetz': '/gesetz.html',
+        '/gesetze': '/gesetze.html',
+      },
+    });
+    callback(null, manifest);
+  }
+
+  let location = path.replace('.html', '');
+  location = location !== '/home' ? location : '/';
   const memoryHistory = createMemoryHistory(location);
   const store = createStore(memoryHistory, client, {});
   const history = syncHistoryWithStore(memoryHistory, store, {
     selectLocationState: state => state.get('routing'),
   });
-
-  match({ history, routes, location }, (error, redirect, renderProps) => {
+  match({ history, routes, location }, (error, redirect, props) => {
     if (error) {
       throw new Error(error.message);
     }
@@ -42,7 +61,7 @@ module.exports = function render({ path }, callback) {
       throw new Error(`Redirect to ${pathname}${search}`);
     }
 
-    if (!renderProps) {
+    if (!props) {
       throw new Error(`404: Not found: ${path}`);
     }
 
@@ -53,8 +72,8 @@ module.exports = function render({ path }, callback) {
 
     Promise.all(asyncDeps.map(settle)).then(() => {
       const page = renderToString(
-        <AppHtml js={js} css={css} state={store.getState()}>
-          <AppServer renderProps={renderProps} store={store} />
+        <AppHtml js={js} css={css} state={store.getState()} assets={assets}>
+          <AppServer renderProps={props} store={store} />
         </AppHtml>
       );
 

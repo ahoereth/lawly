@@ -15,10 +15,14 @@ class WorkerMock {
   }
 }
 
-export default function getWorker(path) {
-  if (!isUndefined(global.window) && !isUndefined(global.window.Worker)) {
-    return new global.window.Worker(path);
+export default function getWorker() {
+  const { Worker, __assets } = global.window || {};
+  if (!isUndefined(Worker) && !isUndefined(__assets)) {
+    const { js } = __assets['web-worker'];
+    if (!isUndefined(js)) {
+      return new global.window.Worker(js);
+    }
   }
 
-  return new WorkerMock(path);
+  return new WorkerMock();
 }

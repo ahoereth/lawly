@@ -11,13 +11,22 @@ http.createServer((req, res) => {
   const { url } = req;
 
   let file = 'index.html';
+  const statics = [
+    'manifest.appcache',
+    'index.html',
+    'home.html',
+    'gesetze.html',
+    'gesetz.html',
+  ];
 
-  if (url.indexOf('/static') === 0) {
+  if (statics.includes(url.slice(1)) || url.indexOf('/static') === 0) {
     file = url.slice(1);
   } else if (url.indexOf('/gesetze') === 0) {
     file = 'gesetze.html';
   } else if (url.indexOf('/gesetz') === 0) {
     file = 'gesetz.html';
+  } else if (url === '/') {
+    file = 'home.html';
   }
 
   fs.readFile(path.resolve(PATH, file), (err, data) => {
