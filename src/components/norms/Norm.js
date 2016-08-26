@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import Immutable from 'immutable';
 import ImmutableTypes from 'react-immutable-proptypes';
+import { Link } from 'react-router';
 import classNames from 'classnames';
 import {
   Card, CardTitle, CardMenu, CardText,
@@ -89,21 +90,23 @@ export default class Norm extends React.Component {
     const { expanded, focused } = this.state;
 
     const enumeration = data.get('enumeration', '0');
+    const deeplinked = enumeration === deeplink;
     const starred = annotations.getIn([enumeration, 'starred'], false);
     const lead = enumeration === '0';
     const level = lead ? 1 : enumeration.split('.').length + 1;
     const heading = level > 6 ? 6 : level;
     const icons = lead ? ['book', 'book'] : ['bookmark', 'bookmark_border'];
 
+    const groupkey = data.get('groupkey');
     let title = data.get('title');
-    let groupkey = <span key='groupkey'>{data.get('groupkey')}</span>;
+    let key = <span key='groupkey'>{data.get('groupkey')}</span>;
     let body = <Html>{data.get('body', '')}</Html>;
-    if (!data.has('title') && !data.has('groupkey')) {
+    if (!data.has('title') && !groupkey) {
       [title, body] = this.shell;
-      groupkey = null;
+      key = null;
     }
 
-    const head = lead ? [groupkey, title] : title;
+    const head = lead ? [key, title] : title;
     const slug = slugify(data.get('title', ''));
     const more = descendants.isEmpty() ? null : (
       <Button raised ripple onClick={this.expand}>
@@ -113,7 +116,7 @@ export default class Norm extends React.Component {
 
     return (
       <Card
-        className={classNames(styles.norm, { focused, starred })}
+        className={[styles.norm, { focused, starred }]}
         id={slug}
         shadow={focused ? 1 : undefined}
         onMouseEnter={() => this.focus(true)}
@@ -130,6 +133,17 @@ export default class Norm extends React.Component {
             name={starred ? icons[0] : icons[1]}
             onClick={() => star(data, !starred)}
           />
+          <Link
+            to={`/gesetz/${encodeURIComponent(groupkey)}/${enumeration}`}
+            style={{ color: 'inherit' }}
+          >
+            <IconButton
+              ripple
+              name={deeplinked ? 'center_focus_strong' : 'center_focus_weak'}
+              disabled={deeplinked}
+              className={{ visible: deeplinked }}
+            />
+          </Link>
         </CardMenu>
         <CardText>
           {body}

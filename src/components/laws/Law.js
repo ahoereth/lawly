@@ -18,13 +18,19 @@ export default class Law extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { expanded: false };
+    this.state = {
+      fullscreenIndex: false,
+      fullscreenNorms: false,
+    };
   }
 
   componentWillReceiveProps(nextProps) {
-    // Go back to norm view when selecting a norm from the expanded overview.
-    if (!this.props.deeplink && nextProps.deeplink) {
-      this.setState({ expanded: false });
+    // Go to fullscreen norm view when deeplinking to a norm.
+    if (nextProps.deeplink) {
+      this.setState({
+        fullscreenIndex: false,
+        fullscreenNorms: true,
+      });
     }
   }
 
@@ -32,19 +38,19 @@ export default class Law extends React.Component {
     return shallowCompare(this, nextProps, nextState);
   }
 
-  toggleExpandedIndex = () => {
-    this.setState({ expanded: !this.state.expanded });
+  toggleFullscreenIndex = () => {
+    this.setState({ fullscreenIndex: !this.state.fullscreenIndex });
   }
 
   render() {
-    const { expanded } = this.state;
+    const { fullscreenIndex, fullscreenNorms } = this.state;
     const { annotations, deeplink, loading, norms, star } = this.props;
     const groupkey = norms.getIn([0, 'norm', 'groupkey'], '');
 
     return (
       <Grid>
-        {expanded ? null :
-          <Cell col={8} className='law'>
+        {fullscreenIndex ? null :
+          <Cell col={fullscreenNorms ? 12 : 8} className='law'>
             <Norms
               annotations={annotations}
               deeplink={deeplink}
@@ -54,22 +60,24 @@ export default class Law extends React.Component {
             />
           </Cell>
         }
-        <Cell col={expanded ? 12 : 4} className='law-sidebar'>
-          {/* Prevent scrolling to a norm when clicking the expand butotn. */}
-          <Link
-            to={`/gesetz/${encodeURIComponent(groupkey)}`}
-            style={{ color: 'inherit' }}
-          >
-            <IconButton
-              ripple
-              colored={expanded}
-              name='fullscreen'
-              onClick={this.toggleExpandedIndex}
-              style={{ float: 'right' }}
-            />
-          </Link>
-          <NormList nodes={norms} />
-        </Cell>
+        {fullscreenNorms ? null :
+          <Cell col={fullscreenIndex ? 12 : 4} className='law-sidebar'>
+            {/* Prevent scrolling to a norm when clicking the expand butotn. */}
+            <Link
+              to={`/gesetz/${encodeURIComponent(groupkey)}`}
+              style={{ color: 'inherit' }}
+            >
+              <IconButton
+                ripple
+                colored={fullscreenIndex}
+                name='fullscreen'
+                onClick={this.toggleFullscreenIndex}
+                style={{ float: 'right' }}
+              />
+            </Link>
+            <NormList nodes={norms} />
+          </Cell>
+        }
       </Grid>
     );
   }

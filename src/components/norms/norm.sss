@@ -1,6 +1,8 @@
 :local(.norm) //.mdl-class
   min-height: auto !important
   width: 100%
+  max-width: 900px
+  margin: 0 auto
   transition: box-shadow 500ms ease // animate hover
 
   h1
@@ -23,13 +25,16 @@
     padding-top: 0
     padding-bottom: 0
 
-    button
+    > button
       width: 100%
 
   .mdl-card__menu
-    display: none
+    button
+      display: none
+      &.visible
+        display: inline-block
 
   &.focused,
   &.starred
-    > .mdl-card__menu
-      display: block
+    > .mdl-card__menu button
+      display: inline-block
