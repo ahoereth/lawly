@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import Immutable from 'immutable';
 import ImmutableTypes from 'react-immutable-proptypes';
+import classNames from 'classnames';
 import {
   Card, CardTitle, CardMenu, CardText,
   Button, IconButton,
@@ -44,7 +45,7 @@ export default class Norm extends React.Component {
     ] : [null, null];
     this.state = {
       expanded: deeplink.indexOf(data.get('enumeration', '0')) === 0,
-      focus: false,
+      focused: false,
     };
   }
 
@@ -76,7 +77,7 @@ export default class Norm extends React.Component {
   }
 
   focus(state) {
-    this.setState({ focus: !!state });
+    this.setState({ focused: !!state });
   }
 
   saveElemRef = ref => {
@@ -85,7 +86,7 @@ export default class Norm extends React.Component {
 
   render() {
     const { annotations, data, deeplink, descendants, star } = this.props;
-    const { expanded, focus } = this.state;
+    const { expanded, focused } = this.state;
 
     const enumeration = data.get('enumeration', '0');
     const starred = annotations.getIn([enumeration, 'starred'], false);
@@ -112,9 +113,9 @@ export default class Norm extends React.Component {
 
     return (
       <Card
-        className={styles.norm}
+        className={classNames(styles.norm, { focused, starred })}
         id={slug}
-        shadow={focus ? 1 : undefined}
+        shadow={focused ? 1 : undefined}
         onMouseEnter={() => this.focus(true)}
         onMouseLeave={() => this.focus(false)}
       >
