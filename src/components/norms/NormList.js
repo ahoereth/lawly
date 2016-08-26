@@ -1,10 +1,9 @@
 import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
-import { Card } from 'react-mdl';
 import { Link } from 'react-router';
 
-import { slugify } from '~/helpers/utils';
+import { getNormLink } from './Norm';
 
 
 export default class NormList extends React.Component {
@@ -22,18 +21,14 @@ export default class NormList extends React.Component {
   }
 
   listNode = (node, i) => {
-    const norm = node.get('norm');
     const children = node.get('children', false);
+    const norm = node.get('norm');
     const title = norm.get('title');
-    const groupkey = encodeURIComponent(norm.get('groupkey'));
+    const groupkey = norm.get('groupkey');
     const enumeration = norm.get('enumeration');
-    const slug = enumeration !== '0' ? `#${slugify(title)}` : '';
-
     return (
       <li key={enumeration || i}>
-        <Link to={`/gesetz/${groupkey}/${enumeration}${slug}`}>
-          {title}
-        </Link>
+        <Link to={getNormLink(groupkey, enumeration, title)}>{title}</Link>
         {!children ? false : <ul>{children.map(this.listNode)}</ul>}
       </li>
     );

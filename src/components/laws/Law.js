@@ -9,6 +9,7 @@ import {
 } from 'react-mdl';
 
 import { NormList, Norms } from '~/components';
+import { getNormLink } from '~/components/norms';
 import styles from './law.sss';
 
 
@@ -78,7 +79,7 @@ export default class Law extends React.Component {
           </Cell>
         }
         <Link
-          to={`/gesetz/${encodeURIComponent(groupkey)}`}
+          to={getNormLink(groupkey)}
           style={{ color: 'inherit' }}
         >
           <FABButton
