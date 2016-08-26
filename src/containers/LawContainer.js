@@ -52,7 +52,7 @@ class LawContainer extends React.Component {
   }
 
   componentWillMount() {
-    const { selectLaw, params, shell, setTitle } = this.props;
+    const { selectLaw, params, push, shell, setTitle } = this.props;
     setTitle(params.groupkey);
 
     if (!shell) {

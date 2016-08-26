@@ -31,10 +31,18 @@ const history = syncHistoryWithStore(hist, store, {
 });
 
 // Hacky scroll to top on route change. TODO.
+let lastLocation = {};
 history.listen(location => {
-  if (location.action === 'POP') { return; }
-  const elem = document.querySelector('.mdl-layout__inner-container');
-  if (elem) { elem.scrollTop = 0; }
+  const { action, pathname } = location;
+  if (action === 'POP') { return; }
+  if (
+    pathname.indexOf('/gesetz/') !== 0 ||
+    lastLocation.pathname.indexOf('/gesetz/') !== 0
+  ) {
+    const elem = document.querySelector('.mdl-layout__inner-container');
+    if (elem) { elem.scrollTop = 0; }
+    lastLocation = location;
+  }
 });
 
 

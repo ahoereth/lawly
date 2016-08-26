@@ -1,34 +1,64 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
-import { Grid, Cell } from 'react-mdl';
+import { Grid, Cell, IconButton } from 'react-mdl';
+import { Link } from 'react-router';
 
 import { NormList, Norms } from '~/components';
 
 
-const Law = ({ annotations, deeplink, loading, norms, star }) => (
-  <Grid>
-    <Cell col={8} className='law'>
-      <Norms
-        annotations={annotations}
-        deeplink={deeplink}
-        loading={loading}
-        nodes={norms}
-        star={star}
-      />
-    </Cell>
-    <Cell col={4} className='law-sidebar'>
-      <NormList nodes={norms} />
-    </Cell>
-  </Grid>
-);
+export default class Law extends React.Component {
+  static propTypes = {
+    annotations: ImmutableTypes.mapOf(ImmutableTypes.map).isRequired,
+    deeplink: PropTypes.string,
+    loading: PropTypes.bool.isRequired,
+    norms: ImmutableTypes.list.isRequired,
+    star: PropTypes.func.isRequired,
+  };
 
-Law.propTypes = {
-  annotations: ImmutableTypes.mapOf(ImmutableTypes.map).isRequired,
-  deeplink: PropTypes.string,
-  loading: PropTypes.bool.isRequired,
-  norms: ImmutableTypes.list.isRequired,
-  star: PropTypes.func.isRequired,
-};
+  constructor(props) {
+    super(props);
+    this.state = { expanded: false };
+  }
 
+  toggleExpandedIndex = () => {
+    this.setState({ expanded: !this.state.expanded });
+  }
 
-export default Law;
+  render() {
+    const { expanded } = this.state;
+    const { annotations, deeplink, loading, norms, star } = this.props;
+    const groupkey = norms.getIn([0, 'norm', 'groupkey'], '');
+
+    return (
+      <Grid>
+        {expanded ? null :
+          <Cell col={8} className='law'>
+            <Norms
+              annotations={annotations}
+              deeplink={deeplink}
+              loading={loading}
+              nodes={norms}
+              star={star}
+            />
+          </Cell>
+        }
+        <Cell col={expanded ? 12 : 4} className='law-sidebar'>
+          {/* Prevent scrolling to a norm when clicking the expand butotn. */}
+          <Link
+            to={`/gesetz/${encodeURIComponent(groupkey)}`}
+            style={{ color: 'inherit' }}
+          >
+            <IconButton
+              ripple
+              colored={expanded}
+              name='fullscreen'
+              onClick={this.toggleExpandedIndex}
+              style={{ float: 'right' }}
+            />
+          </Link>
+          <NormList nodes={norms} />
+        </Cell>
+      </Grid>
+    );
+  }
+}

@@ -24,7 +24,7 @@ export default class NormList extends React.Component {
     const norm = node.get('norm');
     const children = node.get('children', false);
     const title = norm.get('title');
-    const groupkey = norm.get('groupkey');
+    const groupkey = encodeURIComponent(norm.get('groupkey'));
     const enumeration = norm.get('enumeration');
     const slug = enumeration !== '0' ? `#${slugify(title)}` : '';
 
