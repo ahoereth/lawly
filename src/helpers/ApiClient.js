@@ -150,7 +150,9 @@ export default class ApiClient {
         case 'error':
         case 'fail':
         default:
-          throw (message || response.statusText);
+          // eslint-disable-next-line no-console
+          console.warn('Rejected by server', message || response.statusText);
+          throw new Error('Rejected');
       }
     });
   }
@@ -205,8 +207,11 @@ export default class ApiClient {
     });
 
     // Network error.
-    request = request.catch(() => {
-      this.storage.stashRequest(options).then(() => this.isConnected(false));
+    request = request.catch(err => {
+      if (err.message !== 'Rejected') {
+        // Seemingly an network error. Stash to retry later.
+        this.storage.stashRequest(options).then(() => this.isConnected(false));
+      }
       if (!cachable) { throw ApiClient.NO_CONNECTION_NO_CACHE; }
       return this.storage.get({ name, method, ...params });
     });
