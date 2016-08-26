@@ -15,6 +15,15 @@ import { getTextblock, getTextline } from '~/helpers/shells';
 import styles from './norm.sss';
 
 
+export function getNormLink(groupkey, enumeration, title) {
+  if (!groupkey) { return ''; }
+  const key = encodeURIComponent(groupkey);
+  if (!enumeration) { return `/gesetz/${key}`; }
+  if (!title) { return `/gesetz/${key}/${enumeration}`; }
+  return `/gesetz/${key}/${enumeration}#${slugify(title)}`;
+}
+
+
 export default class Norm extends React.Component {
   static propTypes = {
     annotations: ImmutableTypes.mapOf(ImmutableTypes.mapContains({
@@ -116,7 +125,7 @@ export default class Norm extends React.Component {
 
     return (
       <Card
-        className={[styles.norm, { focused, starred }]}
+        className={classNames(styles.norm, { focused, starred })}
         id={slug}
         shadow={focused ? 1 : undefined}
         onMouseEnter={() => this.focus(true)}
@@ -132,18 +141,22 @@ export default class Norm extends React.Component {
             colored={starred}
             name={starred ? icons[0] : icons[1]}
             onClick={() => star(data, !starred)}
+            className={classNames({ visible: starred })}
           />
-          <Link
-            to={`/gesetz/${encodeURIComponent(groupkey)}/${enumeration}`}
-            style={{ color: 'inherit' }}
-          >
+          {deeplinked ? (
             <IconButton
-              ripple
-              name={deeplinked ? 'center_focus_strong' : 'center_focus_weak'}
-              disabled={deeplinked}
-              className={{ visible: deeplinked }}
+              ripple disabled
+              name={'center_focus_strong'}
+              className='visible'
             />
-          </Link>
+          ) : (
+            <Link
+              to={getNormLink(groupkey, enumeration, title)}
+              style={{ color: 'inherit' }}
+            >
+              <IconButton ripple name={focused ? 'center_focus_weak' : ''} />
+            </Link>
+          )}
         </CardMenu>
         <CardText>
           {body}

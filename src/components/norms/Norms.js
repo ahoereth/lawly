@@ -12,8 +12,8 @@ const shell = List([
 ]);
 
 
-const Norms = ({ annotations, deeplink, nodes, star, loading }) => (
-  <div>
+const Norms = ({ annotations, deeplink, nodes, star, loading, ...props }) => (
+  <div {...props}>
     {(!loading ? nodes : shell).map((node, i) =>
       <Norm
         key={node.getIn(['norm', 'enumeration'], i)}

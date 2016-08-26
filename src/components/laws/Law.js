@@ -1,10 +1,15 @@
 import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
-import { Grid, Cell, IconButton } from 'react-mdl';
 import { Link } from 'react-router';
+import {
+  Grid, Cell,
+  Card, CardTitle, CardText,
+  FABButton, Icon,
+} from 'react-mdl';
 
 import { NormList, Norms } from '~/components';
+import styles from './law.sss';
 
 
 export default class Law extends React.Component {
@@ -39,7 +44,10 @@ export default class Law extends React.Component {
   }
 
   toggleFullscreenIndex = () => {
-    this.setState({ fullscreenIndex: !this.state.fullscreenIndex });
+    this.setState({
+      fullscreenIndex: !this.state.fullscreenIndex,
+      fullscreenNorms: false,
+    });
   }
 
   render() {
@@ -53,6 +61,7 @@ export default class Law extends React.Component {
           <Cell col={fullscreenNorms ? 12 : 8} className='law'>
             <Norms
               annotations={annotations}
+              className={styles.norms}
               deeplink={deeplink}
               loading={loading}
               nodes={norms}
@@ -62,22 +71,24 @@ export default class Law extends React.Component {
         }
         {fullscreenNorms ? null :
           <Cell col={fullscreenIndex ? 12 : 4} className='law-sidebar'>
-            {/* Prevent scrolling to a norm when clicking the expand butotn. */}
-            <Link
-              to={`/gesetz/${encodeURIComponent(groupkey)}`}
-              style={{ color: 'inherit' }}
-            >
-              <IconButton
-                ripple
-                colored={fullscreenIndex}
-                name='fullscreen'
-                onClick={this.toggleFullscreenIndex}
-                style={{ float: 'right' }}
-              />
-            </Link>
-            <NormList nodes={norms} />
+            <Card className={styles.normlist} shadow={1}>
+              <CardTitle><h2>Inhaltsübersicht</h2></CardTitle>
+              <CardText><NormList nodes={norms.slice(1)} /></CardText>
+            </Card>
           </Cell>
         }
+        <Link
+          to={`/gesetz/${encodeURIComponent(groupkey)}`}
+          style={{ color: 'inherit' }}
+        >
+          <FABButton
+            raised ripple
+            className={styles.fab}
+            onClick={this.toggleFullscreenIndex}
+          >
+            <Icon name={fullscreenIndex ? 'format_indent_increase' : 'menu'} />
+          </FABButton>
+        </Link>
       </Grid>
     );
   }

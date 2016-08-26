@@ -1,8 +1,5 @@
-:local(.norm) //.mdl-class
+:local(.norm) //.mdl-card
   min-height: auto !important
-  width: 100%
-  max-width: 900px
-  margin: 0 auto
   transition: box-shadow 500ms ease // animate hover
 
   h1
@@ -14,21 +11,18 @@
   br+br // Hide consecutive linebreaks.
     display: none
 
-  .mdl-card__title
-    h1, h2, h3, h4, h5, h6
-      margin: 0
-    small, span
-      opacity: .6
-      display: block
-
   .mdl-card__supporting-text
-    padding-top: 0
-    padding-bottom: 0
 
-    > button
+    color: rgba(0, 0, 0, .8)
+    &> button
       width: 100%
 
+  .mdl-card__title,
+  .mdl-card__supporting-text
+    width: 96%
+
   .mdl-card__menu
+    color: #000
     button
       display: none
       &.visible

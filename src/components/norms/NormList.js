@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
+import { Card } from 'react-mdl';
 import { Link } from 'react-router';
 
 import { slugify } from '~/helpers/utils';
