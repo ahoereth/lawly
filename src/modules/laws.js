@@ -4,6 +4,7 @@ import { push } from 'react-router-redux';
 import { isPlainObject, isString } from 'lodash';
 
 import createReducer from '~/store/createReducer';
+import { getNormLink } from '~/components/norms';
 
 
 export const SCOPE = 'laws';
@@ -48,12 +49,15 @@ export const selectLaw = groupkey => dispatch => {
 /* global encodeURIComponent */
 export const viewLaw = law => dispatch => {
   let groupkey = isString(law) ? law : undefined;
+  let enumeration;
   if (Map.isMap(law)) {
     // Send the data we've got right away to avoid a blank screen.
     dispatch({ type: FETCH_SINGLE, payload: [law.toObject()] });
     groupkey = law.get('groupkey');
+    enumeration = law.get('enumeration');
   }
-  dispatch(push(`/gesetz/${encodeURIComponent(groupkey)}`));
+  enumeration = enumeration !== '0' ? enumeration : undefined;
+  dispatch(push(getNormLink(groupkey, enumeration)));
 };
 
 

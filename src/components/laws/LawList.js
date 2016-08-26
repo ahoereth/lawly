@@ -38,6 +38,7 @@ const LawList = ({
     return Map({
       title: law.get('title'),
       groupkey: law.get('groupkey'),
+      key: `${law.get('groupkey')}${law.get('enumeration')}`,
       star: !star ? null : (
         <Tooltip
           label={
@@ -72,7 +73,7 @@ const LawList = ({
       <DataTable
         rows={rows}
         className={styles.datatable}
-        keyProp='groupkey'
+        keyProp='key'
         shell={shell}
       >
         {!star ? null :
