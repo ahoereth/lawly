@@ -117,10 +117,10 @@ export function umlauts2digraphs(str) {
  * @return {string}
  */
 export function slugify(str) {
-  return umlauts2digraphs(str)
-    .toLowerCase()
+  const slug = umlauts2digraphs(str).toLowerCase()
     .replace(/[^\w]+/ig, '-') // Get rid of none word characters.
     .replace(/^-+|-+$/g, ''); // Get rid of dashes at the beginning and end.
+  return encodeURIComponent(slug);
 }
 
 

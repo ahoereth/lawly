@@ -12,12 +12,13 @@ const shell = List([
 ]);
 
 
-const Norms = ({ annotations, nodes, star, loading }) => (
+const Norms = ({ annotations, deeplink, nodes, star, loading }) => (
   <div>
     {(!loading ? nodes : shell).map((node, i) =>
       <Norm
         key={node.getIn(['norm', 'enumeration'], i)}
         data={node.get('norm')}
+        deeplink={deeplink}
         descendants={node.get('children')}
         annotations={annotations}
         star={star}
@@ -28,6 +29,7 @@ const Norms = ({ annotations, nodes, star, loading }) => (
 
 Norms.propTypes = {
   annotations: ImmutableTypes.mapOf(ImmutableTypes.map).isRequired,
+  deeplink: PropTypes.string,
   loading: PropTypes.bool,
   nodes: ImmutableTypes.listOf(ImmutableTypes.mapContains({
     norm: ImmutableTypes.map.isRequired,

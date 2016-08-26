@@ -25,6 +25,7 @@ export default class Norm extends React.Component {
       body: PropTypes.string,
       foot: PropTypes.string,
     }).isRequired,
+    deeplink: PropTypes.string.isRequired,
     descendants: ImmutableTypes.list.isRequired,
     star: PropTypes.func,
   };
@@ -32,21 +33,42 @@ export default class Norm extends React.Component {
   static defaultProps = {
     annotations: Immutable.Map(),
     descendants: Immutable.List(),
+    deeplink: '',
   };
 
   constructor(props) {
     super(props);
-    this.shell = props.data.get('enumeration', '0') === '0' ? [
+    const { data, deeplink } = props;
+    this.shell = data.get('enumeration', '0') === '0' ? [
       getTextline('title'), getTextblock(8),
     ] : [null, null];
     this.state = {
-      expanded: false,
+      expanded: deeplink.indexOf(data.get('enumeration', '0')) === 0,
       focus: false,
     };
   }
 
+  componentDidMount() {
+    const { data, deeplink } = this.props;
+    this.deeplink(deeplink, data.get('enumeration'));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const { data, deeplink } = nextProps;
+    if (deeplink !== this.props.deeplink) {
+      this.deeplink(deeplink, data.get('enumeration', '0'));
+    }
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState);
+  }
+
+  deeplink(deeplink, enumeration) {
+    this.setState({ expanded: deeplink.indexOf(enumeration) === 0 });
+    if (this.elem && deeplink === enumeration) {
+      this.elem.scrollIntoView();
+    }
   }
 
   expand = () => {
@@ -57,8 +79,12 @@ export default class Norm extends React.Component {
     this.setState({ focus: !!state });
   }
 
+  saveElemRef = ref => {
+    this.elem = ref;
+  }
+
   render() {
-    const { annotations, data, descendants, star } = this.props;
+    const { annotations, data, deeplink, descendants, star } = this.props;
     const { expanded, focus } = this.state;
 
     const enumeration = data.get('enumeration', '0');
@@ -92,6 +118,7 @@ export default class Norm extends React.Component {
         onMouseEnter={() => this.focus(true)}
         onMouseLeave={() => this.focus(false)}
       >
+        <span ref={this.saveElemRef} />
         <CardTitle>
           {React.createElement(`h${heading}`, null, head)}
         </CardTitle>
@@ -107,7 +134,12 @@ export default class Norm extends React.Component {
           {body}
           <Html>{data.get('foot', '')}</Html>
           {!expanded ? more : (
-            <Norms nodes={descendants} star={star} annotations={annotations} />
+            <Norms
+              annotations={annotations}
+              deeplink={deeplink}
+              nodes={descendants}
+              star={star}
+            />
           )}
         </CardText>
       </Card>

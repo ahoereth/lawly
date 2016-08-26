@@ -14,7 +14,7 @@ const routes = (
   <Route path='/' component={Layout}>
     <IndexRoute component={Home} />
     <Route path='suche(/:query)(/:page)' component={Search} />
-    <Route path='gesetz(/:groupkey)' component={Law} />
+    <Route path='gesetz(/:groupkey)(/:enumeration)' component={Law} />
     <Route path='gesetze(/:a)(/:b)(/:c)' component={LawIndex} />
 
     {/* <Redirect from='gesetz' to='gesetze' /> */}

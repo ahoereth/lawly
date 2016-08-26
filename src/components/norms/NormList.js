@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
+import { Link } from 'react-router';
 
 import { slugify } from '~/helpers/utils';
 
@@ -19,13 +20,20 @@ export default class NormList extends React.Component {
     return shallowCompare(this, nextProps, nextState);
   }
 
-  listNodes = (node, i) => {
-    const title = node.getIn(['norm', 'title']);
+  listNode = (node, i) => {
+    const norm = node.get('norm');
     const children = node.get('children', false);
+    const title = norm.get('title');
+    const groupkey = norm.get('groupkey');
+    const enumeration = norm.get('enumeration');
+    const slug = enumeration !== '0' ? `#${slugify(title)}` : '';
+
     return (
-      <li key={node.getIn(['norm', 'enumeration'], i)}>
-        <a href={`#${slugify(title)}`}>{title}</a>
-        {!children ? false : <ul>{children.map(this.listNodes)}</ul>}
+      <li key={enumeration || i}>
+        <Link to={`/gesetz/${groupkey}/${enumeration}${slug}`}>
+          {title}
+        </Link>
+        {!children ? false : <ul>{children.map(this.listNode)}</ul>}
       </li>
     );
   }
@@ -34,7 +42,7 @@ export default class NormList extends React.Component {
     const { nodes, ...otherProps } = this.props;
     return (
       <ul {...otherProps}>
-        {nodes.map(this.listNodes)}
+        {nodes.map(this.listNode)}
       </ul>
     );
   }

@@ -5,14 +5,15 @@ import { Grid, Cell } from 'react-mdl';
 import { NormList, Norms } from '~/components';
 
 
-const Law = ({ annotations, loading, norms, star }) => (
+const Law = ({ annotations, deeplink, loading, norms, star }) => (
   <Grid>
     <Cell col={8} className='law'>
       <Norms
-        nodes={norms}
         annotations={annotations}
-        star={star}
+        deeplink={deeplink}
         loading={loading}
+        nodes={norms}
+        star={star}
       />
     </Cell>
     <Cell col={4} className='law-sidebar'>
@@ -23,6 +24,7 @@ const Law = ({ annotations, loading, norms, star }) => (
 
 Law.propTypes = {
   annotations: ImmutableTypes.mapOf(ImmutableTypes.map).isRequired,
+  deeplink: PropTypes.string,
   loading: PropTypes.bool.isRequired,
   norms: ImmutableTypes.list.isRequired,
   star: PropTypes.func.isRequired,

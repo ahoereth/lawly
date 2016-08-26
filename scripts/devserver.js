@@ -11,7 +11,9 @@ const { host, port } = config.server;
 new WebpackDevServer(webpack(config), {
   publicPath: config.output.publicPath,
   hot: true,
-  historyApiFallback: true,
+  historyApiFallback: {
+    disableDotRule: true,
+  },
   quiet: true,
 }).listen(port, host, (err) => {
   if (err) {

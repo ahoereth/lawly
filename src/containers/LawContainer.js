@@ -32,6 +32,7 @@ class LawContainer extends React.Component {
     norms: ImmutableTypes.list.isRequired,
     params: PropTypes.shape({
       groupkey: PropTypes.string,
+      enumeration: PropTypes.string,
     }).isRequired,
     push: PropTypes.func.isRequired,
     selectLaw: PropTypes.func.isRequired,
@@ -71,10 +72,11 @@ class LawContainer extends React.Component {
 
   render() {
     const { loading } = this.state;
-    const { norms, star, annotations } = this.props;
+    const { annotations, norms, params, star } = this.props;
     return (
       <Law
         annotations={annotations}
+        deeplink={params.enumeration}
         loading={loading}
         norms={norms}
         star={star}
