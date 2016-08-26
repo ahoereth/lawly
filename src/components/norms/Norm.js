@@ -86,7 +86,7 @@ export default class Norm extends React.Component {
     this.setState({ expanded: !this.state.expanded });
   }
 
-  focus(state) {
+  focus(state = !this.state.focus) {
     this.setState({ focused: !!state });
   }
 
@@ -130,6 +130,7 @@ export default class Norm extends React.Component {
         shadow={focused ? 1 : undefined}
         onMouseEnter={() => this.focus(true)}
         onMouseLeave={() => this.focus(false)}
+        onTouchStart={() => this.focus()}
       >
         <span ref={this.saveElemRef} />
         <CardTitle>
@@ -141,7 +142,7 @@ export default class Norm extends React.Component {
             colored={starred}
             name={starred ? icons[0] : icons[1]}
             onClick={() => star(data, !starred)}
-            className={classNames({ visible: starred })}
+            className={classNames({ visible: starred || focused })}
           />
           {deeplinked ? (
             <IconButton
@@ -154,7 +155,10 @@ export default class Norm extends React.Component {
               to={getNormLink(groupkey, enumeration, title)}
               style={{ color: 'inherit' }}
             >
-              <IconButton ripple name={focused ? 'center_focus_weak' : ''} />
+              <IconButton
+                ripple name='center_focus_weak'
+                className={classNames({ visible: focused })}
+              />
             </Link>
           )}
         </CardMenu>

@@ -24,11 +24,6 @@
   .mdl-card__menu
     color: #000
     button
-      display: none
+      visibility: hidden
       &.visible
-        display: inline-block
-
-  &.focused,
-  &.starred
-    > .mdl-card__menu button
-      display: inline-block
+        visibility: visible
