@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Grid, Cell, IconButton } from 'react-mdl';
 import { Link } from 'react-router';
@@ -18,6 +19,17 @@ export default class Law extends React.Component {
   constructor(props) {
     super(props);
     this.state = { expanded: false };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // Go back to norm view when selecting a norm from the expanded overview.
+    if (!this.props.deeplink && nextProps.deeplink) {
+      this.setState({ expanded: false });
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
   }
 
   toggleExpandedIndex = () => {
