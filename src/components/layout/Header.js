@@ -11,7 +11,7 @@ import { SearchInput } from '~/components';
 
 const Header = ({ title, links, search, query }) => (
   <MaterialHeader scroll>
-    <HeaderRow title={title || 'woop'}>
+    <HeaderRow title={title}>
       <SearchInput
         query={query}
         search={search}
@@ -35,6 +35,10 @@ Header.propTypes = {
   query: PropTypes.string,
   search: PropTypes.func.isRequired,
   title: PropTypes.string,
+};
+
+Header.defaultProps = {
+  title: 'Lawly',
 };
 
 

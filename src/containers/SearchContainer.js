@@ -17,6 +17,7 @@ import {
   star,
   getIndexStars,
 } from '~/modules/user';
+import { setTitle } from '~/modules/core';
 import { Search } from '~/components';
 
 
@@ -32,6 +33,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   search,
+  setTitle,
   star,
   selectPage,
 };
@@ -48,10 +50,15 @@ class SearchContainer extends React.Component {
     results: ImmutableTypes.list.isRequired,
     search: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
+    setTitle: PropTypes.func.isRequired,
     star: PropTypes.func.isRequired,
     stars: ImmutableTypes.map.isRequired,
     total: PropTypes.number.isRequired,
   };
+
+  componentWillMount() {
+    this.props.setTitle('Suche');
+  }
 
   componentDidMount() {
     const { search, params, query, selectPage, page } = this.props;

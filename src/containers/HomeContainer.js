@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import { login, logout, getUser, getUserLaws } from '~/modules/user';
 import { viewLaw } from '~/modules/laws';
+import { setTitle } from '~/modules/core';
 import { Home } from '~/components';
 
 
@@ -13,8 +14,13 @@ class HomeContainer extends React.Component {
     laws: ImmutableTypes.list,
     login: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
+    setTitle: PropTypes.func.isRequired,
     user: ImmutableTypes.map,
   };
+
+  componentWillMount() {
+    this.props.setTitle('Lawly');
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState);
@@ -31,5 +37,5 @@ export default connect(
     user: getUser(state),
     laws: getUserLaws(state),
   }),
-  { login, logout, viewLaw }
+  { login, logout, viewLaw, setTitle }
 )(HomeContainer);

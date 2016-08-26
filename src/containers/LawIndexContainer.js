@@ -13,7 +13,7 @@ import {
 } from '~/modules/law_index';
 import { viewLaw } from '~/modules/laws';
 import { getIndexStars, star } from '~/modules/user';
-import { getShellMode } from '~/modules/core';
+import { getShellMode, setTitle } from '~/modules/core';
 import { LawIndex } from '~/components';
 import { isNumeric as isNum } from '~/helpers/utils';
 
@@ -39,6 +39,7 @@ const mapDispatchToProps = {
   selectPage: selectLawIndexPage,
   filter: filterLawIndex,
   selectCollection,
+  setTitle,
   star,
   viewLaw,
 };
@@ -64,6 +65,7 @@ class LawIndexContainer extends React.Component {
     selectInitial: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     selectedInitial: PropTypes.string,
+    setTitle: PropTypes.func.isRequired,
     shells: PropTypes.bool.isRequired,
     star: PropTypes.func.isRequired,
     stars: ImmutableTypes.map.isRequired,
@@ -78,8 +80,11 @@ class LawIndexContainer extends React.Component {
       selectCollection,
       selectInitial,
       selectPage,
+      setTitle,
       params,
     } = this.props;
+
+    setTitle('Übersicht');
 
     // eslint-disable-next-line one-var, one-var-declaration-per-line
     let collection, initial, page;

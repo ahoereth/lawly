@@ -12,10 +12,10 @@ import {
 
 const routes = (
   <Route path='/' component={Layout}>
-    <IndexRoute component={Home} title='Home' />
-    <Route path='suche(/:query)(/:page)' component={Search} title='Suche' />
-    <Route path='gesetz(/:groupkey)' component={Law} title='Gesetz' />
-    <Route path='gesetze(/:a)(/:b)(/:c)' component={LawIndex} title='Index' />
+    <IndexRoute component={Home} />
+    <Route path='suche(/:query)(/:page)' component={Search} />
+    <Route path='gesetz(/:groupkey)' component={Law} />
+    <Route path='gesetze(/:a)(/:b)(/:c)' component={LawIndex} />
 
     {/* <Redirect from='gesetz' to='gesetze' /> */}
   </Route>
