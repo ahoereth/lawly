@@ -4,7 +4,8 @@ import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { match, createMemoryHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
-import { endsWith } from 'lodash';
+import { endsWith, trimEnd, partialRight } from 'lodash';
+import { map, mapValues, flow, replace, flattenDeep } from 'lodash/fp';
 
 import createStore from './store/createStore';
 import ApiClient from './helpers/ApiClient';
@@ -16,11 +17,24 @@ import { fetchLawIndex } from './modules/law_index';
 import { renderShells } from './modules/core';
 import appcache from './appcache.ejs';
 
+
 const APIURL = 'http://localhost:3000/v0';
-const client = new ApiClient(APIURL);
 const ASSETS_PATH = path.resolve(process.env.DIST_PATH, 'assets.json');
-const assets = JSON.parse(fs.readFileSync(ASSETS_PATH, 'utf8'));
+const PUBLIC_PATH = trimEnd(process.env.PUBLIC_PATH, '/') || '';
+
+
+const readFile = partialRight(fs.readFileSync, 'utf8');
+const toArray = e => (Array.isArray(e) ? e : [e]);
+const stripStatic = map(replace(/^\/static/, ''));
+const prefix = prefix => str => `${prefix}${str}`;
+const parseAsset = mapValues(flow(toArray, stripStatic, prefix(PUBLIC_PATH)));
+const flatten = flow(map(map(i => i)), flattenDeep);
+
+
+const client = new ApiClient(APIURL);
+const assets = flow(readFile, JSON.parse, mapValues(parseAsset))(ASSETS_PATH);
 const { js, css } = assets.app;
+
 
 // eslint-disable-next-line import/no-commonjs
 module.exports = function render({ path }, callback) {
@@ -34,18 +48,18 @@ module.exports = function render({ path }, callback) {
 
   if (endsWith(path, 'manifest.appcache')) {
     const manifest = appcache({
-      assets: [css, js, assets['web-worker'].js, '/static/manifest.json'],
-      fallback: {
-        '/': '/static/home.html',
-        '/suche': '/static/index.html', // TODO: Needs shell.
-        '/gesetz': '/static/gesetz.html',
-        '/gesetze': '/static/gesetze.html',
-      },
+      assets: [...flatten(assets), '/manifest.json'],
+      fallback: mapValues(prefix(PUBLIC_PATH))({
+        '/': '/home.html',
+        '/suche': '/index.html', // TODO: Needs shell.
+        '/gesetz': '/gesetz.html',
+        '/gesetze': '/gesetze.html',
+      }),
     });
     callback(null, manifest);
   }
 
-  let location = path.replace('.html', '').replace('/static', '');
+  let location = stripStatic(path.replace('.html', ''));
   location = location !== '/home' ? location : '/';
   const memoryHistory = createMemoryHistory(location);
   const store = createStore(memoryHistory, client, {});
@@ -73,7 +87,7 @@ module.exports = function render({ path }, callback) {
 
     Promise.all(asyncDeps.map(settle)).then(() => {
       const page = renderToString(
-        <AppHtml js={js} css={css} state={store.getState()} assets={assets}>
+        <AppHtml assets={assets} js={js} css={css} state={store.getState()}>
           <AppServer renderProps={props} store={store} />
         </AppHtml>
       );

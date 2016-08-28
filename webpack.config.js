@@ -66,7 +66,12 @@ var config = {
   },
   plugins: [
     new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
-    new LodashPlugin(),
+    new LodashPlugin({
+      collections: true,
+      currying: true,
+      flattening: true,
+      placeholders: true,
+    }),
   ],
 };
 
@@ -230,7 +235,7 @@ if (process.env.NODE_ENV === 'node') {
     output: Object.assign({}, config.output, {
       filename: '[name].js',
       path: DST,
-      publicPath: '/',
+      publicPath: process.env.PUBLIC || '/',
       libraryTarget: 'umd',
     }),
     target: 'node',
@@ -250,6 +255,7 @@ if (process.env.NODE_ENV === 'node') {
         'process.env': {
           NODE_ENV: JSON.stringify('node'),
           DIST_PATH: JSON.stringify(DST),
+          PUBLIC_PATH: JSON.stringify(process.env.PUBLIC || '/'),
         },
       }),
     ]),
