@@ -29,7 +29,7 @@ class LocalSearch {
   }
 
   messageHandler(e) {
-    const { type, cmd, id, val } = e.data;
+    const { type = 'request', cmd, id, val } = e.data;
     switch (type) {
       case 'request':
         break;
