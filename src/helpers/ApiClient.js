@@ -3,6 +3,7 @@ import { isUndefined, isPlainObject, isError, omit } from 'lodash';
 
 import DataClient from './DataClient';
 import localSearch from './LocalSearch';
+import ApiError from './ApiError';
 import { joinPath, parseJWT, obj2query } from './utils';
 import { login } from '~/modules/user';
 import { FETCH_SINGLE, getLaws } from '~/modules/laws';
@@ -152,7 +153,7 @@ export default class ApiClient {
         default:
           // eslint-disable-next-line no-console
           console.warn('Rejected by server', message || response.statusText);
-          throw new Error('Rejected');
+          throw new ApiError(message || response.statusText);
       }
     });
   }
@@ -208,12 +209,16 @@ export default class ApiClient {
 
     // Network error.
     request = request.catch(err => {
-      if (err.message !== 'Rejected') {
-        // Seemingly an network error. Stash to retry later.
+      if (err.name !== 'ApiError') {
+        // Seemingly a network error. Stash to retry later.
         this.storage.stashRequest(options).then(() => this.isConnected(false));
       }
-      if (!cachable) { throw ApiClient.NO_CONNECTION_NO_CACHE; }
-      return this.storage.get({ name, method, ...params });
+
+      if (cachable) {
+        return this.storage.get({ name, method, ...params });
+      }
+
+      throw err;
     });
 
     // If the request has an action type attached dispatch that action here.
@@ -289,8 +294,12 @@ export default class ApiClient {
     return this.post({ name: 'users', email, password, signup })
       .then(result => this.storage.stash(email, result))
       .catch(err => {
-        if (err !== ApiClient.NO_CONNECTION_NO_CACHE) { throw err; }
-        return this.storage.get(email);
+        if (err.name === 'ApiError') {
+          this.unauth(email);
+          throw err;
+        } else {
+          return this.storage.get(email);
+        }
       })
       .then(result => {
         // Fetch all starred laws in a single request and insert them into the
