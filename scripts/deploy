@@ -1,0 +1,25 @@
+#!/bin/zsh
+CDN_PATH=lawly
+GIT_CDN=git@github.com:ahoereth/cdn.git
+GIT_TMP=tmp/github_cdn
+
+[[ $(ssh-add -l) =~ .ssh/id_rsa ]] || ssh-add ~/.ssh/id_rsa
+
+npm run build
+
+mkdir -p $GIT_TMP
+if [ ! -d /tmp/github_cdn ]; then
+  git clone $GIT_CDN $GIT_TMP
+else
+  git -C $GIT_TMP pull
+fi
+git -C $GIT_TMP rm -r *
+mkdir -p $GIT_TMP/$CDN_PATH
+cp dist/static/* $GIT_TMP/$CDN_PATH
+git -C $GIT_TMP add -A
+git -C $GIT_TMP commit -a -m "Deploy $(date +%d.%m.%y-%H:%M:%S)"
+git -C $GIT_TMP push
+
+scp -r dist/static lawly@alnilam.uberspace.de:~/html/app/
+# scp dist/static/index.html lawly@alnilam.uberspace.de:~/html/app/index.html
+scp scripts/htaccess lawly@alnilam.uberspace.de:~/html/app/.htaccess

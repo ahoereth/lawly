@@ -1,0 +1,23 @@
+RewriteEngine On
+
+# Redirect everything to web app.
+RewriteCond %{HTTP_HOST} !=web.lawlyapp.de
+RewriteRule (.*) https://web.lawlyapp.de/$1 [R=301,L]
+
+# Force https.
+RewriteCond %{HTTPS} !=on
+RewriteCond %{ENV:HTTPS} !=on
+RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
+
+# Answer everything from node.
+#RewriteRule ^(.*) http://localhost:61324/ [P]
+
+# If a directory or file exists, use it directly.
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^.*$ - [NC,L]
+
+# If a specific route is accessed directly, reply with the appropriate shell.
+RewriteRule ^/gesetze/(.*) /static/gesetze.html [NC,L]
+RewriteRule ^/gesetz/(.*) /static/gesetz.html [NC,L]
+RewriteRule ^/suche/(.*) /static/home.html [NC,L]
+RewriteRule ^(.*) /static/home.html [NC,L]

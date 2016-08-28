@@ -43,7 +43,7 @@ var config = {
         test: /\.js$/,
         loader: 'babel',
         include: SRC,
-        query: { cacheDirectory: path.resolve(__dirname, 'cache') },
+        query: { cacheDirectory: path.resolve(__dirname, 'tmp/cache') },
       },
       { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
       { test: /\.json$/, loader: 'json', exclude: /manifest.json$/ },
