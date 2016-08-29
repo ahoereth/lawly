@@ -1,25 +1,36 @@
 #!/bin/zsh
-CDN_PATH=lawly
+CDN_PATH=lawly/
 GIT_CDN=git@github.com:ahoereth/cdn.git
 GIT_TMP=tmp/github_cdn
+APACHE_HOST=lawly@alnilam.uberspace.de
+APACHE_PATH="~/html/app/"
+WD=$(pwd)
 
 [[ $(ssh-add -l) =~ .ssh/id_rsa ]] || ssh-add ~/.ssh/id_rsa
 
-npm run build
-
-mkdir -p $GIT_TMP
-if [ ! -d /tmp/github_cdn ]; then
-  git clone $GIT_CDN $GIT_TMP
-else
-  git -C $GIT_TMP pull
+if [[ $@ != **nobuild** ]]; then
+  echo "Build..."
+  npm run build
 fi
-git -C $GIT_TMP rm -r *
-mkdir -p $GIT_TMP/$CDN_PATH
-cp dist/static/* $GIT_TMP/$CDN_PATH
-git -C $GIT_TMP add -A
-git -C $GIT_TMP commit -a -m "Deploy $(date +%d.%m.%y-%H:%M:%S)"
-git -C $GIT_TMP push
 
-scp -r dist/static lawly@alnilam.uberspace.de:~/html/app/
-# scp dist/static/index.html lawly@alnilam.uberspace.de:~/html/app/index.html
-scp scripts/htaccess lawly@alnilam.uberspace.de:~/html/app/.htaccess
+echo "CDN...."
+mkdir -p $GIT_TMP
+if [[ ! -d $GIT_TMP/.git ]]; then
+  rm -rf $GIT_TMP
+  git clone $GIT_CDN $GIT_TMP
+fi
+cd $GIT_TMP
+git pull
+git rm -r $CDN_PATH
+mkdir -p $CDN_PATH
+cp -r $WD/dist/static/* $CDN_PATH
+git add -A
+git commit -a -m "Deploy $(date +%d.%m.%y-%H:%M:%S)"
+git push
+cd $WD
+
+echo "Apache..."
+scp -r dist/static/ ${APACHE_HOST}:${APACHE_PATH}
+scp scripts/htaccess ${APACHE_HOST}:${APACHE_PATH}.htaccess
+
+echo "Done."
