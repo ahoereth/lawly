@@ -127,8 +127,7 @@ if (process.env.NODE_ENV === 'development') {
       ]),
     }),
     externals: Object.assign({}, config.externals, {
-      // See https://github.com/airbnb/enzyme/issues/47
-      cheerio: 'window',
+      // See http://airbnb.io/enzyme/docs/guides/webpack.html
       'react/addons': true,
       'react/lib/ExecutionEnvironment': true,
       'react/lib/ReactContext': true,

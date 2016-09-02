@@ -29,7 +29,7 @@ export default class NormList extends React.Component {
     return (
       <li key={enumeration || i}>
         <Link to={getNormLink(groupkey, enumeration, title)}>{title}</Link>
-        {!children ? false : <ul>{children.map(this.listNode)}</ul>}
+        {!children ? false : <NormList nodes={children} />}
       </li>
     );
   }
