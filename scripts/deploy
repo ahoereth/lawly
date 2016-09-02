@@ -32,5 +32,6 @@ cd $WD
 echo "Apache..."
 scp -r dist/static/ ${APACHE_HOST}:${APACHE_PATH}
 scp scripts/htaccess ${APACHE_HOST}:${APACHE_PATH}.htaccess
+scp scripts/robots.txt ${APACHE_HOST}:${APACHE_PATH}
 
 echo "Done."
