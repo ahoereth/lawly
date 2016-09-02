@@ -20,11 +20,13 @@ function reload() {
 
 
 const Layout = ({ title, children, outdated, navigation, search, query }) => (
-  <MaterialLayout>
+  <MaterialLayout fixedHeader>
     <Header title={title} links={navigation} search={search} query={query} />
     {/* <Drawer title={title} primary={navigation} /> */}
-    <Content>{children}</Content>
-    <Footer primary={navigation} />
+    <Content>
+      {children}
+      <Footer primary={navigation} />
+    </Content>
     <Snackbar
       active={outdated}
       onClick={reload}

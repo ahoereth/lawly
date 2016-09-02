@@ -10,7 +10,7 @@ import { SearchInput } from '~/components';
 
 
 const Header = ({ title, links, search, query }) => (
-  <MaterialHeader scroll>
+  <MaterialHeader scroll waterfall>
     <HeaderRow title={title}>
       <SearchInput
         query={query}
