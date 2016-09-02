@@ -1,8 +1,9 @@
-RewriteEngine On
+AuthType Basic
+AuthName "Private Alpha"
+AuthUserFile /var/www/virtual/lawly/.htuser
+Require valid-user
 
-# Redirect everything to web app.
-RewriteCond %{HTTP_HOST} !=web.lawlyapp.de
-RewriteRule (.*) https://web.lawlyapp.de/$1 [R=301,L]
+RewriteEngine On
 
 # Force https.
 RewriteCond %{HTTPS} !=on
