@@ -186,6 +186,7 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify('production'),
+          APIURL: JSON.stringify('https://api.lawly.org/v0'),
         },
       }),
       // TODO: Stop generating a file when in node environment.

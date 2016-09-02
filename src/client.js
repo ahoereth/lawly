@@ -20,7 +20,7 @@ import 'react-mdl/extra/css/material.red-amber.min.css';
 import 'file?name=[name].[ext]!./manifest.json';
 
 
-const APIURL = 'http://localhost:3000/v0';
+const APIURL = process.env.APIURL || 'http://localhost:3000/v0';
 const client = new ApiClient(APIURL);
 
 // eslint-disable-next-line no-underscore-dangle
