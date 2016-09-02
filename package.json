@@ -7,7 +7,7 @@
     "start": "webpack-dashboard -- npm run server:dev",
     "lint": "NODE_ENV=production eslint src scripts",
     "test": "echo 'Tests viewable on /tests.html' && npm run dev",
-    "build": "npm run lint && npm run build:client && npm run build:server",
+    "build": "rm -rf ./dist && npm run lint && npm run build:client && npm run build:server",
     "build:client": "NODE_ENV=production webpack --progress",
     "build:server": "NODE_ENV=node PUBLIC=https://ahoereth.github.io/cdn/lawly/ webpack",
     "server:dev": "NODE_ENV=development node scripts/devserver.js",
