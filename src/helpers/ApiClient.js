@@ -80,9 +80,7 @@ export default class ApiClient {
    * @param  {object}        query (optional)
    * @return {string}
    */
-  parseFetchOptions(options) {
-    const { method, name, action, cachable, ...payload } = options;
-
+  parseFetchOptions({ method, name, action, cachable = false, ...payload }) {
     const skeleton = ApiClient.resources[name];
     const values = { ...ApiClient.defaultParams, ...payload };
     const params = {};
@@ -261,17 +259,6 @@ export default class ApiClient {
   }
 
   /**
-   * Wrapper around fetch for quick delete requests to the api.
-   *
-   * @param  {url} resource
-   * @param  {object} data
-   * @return {Promise}
-   */
-  remove(resource) {
-    return this.fetch({ ...resource, method: 'delete' });
-  }
-
-  /**
    * Wrapper around fetch for quick put requests to the api.
    *
    * @param  {url} resource
@@ -280,6 +267,17 @@ export default class ApiClient {
    */
   put(resource) {
     return this.fetch({ ...resource, method: 'put' });
+  }
+
+  /**
+   * Wrapper around fetch for quick delete requests to the api.
+   *
+   * @param  {url} resource
+   * @param  {object} data
+   * @return {Promise}
+   */
+  remove(resource) {
+    return this.fetch({ ...resource, method: 'delete' });
   }
 
   /**
