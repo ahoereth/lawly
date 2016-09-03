@@ -11,13 +11,33 @@ var LodashPlugin = require('lodash-webpack-plugin');
 var AssetsPlugin = require('assets-webpack-plugin');
 var StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin');
 var DashboardPlugin = require('webpack-dashboard/plugin');
+var mapValues = require('lodash/fp/mapValues');
 
+var stringifyValues = mapValues(JSON.stringify);
 
 
 var SRC = path.resolve(__dirname, 'src');
 var DST = path.resolve(__dirname, 'dist');
 var DEV_HOST = 'localhost';
 var DEV_PORT = 8080;
+
+var env = {
+  development: {
+    NODE_ENV: 'development',
+    APIURL: 'http://localhost:3000/v0',
+  },
+  production: {
+    NODE_ENV: 'production',
+    APIURL: 'https://api.lawly.org/v0',
+    GA_ID: 'UA-13272600-5',
+  },
+  node: {
+    NODE_ENV: 'node',
+    DIST_PATH: DST,
+    PUBLIC_PATH: process.env.PUBLIC || '/',
+    APIURL: 'http://localhost:3000/v0',
+  },
+};
 
 
 // *****************************************************************************
@@ -147,10 +167,7 @@ if (process.env.NODE_ENV === 'development') {
       new webpack.HotModuleReplacementPlugin(),
       new webpack.NoErrorsPlugin(),
       new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify('development'),
-          APIURL: JSON.stringify('http://localhost/v0'),
-        },
+        'process.env': stringifyValues(env.development),
       }),
       new DashboardPlugin(),
     ]),
@@ -214,11 +231,7 @@ if (process.env.NODE_ENV === 'production') {
         },
       }),
       new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify('production'),
-          APIURL: JSON.stringify('https://api.lawly.org/v0'),
-          GA_ID: 'UA-13272600-5',
-        },
+        'process.env': stringifyValues(env.production),
       }),
     ]),
   });
@@ -254,12 +267,7 @@ if (process.env.NODE_ENV === 'node') {
         '/static/gesetze.html',
       ], {}),
       new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify('node'),
-          DIST_PATH: JSON.stringify(DST),
-          PUBLIC_PATH: JSON.stringify(process.env.PUBLIC || '/'),
-          APIURL: JSON.stringify('http://localhost/v0'),
-        },
+        'process.env': stringifyValues(env.node),
       }),
     ]),
   });

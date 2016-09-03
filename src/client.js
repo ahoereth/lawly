@@ -20,9 +20,7 @@ import 'react-mdl/extra/css/material.red-amber.min.css';
 import 'file?name=[name].[ext]!./manifest.json';
 
 
-const APIURL = process.env.APIURL || 'http://localhost:3000/v0';
-const client = new ApiClient(APIURL);
-
+const client = new ApiClient(process.env.APIURL);
 // eslint-disable-next-line no-underscore-dangle
 const store = createStore(hist, client, window.__state);
 const target = document.getElementById('app');
@@ -36,7 +34,6 @@ history.listen(location => {
   const elem = document.querySelector('.mdl-layout__inner-container');
   if (elem) { elem.scrollTop = 0; }
 });
-
 
 // Turn shell-only rendering off ASAP on the client side.
 store.dispatch(renderShells(false));

@@ -18,7 +18,6 @@ import { renderShells } from './modules/core';
 import appcacheTemplate from './appcache.ejs';
 
 
-const APIURL = 'http://localhost:3000/v0';
 const ASSETS_PATH = path.resolve(process.env.DIST_PATH, 'assets.json');
 const PUBLIC_PATH = process.env.PUBLIC_PATH || '/';
 
@@ -31,7 +30,7 @@ const parseAssets = mapValues(flow(toArray, parseAsset));
 const flatten = flow(map(map(i => i)), flattenDeep);
 
 
-const client = new ApiClient(APIURL);
+const client = new ApiClient(process.env.APIURL);
 const assets = flow(readFile, JSON.parse)(ASSETS_PATH);
 assets.app = parseAssets(assets.app); // Need to avoid `web-worker` here
 const { js, css } = assets.app;
