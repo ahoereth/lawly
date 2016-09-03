@@ -55,10 +55,10 @@ module.exports = function render({ path }, callback) {
     const appcacheContents = appcacheTemplate({
       assets: [...flatten(assets), manifest],
       fallback: mapValues(join('/static'))({
-        '/': '/home.html',
-        '/suche': '/index.html', // TODO: Needs shell.
-        '/gesetz': '/gesetz.html',
         '/gesetze': '/gesetze.html',
+        '/gesetz': '/gesetz.html',
+        '/suche': '/home.html', // TODO: Needs shell.
+        '/': '/home.html',
       }),
     });
     callback(null, appcacheContents);

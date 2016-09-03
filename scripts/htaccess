@@ -10,6 +10,17 @@ Header set Strict-Transport-Security "max-age=10886400000; includeSubdomains" en
 AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript text/javascript application/json
 
 
+### Appcache Manifest settings
+AddType text/cache-manifest .appcache
+<filesMatch "\.appcache$">
+  FileETag None
+  Header unset ETag
+  Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+</filesMatch>
+
+
 ### Rewrites
 RewriteEngine On
 
@@ -26,9 +37,9 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^.*$ - [NC,L]
 
 # If a specific route is accessed directly, reply with the appropriate shell.
-RewriteRule ^/gesetze/(.*) /static/gesetze.html [NC,L]
-RewriteRule ^/gesetz/(.*) /static/gesetz.html [NC,L]
-RewriteRule ^/suche/(.*) /static/home.html [NC,L]
+RewriteRule ^gesetze/(.*) /static/gesetze.html [NC,L]
+RewriteRule ^gesetz/(.*) /static/gesetz.html [NC,L]
+RewriteRule ^suche/(.*) /static/home.html [NC,L]
 RewriteRule ^(.*) /static/home.html [NC,L]
 
 
