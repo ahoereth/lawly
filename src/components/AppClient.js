@@ -7,10 +7,15 @@ import ReactGA from 'react-ga';
 let log = () => {};
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_ID);
+  let lastPathname;
   log = () => {
-    /* global window */
-    ReactGA.set({ page: window.location.pathname });
-    ReactGA.pageview(window.location.pathname);
+    const { pathname } = window.location;
+    if (pathname !== lastPathname) {
+      /* global window */
+      ReactGA.set({ page: window.location.pathname });
+      ReactGA.pageview(window.location.pathname);
+    }
+    lastPathname = pathname;
   };
 }
 

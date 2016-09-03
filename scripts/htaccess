@@ -1,7 +1,7 @@
 ### Security headers
 Header set X-Frame-Options DENY
 Header set X-XSS-Protection "1; mode=block"
-Header set Content-Security-Policy "img-src 'self' s3.eu-central-1.amazonaws.com; script-src 'self' 'unsafe-inline' s3.eu-central-1.amazonaws.com *.google-analytics.com data:; style-src 'unsafe-inline' s3.eu-central-1.amazonaws.com fonts.googleapis.com; font-src s3.eu-central-1.amazonaws.com fonts.gstatic.com;"
+Header set Content-Security-Policy "img-src 'self' s3.eu-central-1.amazonaws.com *.google-analytics.com; script-src 'self' 'unsafe-inline' data: s3.eu-central-1.amazonaws.com *.google-analytics.com; style-src 'unsafe-inline' s3.eu-central-1.amazonaws.com fonts.googleapis.com; font-src s3.eu-central-1.amazonaws.com fonts.gstatic.com;"
 Header set X-Content-Type-Options "nosniff"
 Header set Strict-Transport-Security "max-age=10886400000; includeSubdomains" env=HTTPS
 
