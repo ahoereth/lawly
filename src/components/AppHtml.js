@@ -17,7 +17,7 @@ const propTypes = {
 const defaultProps = {
   assets: {},
   state: Map(),
-  manifest: '/static/manifest.json',
+  manifest: '/manifest.json',
 };
 
 
@@ -36,7 +36,6 @@ const AppHtml = ({
       <meta name='viewport' content='width=device-width, minimum-scale=1.0' />
       <link rel='manifest' href={manifest} />
       <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i' />
-      <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons' />
       {css.map(src =>
         <link rel='stylesheet' href={src} key={src} />
       )}

@@ -20,6 +20,7 @@ rules:
       # ignoreStringLiterals: true # https://github.com/eslint/eslint/issues/5805
   func-names: off # TODO: airbnb link?
   spaced-comment: warn
+  space-infix-ops: warn
   jsx-quotes:
     - warn
     - prefer-single # https://github.com/airbnb/javascript#strings--quotes

@@ -1,6 +1,6 @@
 #!/bin/zsh
-APACHE_HOST=lawly@alnilam.uberspace.de
-APACHE_PATH="~/html/app/"
+UBERSPACE="lawly@alnilam.uberspace.de:~/html/app"
+DIST=dist
 
 [[ $(ssh-add -l) =~ .ssh/id_rsa ]] || ssh-add ~/.ssh/id_rsa
 
@@ -9,12 +9,21 @@ if [[ $@ != **nobuild** ]]; then
   npm run build
 fi
 
-echo "S3...."
-aws s3 cp dist/static/ s3://lawly --recursive --exclude="*" --include="app.*" --region eu-central-1
 
-echo "Apache..."
-scp -r dist/static/ ${APACHE_HOST}:${APACHE_PATH}
-scp scripts/htaccess ${APACHE_HOST}:${APACHE_PATH}.htaccess
-scp scripts/robots.txt ${APACHE_HOST}:${APACHE_PATH}
+if [[ $@ != **nos3** ]]; then
+  echo "S3...."
+  gzip -9 $DIST/app.*.js $DIST/*.css $DIST/MaterialIcons-*
+  rename -- .gz '' $DIST/*.gz
+  aws s3 cp $DIST/ s3://lawly --recursive --region eu-central-1 \
+    --content-encoding gzip --exclude="*" --cache-control max-age=604800 \
+    --include="app.*.js" --include="app.*.css" --include="MaterialIcons-*"
+fi
+
+if [[ $@ != **nouber** ]]; then
+  echo "Uberspace..."
+  scp -r $DIST/*.html $DIST/manifest.* $DIST/*worker* $UBERSPACE/
+  scp scripts/htaccess $UBERSPACE/.htaccess
+  scp scripts/robots.txt $UBERSPACE/
+fi
 
 echo "Done."

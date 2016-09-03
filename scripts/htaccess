@@ -37,10 +37,10 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^.*$ - [NC,L]
 
 # If a specific route is accessed directly, reply with the appropriate shell.
-RewriteRule ^gesetze/(.*) /static/gesetze.html [NC,L]
-RewriteRule ^gesetz/(.*) /static/gesetz.html [NC,L]
-RewriteRule ^suche/(.*) /static/home.html [NC,L]
-RewriteRule ^(.*) /static/home.html [NC,L]
+RewriteRule ^gesetze/(.*) /gesetze.html [NC,L]
+RewriteRule ^gesetz/(.*) /gesetz.html [NC,L]
+RewriteRule ^suche/(.*) /home.html [NC,L]
+RewriteRule ^(.*) /home.html [NC,L]
 
 
 ### Authentication

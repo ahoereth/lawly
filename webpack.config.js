@@ -29,12 +29,13 @@ var env = {
   production: {
     NODE_ENV: 'production',
     APIURL: 'https://api.lawly.org/v0',
+    PUBLIC_PATH: 'https://s3.eu-central-1.amazonaws.com/lawly/',
     GA_ID: 'UA-13272600-5',
   },
   node: {
     NODE_ENV: 'node',
     DIST_PATH: DST,
-    STATICS: 'https://s3.eu-central-1.amazonaws.com/lawly/',
+    PUBLIC_PATH: 'https://s3.eu-central-1.amazonaws.com/lawly/',
     APIURL: 'http://localhost:3000/v0',
   },
 };
@@ -104,10 +105,6 @@ if (process.env.NODE_ENV !== 'node') {
       app: 'client',
       'web-worker': 'web-worker',
     }),
-    output: Object.assign({}, config.output, {
-      path: path.resolve(DST, 'static'),
-      publicPath: '/',
-    }),
     plugins: config.plugins.concat([
       new AssetsPlugin({
         filename: 'assets.json',
@@ -137,6 +134,8 @@ if (process.env.NODE_ENV === 'development') {
     output: Object.assign({}, config.output, {
       pathinfo: true,
       filename: '[name].[hash:8].js',
+      path: path.resolve(DST, 'static'),
+      publicPath: '/',
     }),
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
@@ -186,6 +185,8 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
     devtool: 'source-map',
     output: Object.assign({}, config.output, {
       filename: '[name].[chunkhash:8].js',
+      path: DST,
+      publicPath: env.production.PUBLIC_PATH,
     }),
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
@@ -193,7 +194,7 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
           test: /\.s|css$/,
           loader: ExtractTextPlugin.extract({
             // TODO: Fix minification.
-            loader: ['css?-minimize', 'postcss?parser=sugarss'],
+            loader: ['css?minimize', 'postcss?parser=sugarss'],
             fallbackLoader: 'style',
           }),
         },
@@ -213,9 +214,6 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
 // Production
 if (process.env.NODE_ENV === 'production') {
   config = Object.assign({}, config, {
-    output: Object.assign({}, config.output, {
-      publicPath: '/static/',
-    }),
     plugins: config.plugins.concat([
       new webpack.optimize.UglifyJsPlugin({
         compress: {
@@ -249,8 +247,6 @@ if (process.env.NODE_ENV === 'node') {
     }),
     output: Object.assign({}, config.output, {
       filename: '[name].js',
-      path: DST,
-      publicPath: process.env.PUBLIC || '/',
       libraryTarget: 'umd',
     }),
     target: 'node',
@@ -260,11 +256,11 @@ if (process.env.NODE_ENV === 'node') {
     },
     plugins: config.plugins.concat([
       new StaticSiteGeneratorPlugin('shells', [
-        '/static/',
-        '/static/manifest.appcache',
-        '/static/home.html',
-        '/static/gesetz.html',
-        '/static/gesetze.html',
+        '/',
+        '/manifest.appcache',
+        '/home.html',
+        '/gesetz.html',
+        '/gesetze.html',
       ], {}),
       new webpack.DefinePlugin({
         'process.env': stringifyValues(env.node),
