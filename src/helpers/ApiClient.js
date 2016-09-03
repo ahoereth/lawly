@@ -296,7 +296,14 @@ export default class ApiClient {
           this.unauth(email);
           throw err;
         } else {
-          return this.storage.get(email);
+          return this.storage.get(email).then(cachedUser => {
+            if (!cachedUser) {
+              this.unauth(email);
+              return Promise.reject();
+            }
+
+            return cachedUser;
+          });
         }
       })
       .then(result => {

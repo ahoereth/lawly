@@ -36,7 +36,27 @@ describe('ApiClient', () => {
     expect(tmp).to.have.property('method', 'put');
   });
 
-  // auth
+  it('provides auth() for POST authentication', (done) => {
+    client.fetch = chai.spy(f => { tmp = f; return Promise.resolve('res'); });
+    client.unauth = chai.spy(f => f);
+    client.storage.stash = chai.spy(() => Promise.reject({}));
+    client.auth('mail', 'pw', true).then(() => {
+      expect(client.fetch).to.be.called.once;
+      expect(tmp).to.have.property('method', 'post');
+      expect(tmp).to.have.property('name', 'users');
+      expect(tmp).to.have.property('email', 'mail');
+      expect(tmp).to.have.property('password', 'pw');
+      expect(tmp).to.have.property('signup', true);
+      expect(client.storage.stash).to.be.called.with('email', 'res');
+    }).then(
+      client.auth('mail', 'pw').then(() => {
+        expect(client.fetch).to.be.called.twice;
+        expect(tmp).to.have.property('signup', false);
+        expect(client.fetch).to.be.called.twice;
+      })
+    ).then(done, done);
+  });
+
   // unauth
   // search
 
@@ -57,6 +77,8 @@ describe('ApiClient', () => {
   });
 
   describe('parseFetchOptions()', () => {
+    ApiClient.resources.test = '/test/url/:data1';
+
     it('it passes params through and has defaults', () => {
       const req = { method: 'post', name: 'test', action: 'reduxaction' };
       const { method, name, action, cachable } = client.parseFetchOptions(req);
@@ -69,7 +91,6 @@ describe('ApiClient', () => {
     });
 
     it('it handles POST correctly', () => {
-      ApiClient.resources.test = '/test/url/:data1';
       const req = { method: 'post', name: 'test', data1: 'a', data2: 'b' };
       const { method, url, body } = client.parseFetchOptions(req);
       expect(method).to.equal('post');
