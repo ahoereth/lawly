@@ -34,7 +34,7 @@ var env = {
   node: {
     NODE_ENV: 'node',
     DIST_PATH: DST,
-    PUBLIC_PATH: process.env.PUBLIC || '/',
+    STATICS: 'https://s3.eu-central-1.amazonaws.com/lawly/',
     APIURL: 'http://localhost:3000/v0',
   },
 };

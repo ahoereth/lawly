@@ -9,7 +9,7 @@
     "test": "echo 'Tests viewable on /tests.html' && npm run dev",
     "build": "rm -rf ./dist && npm run lint && npm run build:client && npm run build:server",
     "build:client": "NODE_ENV=production webpack --progress",
-    "build:server": "NODE_ENV=node PUBLIC=https://ahoereth.github.io/cdn/lawly/ webpack",
+    "build:server": "NODE_ENV=node webpack",
     "server:dev": "NODE_ENV=development node scripts/devserver.js",
     "server:shell": "node scripts/shellserver.js",
     "server:ssr": "node dist/server.js"

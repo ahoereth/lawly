@@ -1,10 +1,6 @@
 #!/bin/zsh
-CDN_PATH=lawly/
-GIT_CDN=git@github.com:ahoereth/cdn.git
-GIT_TMP=tmp/github_cdn
 APACHE_HOST=lawly@alnilam.uberspace.de
 APACHE_PATH="~/html/app/"
-WD=$(pwd)
 
 [[ $(ssh-add -l) =~ .ssh/id_rsa ]] || ssh-add ~/.ssh/id_rsa
 
@@ -13,21 +9,8 @@ if [[ $@ != **nobuild** ]]; then
   npm run build
 fi
 
-echo "CDN...."
-mkdir -p $GIT_TMP
-if [[ ! -d $GIT_TMP/.git ]]; then
-  rm -rf $GIT_TMP
-  git clone $GIT_CDN $GIT_TMP
-fi
-cd $GIT_TMP
-git pull
-git rm -r $CDN_PATH
-mkdir -p $CDN_PATH
-cp -r $WD/dist/static/* $CDN_PATH
-git add -A
-git commit -a -m "Deploy $(date +%d.%m.%y-%H:%M:%S)"
-git push
-cd $WD
+echo "S3...."
+aws s3 cp dist/static/ s3://lawly --recursive --exclude="*" --include="app.*" --region eu-central-1
 
 echo "Apache..."
 scp -r dist/static/ ${APACHE_HOST}:${APACHE_PATH}

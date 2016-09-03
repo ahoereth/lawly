@@ -18,18 +18,16 @@ import { renderShells } from './modules/core';
 import appcacheTemplate from './appcache.ejs';
 
 
-const ASSETS_PATH = path.resolve(process.env.DIST_PATH, 'assets.json');
-const PUBLIC_PATH = process.env.PUBLIC_PATH || '/';
-
 const readFile = partialRight(fs.readFileSync, 'utf8');
 const toArray = e => (Array.isArray(e) ? e : [e]);
 const stripStatic = replace(/^\/static/, '');
 const join = a => b => `${trimEnd(a, '/')}/${trimStart(b, '/')}`;
-const parseAsset = map(flow(stripStatic, join(PUBLIC_PATH)));
+const parseAsset = map(flow(stripStatic, join(process.env.STATICS)));
 const parseAssets = mapValues(flow(toArray, parseAsset));
 const flatten = flow(map(map(i => i)), flattenDeep);
 
 
+const ASSETS_PATH = path.resolve(process.env.DIST_PATH, 'assets.json');
 const client = new ApiClient(process.env.APIURL);
 const assets = flow(readFile, JSON.parse)(ASSETS_PATH);
 assets.app = parseAssets(assets.app); // Need to avoid `web-worker` here
