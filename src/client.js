@@ -71,7 +71,7 @@ if (module.hot) {
 }
 
 /* global process, require */
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV === 'development') {
   // eslint-disable-next-line global-require
   window.Perf = require('react-addons-perf');
 }

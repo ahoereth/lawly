@@ -149,6 +149,7 @@ if (process.env.NODE_ENV === 'development') {
       new webpack.DefinePlugin({
         'process.env': {
           NODE_ENV: JSON.stringify('development'),
+          APIURL: JSON.stringify('http://localhost/v0'),
         },
       }),
       new DashboardPlugin(),
@@ -183,12 +184,6 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
     }),
     plugins: config.plugins.concat([
       new webpack.optimize.DedupePlugin(),
-      new webpack.DefinePlugin({
-        'process.env': {
-          NODE_ENV: JSON.stringify('production'),
-          APIURL: JSON.stringify('https://api.lawly.org/v0'),
-        },
-      }),
       // TODO: Stop generating a file when in node environment.
       // See: https://github.com/webpack/extract-text-webpack-plugin/issues/164
       new ExtractTextPlugin('[name].[contenthash:8].css'),
@@ -216,6 +211,13 @@ if (process.env.NODE_ENV === 'production') {
         output: {
           comments: false,
           screw_ie8: true,
+        },
+      }),
+      new webpack.DefinePlugin({
+        'process.env': {
+          NODE_ENV: JSON.stringify('production'),
+          APIURL: JSON.stringify('https://api.lawly.org/v0'),
+          GA_ID: 'UA-13272600-5',
         },
       }),
     ]),
@@ -256,6 +258,7 @@ if (process.env.NODE_ENV === 'node') {
           NODE_ENV: JSON.stringify('node'),
           DIST_PATH: JSON.stringify(DST),
           PUBLIC_PATH: JSON.stringify(process.env.PUBLIC || '/'),
+          APIURL: JSON.stringify('http://localhost/v0'),
         },
       }),
     ]),
