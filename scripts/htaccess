@@ -1,8 +1,13 @@
-AuthType Basic
-AuthName "Private Alpha"
-AuthUserFile /var/www/virtual/lawly/.htuser
-Require valid-user
+### Security headers
+Header set X-Frame-Options DENY
+Header set X-XSS-Protection "1; mode=block"
+Header set Content-Security-Policy "img-src 'self' ahoereth.github.io; script-src 'self' 'unsafe-inline' ahoereth.github.io google-analytics.com; style-src 'unsafe-inline' ahoereth.github.io fonts.googleapis.com; font-src ahoereth.github.io fonts.gstatic.com;"
+Header set X-Content-Type-Options "nosniff"
+Header set Strict-Transport-Security "max-age=10886400000; includeSubdomains" env=HTTPS
 
+
+
+### Rewrites
 RewriteEngine On
 
 # Force https.
