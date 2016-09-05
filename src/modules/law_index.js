@@ -121,9 +121,9 @@ export const getCollection = createSelector(
 export const getLawsByCollection = createSelector(
   [getLawIndex, getCollection],
   (laws, collection) => {
-    if (!collection.get('laws')) { return laws; }
+    if (!collection.has('laws')) { return laws; }
     const keys = collection.get('laws').map(groupkey => groupkey.toLowerCase());
-    return laws.filter(l => keys.indexOf(l.get('groupkey').toLowerCase()) < 0);
+    return laws.filter(l => keys.includes(l.get('groupkey').toLowerCase()));
   }
 );
 
