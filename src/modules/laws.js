@@ -4,7 +4,7 @@ import { push } from 'react-router-redux';
 import { isPlainObject, isString } from 'lodash';
 
 import createReducer from '~/store/createReducer';
-import { getNormLink } from '~/components/norms';
+import { getNormLink } from '~/helpers';
 
 
 export const SCOPE = 'laws';

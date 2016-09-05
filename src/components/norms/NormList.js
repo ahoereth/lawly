@@ -3,7 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 
-import { getNormLink } from './Norm';
+import { getNormLink } from '~/helpers';
 
 
 export default class NormList extends React.Component {

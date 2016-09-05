@@ -5,7 +5,7 @@ import { fromJS } from 'immutable';
 import { shallow, render } from 'enzyme';
 
 import NormList from './NormList';
-import { getNormLink } from './Norm';
+import { getNormLink } from '~/helpers';
 
 /* eslint-disable max-len */
 const props = {

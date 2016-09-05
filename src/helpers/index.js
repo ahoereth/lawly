@@ -1,0 +1,1 @@
+export getNormLink from './getNormLink';

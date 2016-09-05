@@ -9,19 +9,12 @@ import {
   Button, IconButton,
 } from 'react-mdl';
 
+import { getNormLink } from '~/helpers';
 import { slugify } from '~/helpers/utils';
 import { Html, Norms } from '~/components';
 import { getTextblock, getTextline } from '~/helpers/shells';
 import styles from './norm.sss';
 
-
-export function getNormLink(groupkey, enumeration, title) {
-  if (!groupkey) { return ''; }
-  const key = encodeURIComponent(groupkey);
-  if (!enumeration) { return `/gesetz/${key}`; }
-  if (!title) { return `/gesetz/${key}/${enumeration}`; }
-  return `/gesetz/${key}/${enumeration}#${slugify(title)}`;
-}
 
 
 export default class Norm extends React.Component {

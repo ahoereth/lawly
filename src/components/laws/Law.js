@@ -9,7 +9,7 @@ import {
 } from 'react-mdl';
 
 import { NormList, Norms } from '~/components';
-import { getNormLink } from '~/components/norms';
+import { getNormLink } from '~/helpers';
 import styles from './law.sss';
 
 
