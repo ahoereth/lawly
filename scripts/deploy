@@ -10,22 +10,23 @@ if [[ $@ != **nobuild** ]]; then
   npm run build
 fi
 
-
-if [[ $@ != **nos3** ]]; then
-  echo "S3...."
-  gzip -9 $DIST/app.*.js $DIST/*.css $DIST/MaterialIcons-*
-  rename -- .gz '' $DIST/*.gz
-  aws s3 cp $DIST/ s3://lawly --recursive --region eu-central-1 \
-    --content-encoding gzip --exclude="*" --cache-control max-age=604800 \
-    --include="app.*.js" --include="app.*.css" --include="MaterialIcons-*"
-fi
+# Currently serving all statics from same origin because AppCache does not
+# handle font CORS well..
+# https://bugs.chromium.org/p/chromium/issues/detail?id=358744&thanks=358744&ts=1396376673
+#if [[ $@ != **nos3** ]]; then
+#  echo "S3...."
+#  gzip -9 $DIST/app.*.js $DIST/*.css $DIST/MaterialIcons-*
+#  rename -- .gz '' $DIST/*.gz
+#  aws s3 cp $DIST/ s3://lawly --recursive --region eu-central-1 \
+#    --content-encoding gzip --exclude="*" --cache-control max-age=604800 \
+#    --include="app.*.js" --include="app.*.css" --include="MaterialIcons-*"
+#fi
 
 if [[ $@ != **nouber** ]]; then
   echo "Uberspace..."
-  scp -r $DIST/*.html $DIST/manifest.* $DIST/*worker* $UBERSPACE/
+  scp -r scripts/robots.txt $DIST/*.html $DIST/manifest.* $DIST/*worker* $DIST/app.* $DIST/MaterialIcons-* $UBERSPACE/
   scp scripts/htaccess $UBERSPACE/.htaccess
   scp scripts/htaccessWWW $UBERSPACE_WWW/.htaccess
-  scp scripts/robots.txt $UBERSPACE/
 fi
 
 echo "Done."

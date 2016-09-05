@@ -1,12 +1,18 @@
 ### Security headers
 Header set X-Frame-Options DENY
 Header set X-XSS-Protection "1; mode=block"
-Header set Content-Security-Policy "img-src 'self' s3.eu-central-1.amazonaws.com *.google-analytics.com; script-src 'self' 'unsafe-inline' data: s3.eu-central-1.amazonaws.com *.google-analytics.com; style-src 'unsafe-inline' s3.eu-central-1.amazonaws.com fonts.googleapis.com; font-src s3.eu-central-1.amazonaws.com fonts.gstatic.com;"
+Header set Content-Security-Policy "img-src 'self' *.google-analytics.com; script-src 'self' 'unsafe-inline' data: *.google-analytics.com; style-src 'self' 'unsafe-inline' fonts.googleapis.com; font-src 'self' fonts.gstatic.com;"
 Header set X-Content-Type-Options "nosniff"
 Header set Strict-Transport-Security "max-age=10886400; includeSubDomains; preload" env=HTTPS
 
 
 ### Cache settings
+<filesMatch "\.(html|json)$">
+  Header set Cache-Control "max-age=86400, public"
+</filesMatch>
+<filesMatch "\.(js|css|map|woff|eot)$">
+  Header set Cache-Control "max-age=2592000, public"
+</filesMatch>
 <Files manifest.appcache>
   FileETag None
   Header unset ETag

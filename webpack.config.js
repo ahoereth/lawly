@@ -29,13 +29,13 @@ var env = {
   production: {
     NODE_ENV: 'production',
     APIURL: 'https://api.lawly.org/v0',
-    PUBLIC_PATH: 'https://s3.eu-central-1.amazonaws.com/lawly/',
+    PUBLIC_PATH: '/',
     GA_ID: 'UA-13272600-5',
   },
   node: {
     NODE_ENV: 'node',
     DIST_PATH: DST,
-    PUBLIC_PATH: 'https://s3.eu-central-1.amazonaws.com/lawly/',
+    PUBLIC_PATH: '/',
     APIURL: 'http://localhost:3000/v0',
   },
 };
@@ -50,6 +50,7 @@ var config = {
   entry: {},
   output: {
     filename: '[name].js',
+    publicPath: '/',
   },
   resolve: {
     modules: ['node_modules', 'src'],
@@ -135,7 +136,6 @@ if (process.env.NODE_ENV === 'development') {
       pathinfo: true,
       filename: '[name].[hash:8].js',
       path: path.resolve(DST, 'static'),
-      publicPath: '/',
     }),
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
