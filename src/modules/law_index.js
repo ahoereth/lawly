@@ -24,15 +24,16 @@ export const FILTER = 'law_index/FILTER';
 // ******************************************************************
 // REDUCERS
 export default createReducer(Map({
-  laws: List(),
   collections: List(),
   collection: undefined,
-  initials: List(),
-  initial: '',
-  page: 1,
-  pageSize: 20,
   error: undefined,
   filters: Map(),
+  initials: List(),
+  initial: '',
+  laws: List(),
+  page: 1,
+  pageSize: 20,
+  total: -1,
 }), {
   [FETCH]: (state, { payload }) => state.merge({
     initials: List(payload.initials || []),
@@ -88,21 +89,28 @@ export const filterLawIndex = (filters = {}) => (dispatch) => {
 
 // ******************************************************************
 // SELECTORS
+export const getCollections = state => state.getIn([SCOPE, 'collections']);
+
+export const getCollectionTitle = state => state.getIn([SCOPE, 'collection']);
+
+export const getFilters = (state) => state.getIn([SCOPE, 'filters']);
+
+export const getInitial = (state) => state.getIn([SCOPE, 'initial']);
+
+export const getInitials = (state) => state.getIn([SCOPE, 'initials']);
+
 export const getLawIndex = (state) => state.getIn([SCOPE, 'laws']);
 
 export const getPage = (state) => state.getIn([SCOPE, 'page']);
 
 export const getPageSize = (state) => state.getIn([SCOPE, 'pageSize']);
 
-export const getInitial = (state) => state.getIn([SCOPE, 'initial']);
+export const getTotal = (state) => state.getIn([SCOPE, 'total']);
 
-export const getInitials = (state) => state.getIn([SCOPE, 'initials']);
-
-export const getCollections = state => state.getIn([SCOPE, 'collections']);
-
-export const getCollectionTitle = state => state.getIn([SCOPE, 'collection']);
-
-export const getFilters = (state) => state.getIn([SCOPE, 'filters']);
+export const isLoaded = createSelector(
+  [getTotal, getLawIndex],
+  (total, laws) => total > -1 && total === laws.size
+);
 
 export const getCollectionTitles = createSelector(
   [getCollections],

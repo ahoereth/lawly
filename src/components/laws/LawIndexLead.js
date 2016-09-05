@@ -3,6 +3,7 @@ import ImmutableTypes from 'react-immutable-proptypes';
 
 
 const propTypes = {
+  count: PropTypes.number.isRequired,
   collection: ImmutableTypes.mapContains({
     title: PropTypes.string,
     laws: ImmutableTypes.list,
@@ -11,13 +12,12 @@ const propTypes = {
   initial: PropTypes.string.isRequired,
   page: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
-  total: PropTypes.number.isRequired,
 };
 
 
 /* eslint-disable max-len, no-nested-ternary */
 const LawIndexLead = ({
-  total,
+  count,
   collection,
   initial: rawInitial,
   filters,
@@ -32,11 +32,11 @@ const LawIndexLead = ({
         <span>
           Die Gesetzsammlung <strong>{collection.get('title')}</strong> beinhaltet insgesamt {collection.get('laws').size} Gesetze und Verordnungen.
           {!initial && !groupkey && !title && !starred ? null :
-            <span>Durch den aktuellen Filter werden {total} von diesen angezeigt.</span>
+            <span>Durch den aktuellen Filter werden {count} von diesen angezeigt.</span>
           }
         </span> :
-        total < 2 ? null :
-          <span>In der Datenbank finden sich insgesamt <strong>{total} Gesetze und Verodnungen</strong>, die mit dem aktuellen Filter übereinstimmen:&nbsp;</span>
+        count < 2 ? null :
+          <span>In der Datenbank finden sich insgesamt <strong>{count} Gesetze und Verodnungen</strong>, die mit dem aktuellen Filter übereinstimmen:&nbsp;</span>
       }
       {initial
         ? (groupkey
@@ -76,7 +76,7 @@ const LawIndexLead = ({
           )
         )
       }
-      <span>Aktuell wird <strong>Seite {page} von {Math.ceil(total / pageSize)}</strong> angezeigt.</span>
+      <span>Aktuell wird <strong>Seite {page} von {Math.ceil(count / pageSize)}</strong> angezeigt.</span>
     </p>
   );
 };

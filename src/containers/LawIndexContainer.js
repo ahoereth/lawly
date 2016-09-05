@@ -6,10 +6,14 @@ import { pick, isUndefined } from 'lodash';
 import { List } from 'immutable';
 
 import {
-  getFilteredLawsByPage, getInitial, getInitials, getPage, getPageSize,
-  getFilters, getFilteredLawsCount, getCollection, getCollectionTitles,
+  getCollection, getCollectionTitles,
+  getFilters, getFilteredLawsByPage, getFilteredLawsCount,
+  getInitial, getInitials,
+  getPage, getPageSize,
+  isLoaded,
   fetchLawIndex,
-  selectCollection, selectLawIndexInitial, selectLawIndexPage, filterLawIndex,
+  filterLawIndex,
+  selectCollection, selectLawIndexInitial, selectLawIndexPage,
 } from '~/modules/law_index';
 import { viewLaw } from '~/modules/laws';
 import { getIndexStars, star } from '~/modules/user';
@@ -19,7 +23,8 @@ import { isNumeric as isNum } from '~/helpers/utils';
 
 
 const mapStateToProps = state => ({
-  total: getFilteredLawsCount(state),
+  count: getFilteredLawsCount(state),
+  isLoaded: isLoaded(state),
   laws: getFilteredLawsByPage(state),
   initials: getInitials(state),
   page: getPage(state),
@@ -49,10 +54,12 @@ class LawIndexContainer extends React.Component {
   static propTypes = {
     collection: ImmutableTypes.map.isRequired,
     collections: ImmutableTypes.listOf(PropTypes.string),
+    count: PropTypes.number.isRequired,
     fetchIndex: PropTypes.func.isRequired,
     filter: PropTypes.func.isRequired,
     filters: ImmutableTypes.map,
     initials: ImmutableTypes.list.isRequired,
+    isLoaded: PropTypes.bool.isRequired,
     laws: ImmutableTypes.list.isRequired,
     page: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
@@ -69,14 +76,13 @@ class LawIndexContainer extends React.Component {
     shells: PropTypes.bool.isRequired,
     star: PropTypes.func.isRequired,
     stars: ImmutableTypes.map.isRequired,
-    total: PropTypes.number.isRequired,
     viewLaw: PropTypes.func.isRequired,
   };
 
   componentWillMount() {
     const {
       fetchIndex,
-      total,
+      isLoaded,
       selectCollection,
       selectInitial,
       selectPage,
@@ -98,8 +104,7 @@ class LawIndexContainer extends React.Component {
       page = isNum(c) ? c : (isNum(b) ? b : (isNum(a) ? a : undefined));
     }
 
-    // TODO: Fetch if incomplete data available.
-    total > 0 || fetchIndex();
+    isLoaded || fetchIndex();
     selectCollection(collection);
     selectInitial(initial);
     selectPage(page);

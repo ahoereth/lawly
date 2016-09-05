@@ -9,6 +9,7 @@ import LawCollectionChooser from './LawCollectionChooser';
 
 
 const LawIndex = ({
+  count,
   collection,
   collections,
   filter,
@@ -23,7 +24,6 @@ const LawIndex = ({
   selectedInitial,
   star,
   stars,
-  total,
   viewLaw,
 }) => (
   <Grid>
@@ -47,14 +47,14 @@ const LawIndex = ({
         initial={selectedInitial}
         page={page}
         pageSize={pageSize}
-        total={total}
+        count={count}
         filters={filters}
       />
       <LawList
         laws={laws}
         page={page}
         pageSize={pageSize}
-        total={total}
+        total={count}
         selectPage={selectPage}
         viewLaw={viewLaw}
         star={star}
@@ -67,6 +67,7 @@ const LawIndex = ({
 );
 
 LawIndex.propTypes = {
+  count: PropTypes.number.isRequired,
   collection: ImmutableTypes.mapContains({
     title: PropTypes.string,
   }).isRequired,
@@ -83,7 +84,6 @@ LawIndex.propTypes = {
   selectedInitial: PropTypes.string.isRequired,
   star: PropTypes.func.isRequired,
   stars: ImmutableTypes.map.isRequired,
-  total: PropTypes.number.isRequired,
   viewLaw: PropTypes.func.isRequired,
 };
 
