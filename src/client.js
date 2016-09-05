@@ -6,7 +6,6 @@ import { render } from 'react-dom';
 import { match, browserHistory as hist } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
-import Redbox from 'redbox-react';
 import { isUndefined } from 'lodash';
 
 import routes from './routes';
@@ -49,12 +48,13 @@ if (!isUndefined(window.applicationCache)) {
 
 match({ history, routes }, (error, redirectLocation, renderProps) => {
   render(
-    <AppContainer errorReporter={Redbox}>
+    <AppContainer>
       <AppClient store={store} renderProps={renderProps} />
     </AppContainer>,
     target
   );
 });
+
 
 /* global module */
 if (module.hot) {
