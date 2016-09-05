@@ -29,13 +29,13 @@ var env = {
   production: {
     NODE_ENV: 'production',
     APIURL: 'https://api.lawly.org/v0',
-    PUBLIC_PATH: '/',
+    PUBLIC_PATH: '/static/',
     GA_ID: 'UA-13272600-5',
   },
   node: {
     NODE_ENV: 'node',
     DIST_PATH: DST,
-    PUBLIC_PATH: '/',
+    PUBLIC_PATH: '/static/',
     APIURL: 'http://localhost:3000/v0',
   },
 };
@@ -44,12 +44,12 @@ var env = {
 // *****************************************************************************
 // Base
 var config = {
-  devtool: 'cheap-module-source-map',
-  target: 'web',
+  devtool: 'source-map',
   context: SRC,
   entry: {},
   output: {
     filename: '[name].js',
+    path: DST,
     publicPath: '/',
   },
   resolve: {
@@ -102,6 +102,7 @@ var config = {
 // Development and production
 if (process.env.NODE_ENV !== 'node') {
   config = Object.assign({}, config, {
+    target: 'web',
     entry: Object.assign({}, config.entry, {
       app: 'client',
       'web-worker': 'web-worker',
@@ -127,6 +128,7 @@ if (process.env.NODE_ENV === 'development') {
   ];
 
   config = Object.assign({}, config, {
+    devtool: 'cheap-module-source-map',
     watch: true,
     entry: Object.assign({}, config.entry, {
       app: hotreloading.concat([config.entry.app]),
@@ -134,8 +136,6 @@ if (process.env.NODE_ENV === 'development') {
     }),
     output: Object.assign({}, config.output, {
       pathinfo: true,
-      filename: '[name].[hash:8].js',
-      path: path.resolve(DST, 'static'),
     }),
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
@@ -184,16 +184,25 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
   config = Object.assign({}, config, {
     devtool: 'source-map',
     output: Object.assign({}, config.output, {
-      filename: '[name].[chunkhash:8].js',
-      path: DST,
       publicPath: env.production.PUBLIC_PATH,
+    }),
+  });
+}
+
+
+// *****************************************************************************
+// Production
+if (process.env.NODE_ENV === 'production') {
+  config = Object.assign({}, config, {
+    output: Object.assign({}, config.output, {
+      filename: '[name].[chunkhash:8].js',
+      path: path.resolve(DST, 'static'),
     }),
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
         {
           test: /\.s|css$/,
           loader: ExtractTextPlugin.extract({
-            // TODO: Fix minification.
             loader: ['css?minimize', 'postcss?parser=sugarss'],
             fallbackLoader: 'style',
           }),
@@ -205,16 +214,6 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
       // TODO: Stop generating a file when in node environment.
       // See: https://github.com/webpack/extract-text-webpack-plugin/issues/164
       new ExtractTextPlugin('[name].[contenthash:8].css'),
-    ]),
-  });
-}
-
-
-// *****************************************************************************
-// Production
-if (process.env.NODE_ENV === 'production') {
-  config = Object.assign({}, config, {
-    plugins: config.plugins.concat([
       new webpack.optimize.UglifyJsPlugin({
         compress: {
           screw_ie8: true, // React doesn't support IE8
@@ -241,6 +240,7 @@ if (process.env.NODE_ENV === 'production') {
 if (process.env.NODE_ENV === 'node') {
   config = Object.assign({}, config, {
     devtool: 'eval',
+    target: 'node',
     entry: Object.assign({}, config.entry, {
       server: 'server',
       shells: 'shells',
@@ -249,18 +249,22 @@ if (process.env.NODE_ENV === 'node') {
       filename: '[name].js',
       libraryTarget: 'umd',
     }),
-    target: 'node',
+    module: Object.assign({}, config.module, {
+      loaders: config.module.loaders.concat([
+        { test: /\.s|css$/, loader: 'ignore' },
+      ]),
+    }),
     node: {
       __dirname: false,
       __filename: false,
     },
     plugins: config.plugins.concat([
       new StaticSiteGeneratorPlugin('shells', [
+        '/static/manifest.appcache',
         '/',
-        '/manifest.appcache',
-        '/home.html',
-        '/gesetz.html',
-        '/gesetze.html',
+        '/static/home.html',
+        '/static/gesetz.html',
+        '/static/gesetze.html',
       ], {}),
       new webpack.DefinePlugin({
         'process.env': stringifyValues(env.node),

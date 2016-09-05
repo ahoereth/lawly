@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from 'path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import { match, createMemoryHistory } from 'react-router';
@@ -24,21 +23,21 @@ const readFile = partialRight(fs.readFileSync, 'utf8');
 const toArray = e => (Array.isArray(e) ? e : [e]);
 const toArrays = mapValues(toArray);
 const join = a => b => `${trimEnd(a, '/')}/${trimStart(b, '/')}`;
-const prefixPublicPath = map(join(publicPath));
+const prefixPath = join(publicPath);
+const stripPath = str => str.slice(publicPath.length - 1);
 const flatten = flow(map(map(i => i)), flattenDeep);
 const notCssOrJS = str => !str.match(/js|css$/i);
 
 
-const manifest = '/manifest.json';
-const appcache = '/manifest.appcache';
+const manifest = prefixPath('/manifest.json');
+let appcache; // Value comes from webpack config, should be first static.
 
-const ASSETS_PATH = path.resolve(process.env.DIST_PATH, 'assets.json');
+const ASSETS_PATH = join(process.env.DIST_PATH)('assets.json');
 const client = new ApiClient(process.env.APIURL);
 const assets = flow(readFile, JSON.parse)(ASSETS_PATH);
-assets['web-worker'].js = assets['web-worker'].js.slice(publicPath.length - 1);
 const { js, css } = toArrays(assets.app);
 
-const MANIFEST_PATH = path.resolve(process.env.DIST_PATH, manifest.slice(1));
+const MANIFEST_PATH = join(process.env.DIST_PATH)(manifest);
 const manifestObj = JSON.parse(readFile(MANIFEST_PATH));
 const meta = manup(manifestObj);
 
@@ -48,29 +47,30 @@ module.exports = function render(locals, callback) {
   const { path, webpackStats: stats } = locals;
 
   if (endsWith(path, 'manifest.appcache')) {
+    appcache = path;
     const externals = Object.keys(stats.compilation.assets).filter(notCssOrJS);
     const appcacheContents = appcacheTemplate({
-      assets: [manifest, ...flatten(assets), ...prefixPublicPath(externals)],
-      fallback: {
-        '/gesetze': '/gesetze.html',
-        '/gesetz': '/gesetz.html',
-        '/suche': '/home.html', // TODO: Needs shell.
-        '/': '/home.html',
-      },
+      assets: [manifest, ...flatten(assets), ...map(prefixPath, externals)],
+      fallback: mapValues(prefixPath, {
+        '/gesetze': 'gesetze.html',
+        '/gesetz': 'gesetz.html',
+        '/suche': 'home.html', // TODO: Needs shell.
+        '/': 'home.html',
+      }),
     });
     callback(null, appcacheContents);
   }
 
-  let location = path.replace('.html', '');
-  location = location !== '/home' ? location : '/';
-  const memoryHistory = createMemoryHistory(location);
+  let loc = stripPath(path.replace('.html', ''));
+  loc = loc !== '/home' ? loc : '/';
+  const memoryHistory = createMemoryHistory(loc);
   const store = createStore(memoryHistory, client, {});
   const history = syncHistoryWithStore(memoryHistory, store, {
     selectLocationState: state => state.get('routing'),
   });
-  match({ history, routes, location }, (error, redirect, props) => {
-    if (error) {
-      throw new Error(error.message);
+  match({ history, routes, loc, basename: '/' }, (err, redirect, props) => {
+    if (err) {
+      throw new Error(err.message);
     }
 
     if (redirect) {

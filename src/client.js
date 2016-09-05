@@ -52,10 +52,10 @@ if (process.env.NODE_ENV === 'production') {
   const match = require('react-router').match;
   const routes = require('./routes').default;
 
-  match({ history, routes }, (error, redirectLocation, renderProps) => {
+  match({ history, routes, basename: '/' }, (error, redirect, props) => {
     render(
       <AppContainer>
-        <AppClient store={store} renderProps={renderProps} />
+        <AppClient store={store} renderProps={props} />
       </AppContainer>,
       target
     );

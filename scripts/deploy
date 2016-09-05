@@ -24,7 +24,7 @@ fi
 
 if [[ $@ != **nouber** ]]; then
   echo "Uberspace..."
-  scp -r scripts/robots.txt $DIST/*.html $DIST/manifest.* $DIST/*worker* $DIST/app.* $DIST/MaterialIcons-* $UBERSPACE/
+  scp -r scripts/robots.txt $DIST/index.html $DIST/static $UBERSPACE/
   scp scripts/htaccess $UBERSPACE/.htaccess
   scp scripts/htaccessWWW $UBERSPACE_WWW/.htaccess
 fi

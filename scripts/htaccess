@@ -32,6 +32,7 @@ AddType text/cache-manifest .appcache
 ### Compression
 AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript text/javascript application/json application/manifest+json text/cache-manifest
 
+
 ### Rewrites
 RewriteEngine On
 
@@ -48,10 +49,10 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^.*$ - [NC,L]
 
 # If a specific route is accessed directly, reply with the appropriate shell.
-RewriteRule ^gesetze/(.*) /gesetze.html [NC,L]
-RewriteRule ^gesetz/(.*) /gesetz.html [NC,L]
-RewriteRule ^suche/(.*) /home.html [NC,L]
-RewriteRule ^(.*) /home.html [NC,L]
+RewriteRule ^gesetze/(.*) /static/gesetze.html [NC,L]
+RewriteRule ^gesetz/(.*) /static/gesetz.html [NC,L]
+RewriteRule ^suche/(.*) /static/home.html [NC,L]
+RewriteRule ^(.*) /static/home.html [NC,L]
 
 
 ### Authentication
@@ -62,6 +63,6 @@ Order Deny,Allow
 Deny from all
 Satisfy Any
 Allow from env=!HTTPS
-SetEnvIf REQUEST_URI "manifest\.(json|appcache)" allow
+SetEnvIf REQUEST_URI "^/static/.*(?!\.html)" allow
 Allow from env=allow
 Require valid-user
