@@ -92,17 +92,17 @@ class LawIndexContainer extends React.Component {
 
     setTitle('Übersicht');
 
-    // eslint-disable-next-line one-var, one-var-declaration-per-line
+    /* eslint-disable one-var, no-nested-ternary */
     let collection, initial, page;
     const { a, b, c } = params;
     if (!isUndefined(a)) {
       collection = !isNum(a) && a.length > 1 ? a : undefined;
-      // Hack for numeric initials: When initial is set, page is always defined.
-      const aAsInitial = a.length === 1 ? a : undefined;
-      initial = isUndefined(b) || isUndefined(c) ? aAsInitial : b;
-      // eslint-disable-next-line no-nested-ternary
-      page = isNum(c) ? c : (isNum(b) ? b : (isNum(a) ? a : undefined));
+      // Hack for numeric initials: When initial is numeric, always show page.
+      const aInit = a.length === 1 && (!isNum(a) || isNum(b)) ? a : undefined;
+      initial = !aInit && (!isNum(b) || isNum(c)) ? b : aInit;
+      page = isNum(c) ? c : isNum(b) ? b : isNum(a) ? a : undefined;
     }
+    /* eslint-enable one-var, no-nested-ternary */
 
     isLoaded || fetchIndex();
     selectCollection(collection);

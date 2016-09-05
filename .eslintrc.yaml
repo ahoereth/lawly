@@ -26,6 +26,7 @@ rules:
     - prefer-single # https://github.com/airbnb/javascript#strings--quotes
   object-property-newline: off
   no-unused-expressions: off # For chaijs tests.
+  one-var-declaration-per-line: off # covered by one-var
   new-cap:
     - error
     - capIsNewExceptions: # Exceptions for ImmutableJS.

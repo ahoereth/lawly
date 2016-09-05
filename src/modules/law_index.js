@@ -63,8 +63,8 @@ export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
   const collection = getState().getIn([SCOPE, 'collection']);
   const collectionPath = collection ? `${collection}/` : '';
   const initialPath = initial ? `${initial}/` : '';
-  // Hack for numeric initials: When initial is set, always show page.
-  const pagePath = pageInt > 1 || initial ? pageInt : '';
+  // Hack for numeric initials: When initial is numeric, always show page.
+  const pagePath = pageInt > 1 || isNumeric(initial) ? pageInt : '';
   dispatch({ type: SELECT_PAGE, payload: pageInt });
   dispatch(push(`/gesetze/${collectionPath}${initialPath}${pagePath}`));
 };
