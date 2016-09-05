@@ -1,14 +1,15 @@
-/* global document, window */
+/* global document, window, module, process */
+/* eslint-disable global-require */
+
 import './polyfills';
 
 import React from 'react';
 import { render } from 'react-dom';
-import { match, browserHistory as hist } from 'react-router';
+import { browserHistory as hist } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
 import { isUndefined } from 'lodash';
 
-import routes from './routes';
 import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
 import AppClient from './components/AppClient';
@@ -46,30 +47,37 @@ if (!isUndefined(window.applicationCache)) {
   }, false);
 }
 
-match({ history, routes }, (error, redirectLocation, renderProps) => {
-  render(
-    <AppContainer>
-      <AppClient store={store} renderProps={renderProps} />
-    </AppContainer>,
-    target
-  );
-});
 
+if (process.env.NODE_ENV === 'production') {
+  const match = require('react-router').match;
+  const routes = require('./routes').default;
 
-/* global module */
-if (module.hot) {
-  module.hot.accept('./components/AppClient', () => {
+  match({ history, routes }, (error, redirectLocation, renderProps) => {
     render(
       <AppContainer>
-        <AppClient store={store} history={history} />
+        <AppClient store={store} renderProps={renderProps} />
       </AppContainer>,
       target
     );
   });
-}
+} else {
+  render(
+    <AppContainer>
+      <AppClient store={store} renderProps={{ history }} />
+    </AppContainer>,
+    target
+  );
 
-/* global process, require */
-if (process.env.NODE_ENV === 'development') {
-  // eslint-disable-next-line global-require
+  if (module.hot) {
+    module.hot.accept('./components/AppClient', () => {
+      render(
+        <AppContainer>
+          <AppClient store={store} renderProps={{ history }} />
+        </AppContainer>,
+        target
+      );
+    });
+  }
+
   window.Perf = require('react-addons-perf');
 }

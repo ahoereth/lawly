@@ -3,6 +3,8 @@ import { Provider } from 'react-redux';
 import { Router } from 'react-router';
 import ReactGA from 'react-ga';
 
+import routes from '../routes';
+
 
 let log = () => {};
 if (process.env.NODE_ENV === 'production') {
@@ -22,7 +24,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const AppClient = ({ renderProps, store }) => (
   <Provider store={store}>
-    <Router {...renderProps} onUpdate={log} />
+    <Router {...{ routes, ...renderProps }} onUpdate={log} />
   </Provider>
 );
 
