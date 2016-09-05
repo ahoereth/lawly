@@ -26,19 +26,20 @@ const LawIndexLead = ({
 }) => {
   const { groupkey, title, starred } = filters.toObject();
   const initial = rawInitial.toUpperCase();
+  const filtered = groupkey || title || starred || initial;
+  const total = 5000;
   return (
     <p>
-      {collection.has('title') ?
-        <span>
-          Die Gesetzsammlung <strong>{collection.get('title')}</strong> beinhaltet insgesamt {collection.get('laws').size} Gesetze und Verordnungen.
-          {!initial && !groupkey && !title && !starred ? null :
-            <span>Durch den aktuellen Filter werden {count} von diesen angezeigt.</span>
-          }
-        </span> :
-        count < 2 ? null :
-          <span>In der Datenbank finden sich insgesamt <strong>{count} Gesetze und Verodnungen</strong>, die mit dem aktuellen Filter übereinstimmen:&nbsp;</span>
-      }
-      {initial
+      {(!filtered && !collection.has('title')
+        ? <span>In der Datenbank finden sich insgesamt <strong>{count} Gesetze und Verodnungen</strong>. Nutze die Schalter und Eingabefelder um die angezeigte Auswahl zu filtern.</span>
+        : (collection.has('title')
+          ? (filtered
+            ? <span>Aus der Sammlung <strong>{collection.get('title')}</strong> werden durch die aktuellen Filter <strong>{count} Gesetze und Verdnungen</strong> von insgesamt {collection.get('laws').size} angezeigt.&nbsp;</span>
+            : <span>Die Sammlung <strong>{collection.get('title')}</strong> beinhaltet insgesamt {collection.get('laws').size} Gesetze und Verordnungen.</span>
+          ) : <span>Durch den aktuellen Filter werden aktuell <strong>{count} Gesetze und Verodnungen</strong> angezeigt.&nbsp;</span>
+        )
+      )}
+      {(initial
         ? (groupkey
           ? (title
             ? (starred
@@ -52,8 +53,9 @@ const LawIndexLead = ({
             ? (starred
               ? <span>Sie wurden von dir <strong>markiert</strong>, sie beinhalten in ihrer <strong>Bezeichnung <em>{title}</em></strong> und ihr Kürzel beginnt mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong></span>
               : <span>Sie beinhalten in ihrer <strong>Bezeichnung <em>{title}</em></strong> und ihr Kürzel beginnt mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong>.</span>
-            ) : (!starred ? '' : // no title
-              <span>Sie wurden von dir <strong>markiert</strong> und ihr Kürzel beginnt mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong>.</span>
+            ) : (starred // no title
+              ? <span>Sie wurden von dir <strong>markiert</strong> und ihr Kürzel beginnt mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong>.</span>
+              : <span>Ihr Kürzel beginnt mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong>.</span>
             )
           )
         ) : (groupkey // no initial
@@ -75,8 +77,8 @@ const LawIndexLead = ({
             )
           )
         )
-      }
-      <span>Aktuell wird <strong>Seite {page} von {Math.ceil(count / pageSize)}</strong> angezeigt.</span>
+      )}
+      <span>&nbsp;Aktuell wird <strong>Seite {page} von {Math.ceil(count / pageSize)}</strong> angezeigt.</span>
     </p>
   );
 };
