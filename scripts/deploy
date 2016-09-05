@@ -1,5 +1,6 @@
 #!/bin/zsh
 UBERSPACE="lawly@alnilam.uberspace.de:~/html/app"
+UBERSPACE_WWW="lawly@alnilam.uberspace.de:~/html"
 DIST=dist
 
 [[ $(ssh-add -l) =~ .ssh/id_rsa ]] || ssh-add ~/.ssh/id_rsa
@@ -23,6 +24,7 @@ if [[ $@ != **nouber** ]]; then
   echo "Uberspace..."
   scp -r $DIST/*.html $DIST/manifest.* $DIST/*worker* $UBERSPACE/
   scp scripts/htaccess $UBERSPACE/.htaccess
+  scp scripts/htaccessWWW $UBERSPACE_WWW/.htaccess
   scp scripts/robots.txt $UBERSPACE/
 fi
 

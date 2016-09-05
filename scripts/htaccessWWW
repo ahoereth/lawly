@@ -1,0 +1,17 @@
+RewriteEngine On
+
+# Force https.
+RewriteCond %{HTTPS} !=on
+RewriteCond %{ENV:HTTPS} !=on
+RewriteRule .* https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
+
+# Redirect everything to web app.
+#RewriteCond %{HTTP_HOST} !=web.lawly.org
+#RewriteRule (.*) https://web.lawly.org/$1 [R=301,L]
+
+### Security headers
+Header set X-Frame-Options DENY
+Header set X-XSS-Protection "1; mode=block"
+Header set Content-Security-Policy "allow 'self'"
+Header set X-Content-Type-Options "nosniff"
+Header set Strict-Transport-Security "max-age=10886400; includeSubDomains; preload" env=HTTPS
