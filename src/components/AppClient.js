@@ -20,16 +20,17 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
-const App = ({ renderProps, store }) => (
+const AppClient = ({ renderProps, store }) => (
   <Provider store={store}>
     <Router {...renderProps} onUpdate={log} />
   </Provider>
 );
 
-App.propTypes = {
+
+AppClient.propTypes = {
   renderProps: PropTypes.any.isRequired,
   store: PropTypes.any.isRequired,
 };
 
 
-export default App;
+export default AppClient;
