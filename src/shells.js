@@ -6,6 +6,7 @@ import { match, createMemoryHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { endsWith, partialRight, trimEnd, trimStart } from 'lodash';
 import { map, mapValues, flow, flattenDeep } from 'lodash/fp';
+import manup from 'manup';
 
 import createStore from './store/createStore';
 import ApiClient from './helpers/ApiClient';
@@ -28,13 +29,18 @@ const flatten = flow(map(map(i => i)), flattenDeep);
 const notCssOrJS = str => !str.match(/js|css$/i);
 
 
+const manifest = '/manifest.json';
+const appcache = '/manifest.appcache';
+
 const ASSETS_PATH = path.resolve(process.env.DIST_PATH, 'assets.json');
 const client = new ApiClient(process.env.APIURL);
 const assets = flow(readFile, JSON.parse)(ASSETS_PATH);
 assets['web-worker'].js = assets['web-worker'].js.slice(publicPath.length - 1);
 const { js, css } = toArrays(assets.app);
-const manifest = '/manifest.json';
-const appcache = '/manifest.appcache';
+
+const MANIFEST_PATH = path.resolve(process.env.DIST_PATH, manifest.slice(1));
+const manifestObj = JSON.parse(readFile(MANIFEST_PATH));
+const meta = manup(manifestObj);
 
 
 // eslint-disable-next-line import/no-commonjs
@@ -90,6 +96,8 @@ module.exports = function render(locals, callback) {
           css={css}
           state={store.getState()}
           manifest={manifest}
+          meta={meta}
+          title={manifestObj.short_name}
         >
           <AppServer renderProps={props} store={store} />
         </AppHtml>

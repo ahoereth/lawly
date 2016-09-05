@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { Map } from 'immutable';
 import ImmutableTypes from 'react-immutable-proptypes';
+import { isString, isPlainObject } from 'lodash';
 
 
 const propTypes = {
@@ -11,6 +12,11 @@ const propTypes = {
   css: PropTypes.array.isRequired,
   state: ImmutableTypes.map.isRequired,
   manifest: PropTypes.string.isRequired,
+  meta: PropTypes.arrayOf((p, k, c, l, n) => (
+    (p[k].length === 2 && isString(p[k][0]) && isPlainObject(p[k][1])) ?
+      undefined : new Error(`Invalid prop \`${n}\` supplied to \`${c}\`.`)
+  )),
+  title: PropTypes.string,
 };
 
 
@@ -18,6 +24,8 @@ const defaultProps = {
   assets: {},
   state: Map(),
   manifest: '/manifest.json',
+  meta: [],
+  title: 'Lawly',
 };
 
 
@@ -29,17 +37,22 @@ const AppHtml = ({
   js,
   state,
   manifest,
+  meta,
+  title,
 }) => (
   <html lang='de-DE' manifest={appcache}>
     <head>
+      <title>{title}</title>
       <meta charSet='utf-8' />
       <meta name='viewport' content='width=device-width, minimum-scale=1.0' />
+      {meta.map(([tag, props], idx) =>
+        React.createElement(tag, { ...props, key: idx })
+      )}
       <link rel='manifest' href={manifest} />
       <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i' />
       {css.map(src =>
         <link rel='stylesheet' href={src} key={src} />
       )}
-      <title>Lawly</title>
     </head>
     <body>
       <div id='app'>{children}</div>
