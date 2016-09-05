@@ -1,51 +1,8 @@
 import React, { PropTypes } from 'react';
-import { List } from 'immutable';
 import ImmutableTypes from 'react-immutable-proptypes';
 
 
-/* eslint-disable max-len */
-const LawIndexLead = ({
-  total,
-  collection,
-  // initial,
-  // filters: { groupkey, title, starred },
-  page,
-  pageSize,
-}) => (
-  <p>
-    {!collection.size ? null :
-      <span>Die Gesetzsammlung <strong>{collection.get('title')}</strong> beinhaltet insgesamt {collection.get('laws', List()).size} Gesetze und Verordnungen.&nbsp;</span>
-    }
-    <span>
-      Durch den aktuellen Filter werden {total} von diesen angezeigt. Du befindest dich aktuell auf <strong>Seite {page} von {Math.ceil(total / pageSize)}</strong>.
-    </span>
-  {/* <p>
-    {total === 0
-      ? <span>In der Datenbank findet sich insgesamt <strong>ein Gesetz oder eine Verordnung</strong>, welche/s mit dem aktuellen Filter übereinstimmt:&nbsp;</span>
-      : <span>In der Datenbank finden sich insgesamt <strong>{total} Gesetze und Verodnungen</strong>, die mit dem aktuellen Filter übereinstimmen:&nbsp;</span>
-    }
-    Ihr Kürzel beginnt mit dem <strong>Anfangsbuchstaben {initial.toUpperCase()}</strong>
-    {groupkey
-      ? title
-        ? starred
-          ? <span>&nbsp;und beinhaltet <strong>{groupkey}</strong>. Außerdem ist <strong>{title}</strong> Teil ihrer Beschreibung und sie wurden von dir <strong>markiert</strong></span>
-          : <span>&nbsp;und beinhaltet <strong>{groupkey}</strong>. Außerdem ist <strong>{title}</strong> Teil ihrer Bezeichnung</span>
-        : starred
-          ? <span>, stimmt mit <strong>{groupkey}</strong> überein und sie wurden von dir <strong>markiert</strong></span>
-          : <span>&nbsp;und stimmt mit <strong>{groupkey} </strong>überein</span>
-      : title
-        ? starred
-          ? <span>wurden von dir <strong>markiert</strong> und ihre Bezeichnung beinhaltet <strong>{title}</strong>.</span>
-          : <span>&nbsp;und ihre Bezeichnung beinhaltet <strong>{title}</strong></span>
-        : !starred ? '' :
-          <span>&nbsp;und wurden von dir <strong>markiert</strong></span>
-    }.&nbsp;
-    Aktuell wird <strong>Seite {page} von {Math.ceil(total/pageSize)}</strong> angezeigt.
-  </p> */}
-  </p>
-);
-
-LawIndexLead.propTypes = {
+const propTypes = {
   collection: ImmutableTypes.mapContains({
     title: PropTypes.string,
     laws: ImmutableTypes.list,
@@ -56,6 +13,75 @@ LawIndexLead.propTypes = {
   pageSize: PropTypes.number.isRequired,
   total: PropTypes.number.isRequired,
 };
+
+
+/* eslint-disable max-len, no-nested-ternary */
+const LawIndexLead = ({
+  total,
+  collection,
+  initial: rawInitial,
+  filters,
+  page,
+  pageSize,
+}) => {
+  const { groupkey, title, starred } = filters.toObject();
+  const initial = rawInitial.toUpperCase();
+  return (
+    <p>
+      {collection.has('title') ?
+        <span>
+          Die Gesetzsammlung <strong>{collection.get('title')}</strong> beinhaltet insgesamt {collection.get('laws').size} Gesetze und Verordnungen.
+          {!initial && !groupkey && !title && !starred ? null :
+            <span>Durch den aktuellen Filter werden {total} von diesen angezeigt.</span>
+          }
+        </span> :
+        total < 2 ? null :
+          <span>In der Datenbank finden sich insgesamt <strong>{total} Gesetze und Verodnungen</strong>, die mit dem aktuellen Filter übereinstimmen:&nbsp;</span>
+      }
+      {initial
+        ? (groupkey
+          ? (title
+            ? (starred
+              ? <span>Sie wurden von dir <strong>markiert</strong>, verfügen über die <strong>Bezeichnung <em>{title}</em></strong> und die <strong>Kennung <em>{groupkey}</em></strong> mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong>.</span>
+              : <span>Sie verfügen über die <strong>Bezeichnung <em>{title}</em></strong> und die <strong>Kennung <em>{groupkey}</em></strong> mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong>.</span>
+            ) : (starred // no title
+              ? <span>Sie wurden von dir <strong>markiert</strong> und verfügen über die <strong>Kennung <em>{groupkey}</em></strong> mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong>.</span>
+              : <span>Sie verfügen über die <strong>Kennung <em>{groupkey}</em></strong> mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong>.</span>
+            )
+          ) : (title // no groupkey
+            ? (starred
+              ? <span>Sie wurden von dir <strong>markiert</strong>, sie beinhalten in ihrer <strong>Bezeichnung <em>{title}</em></strong> und ihr Kürzel beginnt mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong></span>
+              : <span>Sie beinhalten in ihrer <strong>Bezeichnung <em>{title}</em></strong> und ihr Kürzel beginnt mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong>.</span>
+            ) : (!starred ? '' : // no title
+              <span>Sie wurden von dir <strong>markiert</strong> und ihr Kürzel beginnt mit dem <strong>Anfangsbuchstaben <em>{initial}</em></strong>.</span>
+            )
+          )
+        ) : (groupkey // no initial
+          ? (title
+            ? (starred
+              ? <span>Sie wurden von dir <strong>markiert</strong>, verfügen über die <strong>Bezeichnung <em>{title}</em></strong> und die <strong>Kennung <em>{groupkey}</em></strong>.</span>
+              : <span>Sie verfügen über die <strong>Bezeichnung <em>{title}</em></strong> und die <strong>Kennung <em>{groupkey}</em></strong>.</span>
+            ) : (starred // no title
+              ? <span>Sie wurden von dir <strong>markiert</strong> und verfügen über die <strong>Kennung <em>{groupkey}</em></strong>.</span>
+              : <span>Sie verfügen über die <strong>Kennung <em>{groupkey}</em></strong>.</span>
+            )
+          ) : (title // no groupkey
+            ? (starred
+              ? <span>Sie wurden von dir <strong>markiert</strong> und beinhalten in ihrer <strong>Bezeichnung <em>{title}</em></strong>.</span>
+              : <span>Sie beinhalten in ihrer <strong>Bezeichnung <em>{title}</em></strong>.</span>
+            ) : (starred // no title
+              ? <span>Sie wurden von dir <strong>markiert</strong>.</span>
+              : null
+            )
+          )
+        )
+      }
+      <span>Aktuell wird <strong>Seite {page} von {Math.ceil(total / pageSize)}</strong> angezeigt.</span>
+    </p>
+  );
+};
+
+LawIndexLead.propTypes = propTypes;
 
 
 export default LawIndexLead;
