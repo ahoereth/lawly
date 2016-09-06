@@ -13,16 +13,13 @@ Header set Strict-Transport-Security "max-age=10886400; includeSubDomains; prelo
 <filesMatch "\.(js|css|map|woff|eot)$">
   Header set Cache-Control "max-age=2592000, public"
 </filesMatch>
-<Files manifest.appcache>
-  FileETag None
-  Header unset ETag
-  Header set Cache-Control "max-age=0, no-cache, no-store, must-revalidate"
-  Header set Pragma "no-cache"
-  Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
-</Files>
+<filesMatch "\.appcache">
+  Header set Cache-Control "max-age=0, must-revalidate"
+</filesMatch>
 
 
-### Additional mime types
+### File settings, mime and encoding
+AddCharset UTF-8 .html .json .js .css .map .appcache
 AddType text/cache-manifest .appcache
 <Files manifest.json>
   AddType application/manifest+json .json
@@ -49,9 +46,9 @@ RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^.*$ - [NC,L]
 
 # If a specific route is accessed directly, reply with the appropriate shell.
-RewriteRule ^gesetze/(.*) /static/gesetze.html [NC,L]
-RewriteRule ^gesetz/(.*) /static/gesetz.html [NC,L]
-RewriteRule ^suche/(.*) /static/home.html [NC,L]
+RewriteRule ^gesetze(.*) /static/gesetze.html [NC,L]
+RewriteRule ^gesetz(.*) /static/gesetz.html [NC,L]
+RewriteRule ^suche(.*) /static/home.html [NC,L]
 RewriteRule ^(.*) /static/home.html [NC,L]
 
 

@@ -67,7 +67,7 @@ var config = {
         include: SRC,
         query: { cacheDirectory: path.resolve(__dirname, 'tmp/cache') },
       },
-      { test: /\.(woff|woff2|eot|ttf)$/, loader: 'file?name=[name].[ext]' },
+      { test: /\.(woff2?|eot|ttf)$/i, loader: 'file?name=[name].[ext]' },
       { test: /\.json$/, loader: 'json', exclude: /manifest.json$/ },
       { test: /\.ejs$/, loader: 'ejs' },
     ],
@@ -112,6 +112,7 @@ if (process.env.NODE_ENV !== 'node') {
         filename: 'assets.json',
         prettyPrint: true,
         path: DST,
+        assetsRegex: /\.(woff2?|eot|ttf)$/i,
       }),
     ]),
   });
@@ -251,7 +252,7 @@ if (process.env.NODE_ENV === 'node') {
     }),
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
-        { test: /\.s|css$/, loader: 'ignore' },
+        { test: /\.s|css$/, loaders: ['css', 'postcss?parser=sugarss'] },
       ]),
     }),
     node: {

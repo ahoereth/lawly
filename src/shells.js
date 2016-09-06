@@ -55,7 +55,7 @@ module.exports = function render(locals, callback) {
         '/gesetze': 'gesetze.html',
         '/gesetz': 'gesetz.html',
         '/suche': 'home.html', // TODO: Needs shell.
-        '/': 'home.html',
+        '/index.html': 'index.html',
       }),
     });
     callback(null, appcacheContents);
