@@ -5,10 +5,24 @@ DIST=dist
 
 [[ $(ssh-add -l) =~ .ssh/id_rsa ]] || ssh-add ~/.ssh/id_rsa
 
+
+if [[ $@ != **noclean** ]]; then
+  rm -rf $DIST
+fi
+mkdir -p $DIST
+
+
+if [[ $@ != **noicons** ]]; then
+  echo "Make icons..."
+  ./scripts/make_icons ./assets/logo-1/icon.png dist/static/img
+fi
+
+
 if [[ $@ != **nobuild** ]]; then
-  echo "Build..."
+  echo "Build JS..."
   npm run build
 fi
+
 
 # Currently serving all statics from same origin because AppCache does not
 # handle font CORS well..
@@ -22,11 +36,13 @@ fi
 #    --include="app.*.js" --include="app.*.css" --include="MaterialIcons-*"
 #fi
 
+
 if [[ $@ != **nouber** ]]; then
   echo "Uberspace..."
   scp -r scripts/robots.txt $DIST/index.html $DIST/static $UBERSPACE/
   scp scripts/htaccess $UBERSPACE/.htaccess
   scp scripts/htaccessWWW $UBERSPACE_WWW/.htaccess
 fi
+
 
 echo "Done."

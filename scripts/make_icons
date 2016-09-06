@@ -1,0 +1,29 @@
+#!/bin/zsh
+if [[ $# -eq 0 ]]; then
+  print "Missing source and destination for make_icons"
+  exit
+elif [[ $# -eq 1 ]]; then
+  print "Missing destination for make_icons"
+  exit
+fi
+
+dist=$2
+filename=$(basename "$1")
+extension="${filename##*.}"
+filename="${filename%.*}"
+
+mkdir -p $2
+optim=$dist/${filename}_optim${extension}
+pngs=(16 24 32 36 48 57 64 72 76 96 120 144 152 180 192)
+
+convert $1 $dist/${filename}.png
+pngcrush -q $dist/${filename}.png $optim
+
+for size in $pngs; do
+  convert $optim -resize ${size}x${size} $dist/${filename}-${size}.png
+done
+
+ico=(16 24 32 48 64)
+convert $dist/${filename}-${^ico}.png $dist/${filename}.ico
+
+rm $dist/${filename}.png $optim
