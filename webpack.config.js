@@ -68,7 +68,7 @@ var config = {
         query: { cacheDirectory: path.resolve(__dirname, 'tmp/cache') },
       },
       { test: /\.(woff2?|eot|ttf)$/i, loader: 'file?name=[name].[ext]' },
-      { test: /\.json$/, loader: 'json', exclude: /manifest.json$/ },
+      { test: /\.json$/, loader: 'json-loader' },
       { test: /\.ejs$/, loader: 'ejs' },
     ],
   },
@@ -261,6 +261,7 @@ if (process.env.NODE_ENV === 'node') {
     },
     plugins: config.plugins.concat([
       new StaticSiteGeneratorPlugin('shells', [
+        '/static/manifest.json',
         '/static/manifest.appcache',
         '/',
         '/static/home.html',

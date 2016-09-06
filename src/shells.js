@@ -16,10 +16,11 @@ import settle from './helpers/settle';
 import { fetchLawIndex } from './modules/law_index';
 import { renderShells } from './modules/core';
 import appcacheTemplate from './appcache.ejs';
+import manifest from './manifest.json';
 
 
 const publicPath = process.env.PUBLIC_PATH;
-const readFile = partialRight(fs.readFileSync, 'utf8');
+const readJSON = flow(partialRight(fs.readFileSync, 'utf8'), JSON.parse);
 const toArray = e => (Array.isArray(e) ? e : [e]);
 const toArrays = mapValues(toArray);
 const join = a => b => `${trimEnd(a, '/')}/${trimStart(b, '/')}`;
@@ -29,28 +30,38 @@ const flatten = flow(map(map(i => i)), flattenDeep);
 const notCssOrJS = str => !str.match(/js|css$/i);
 
 
-const manifest = prefixPath('/manifest.json');
 let appcache; // Value comes from webpack config, should be first static.
 
 const ASSETS_PATH = join(process.env.DIST_PATH)('assets.json');
 const client = new ApiClient(process.env.APIURL);
-const assets = flow(readFile, JSON.parse)(ASSETS_PATH);
+const assets = readJSON(ASSETS_PATH);
 const { js, css } = toArrays(assets.app);
-
-const MANIFEST_PATH = join(process.env.DIST_PATH)(manifest);
-const manifestObj = JSON.parse(readFile(MANIFEST_PATH));
-const meta = manup(manifestObj);
 
 
 // eslint-disable-next-line import/no-commonjs
 module.exports = function render(locals, callback) {
   const { path, webpackStats: stats } = locals;
 
+  if (endsWith(path, 'manifest.json')) {
+    const images = fs.readdirSync(join(process.env.DIST_PATH)('static/img'));
+    manifest.icons = images
+      .filter(f => f.match(/icon-\d{2,3}\.png$/))
+      .map(join(prefixPath('img')))
+      .map(src => ({ src, size: (/-(\d{2,3})\.png$/).exec(src)[1] }))
+      .sort((a, b) => (b.size - a.size))
+      .map(({ src, size }) => ({
+        src, sizes: `${size}x${size}`, type: 'image/png',
+      }));
+    // callback(null, JSON.stringify(manifest, null, 2));
+    callback(null, JSON.stringify(manifest));
+  }
+
+
   if (endsWith(path, 'manifest.appcache')) {
     appcache = path;
     const externals = Object.keys(stats.compilation.assets).filter(notCssOrJS);
     const appcacheContents = appcacheTemplate({
-      assets: [manifest, ...flatten(assets), ...map(prefixPath, externals)],
+      assets: [...flatten(assets), ...map(prefixPath, externals)],
       fallback: mapValues(prefixPath, {
         '/gesetze': 'gesetze.html',
         '/gesetz': 'gesetz.html',
@@ -61,20 +72,21 @@ module.exports = function render(locals, callback) {
     callback(null, appcacheContents);
   }
 
-  let loc = stripPath(path.replace('.html', ''));
-  loc = loc !== '/home' ? loc : '/';
-  const memoryHistory = createMemoryHistory(loc);
+
+  let location = stripPath(path.replace('.html', ''));
+  location = location !== '/home' ? location : '/';
+  const memoryHistory = createMemoryHistory(location);
   const store = createStore(memoryHistory, client, {});
   const history = syncHistoryWithStore(memoryHistory, store, {
     selectLocationState: state => state.get('routing'),
   });
-  match({ history, routes, loc, basename: '/' }, (err, redirect, props) => {
+  match({ history, routes, location, basename: '/' }, (err, re, props) => {
     if (err) {
       throw new Error(err.message);
     }
 
-    if (redirect) {
-      const { pathname, search } = redirect;
+    if (re) {
+      const { pathname, search } = re;
       throw new Error(`Redirect to ${pathname}${search}`);
     }
 
@@ -95,9 +107,9 @@ module.exports = function render(locals, callback) {
           js={js}
           css={css}
           state={store.getState()}
-          manifest={manifest}
-          meta={meta}
-          title={manifestObj.short_name}
+          manifest={prefixPath('/manifest.json')}
+          meta={manup(manifest)}
+          title={manifest.short_name}
         >
           <AppServer renderProps={props} store={store} />
         </AppHtml>

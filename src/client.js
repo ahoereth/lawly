@@ -17,7 +17,6 @@ import { updateAvailable, renderShells } from './modules/core';
 
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
-import 'file?name=[name].[ext]!./manifest.json';
 
 
 const client = new ApiClient(process.env.APIURL);
