@@ -8,10 +8,12 @@ Header set Strict-Transport-Security "max-age=10886400; includeSubDomains; prelo
 
 ### Cache settings
 <filesMatch "\.(html|json)$">
-  Header set Cache-Control "max-age=86400, public"
+  #86400
+  Header set Cache-Control "max-age=60, public"
 </filesMatch>
-<filesMatch "\.(js|css|map|woff|eot)$">
-  Header set Cache-Control "max-age=2592000, public"
+<filesMatch "\.(js|css|map|woff|eot|png|ico)$">
+  #2592000
+  Header set Cache-Control "max-age=60, public"
 </filesMatch>
 <filesMatch "\.appcache">
   Header set Cache-Control "max-age=0, must-revalidate"
