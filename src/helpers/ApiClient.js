@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import { isUndefined, isPlainObject, omit, filter, partialRight } from 'lodash';
+import { isUndefined, omit, filter, uniq } from 'lodash';
 
 import DataClient from './DataClient';
 import localSearch from './LocalSearch';
@@ -7,9 +7,6 @@ import ApiError from './ApiError';
 import { joinPath, parseJWT, obj2query } from './utils';
 import { login } from '~/modules/user';
 import { FETCH_SINGLE, getLaws } from '~/modules/laws';
-
-
-const defined = partialRight(filter, x => !isUndefined(x));
 
 
 export default class ApiClient {
@@ -98,7 +95,8 @@ export default class ApiClient {
     }
 
     return {
-      method, name, action, cachable, params,
+      method, name, action, cachable,
+      params: filter(params, x => !isUndefined(x)),
       url: joinPath(this.apiurl, path),
       body: method !== 'get' ? body : undefined,
     };
@@ -171,15 +169,41 @@ export default class ApiClient {
       url, body, name, params, method, action, cachable,
     } = this.parseFetchOptions(options);
 
-    let request = fetch(url, {
-      method,
-      body: JSON.stringify(body),
-      headers: {
-        ...ApiClient.jsonHeaders,
-        ...this.headers,
-        ...options.headers,
-      },
+    let expired = true;
+    let cache = Promise.resolve();
+
+    if (cachable) {
+      cache = this.storage.get({ name, method, ...params }).then(cached => {
+        if (cached) {
+          const { data = cached, expire } = cached;
+          expired = expire && expire < Date.now();
+          if (action) {
+            this.store.dispatch({ type: action, payload: data });
+          }
+
+          return cached.data;
+        }
+
+        return undefined;
+      });
+    }
+
+    let request = cache.then(cachedResult => {
+      if (!cachedResult || expired) {
+        return fetch(url, {
+          method,
+          body: JSON.stringify(body),
+          headers: {
+            ...ApiClient.jsonHeaders,
+            ...this.headers,
+            ...options.headers,
+          },
+        });
+      }
+
+      throw new Error('FROM_CACHE');
     });
+
 
     // Server responded.
     request = request.then(res => {
@@ -200,23 +224,28 @@ export default class ApiClient {
       }
 
       // Fresh response, need to parse it.
-      return this.parseResponse(res).then(result => {
+      return this.parseResponse(res).then(data => {
         if (cachable) {
-          this.storage.stash({ name, method, ...defined(params) }, result);
+          const expire = Date.now() + (1 * 24 * 60 * 60 * 1000); // TOMORROW
+          this.storage.stash({ name, method, ...params }, { expire, data });
         }
-        return result;
+        return data;
       });
     });
 
     // Network error.
     request = request.catch(err => {
-      if (err.name !== 'ApiError') {
-        // Seemingly a network error. Stash to retry later.
+      if (err.message === 'FROM_CACHE') {
+        return cache;
+      }
+
+      if (err.name !== 'ApiError' && !cachable) {
+        // Seemingly a network error. Stash to retry later if its not cachable.
         this.storage.stashRequest(options).then(() => this.isConnected(false));
       }
 
       if (cachable) {
-        return this.storage.get({ name, method, ...defined(params) });
+        return this.storage.get({ name, method, ...params });
       }
 
       throw err;
@@ -224,10 +253,6 @@ export default class ApiClient {
 
     // If the request has an action type attached dispatch that action.
     if (action) {
-      request = request.then(
-        result => this.store.dispatch({ type: action, payload: result })
-      );
-
       // If the request is cachable answer using the cache right away, but do
       // not overwrite the API result if its back first.
       if (cachable) {
@@ -242,10 +267,14 @@ export default class ApiClient {
 
           request.then(remote => {
             remoteRequestFinished = true;
-            resolve(remote);
+            resolve(this.store.dispatch({ type: action, payload: remote }));
           });
         });
         request = pairedRequest;
+      } else {
+        request = request.then(result =>
+          this.store.dispatch({ type: action, payload: result })
+        );
       }
     }
 
@@ -322,17 +351,12 @@ export default class ApiClient {
         }
       })
       .then(result => {
-        // Fetch all starred laws in a single request and insert them into the
-        // redux store. TODO: This logic chunk does not really belong here.
-        this.get({ name: 'law', groupkey: result.laws.map(l => l.groupkey) })
-          .then(laws => (
-            !isPlainObject(laws) ? { [laws[0].groupkey]: laws } : laws
-          ))
-          .then(laws => Object.keys(laws).forEach(groupkey => {
-            const law = laws[groupkey];
-            this.storage.stash({ method: 'get', name: 'law', groupkey }, law);
-            this.store.dispatch({ type: FETCH_SINGLE, payload: law });
-          }));
+        // Fetch all starred laws and insert them into the redux store.
+        uniq(result.laws.map(law => law.groupkey)).forEach(groupkey => {
+          this.get({
+            name: 'law', groupkey, cachable: true, action: FETCH_SINGLE,
+          });
+        });
         return result;
       });
   }
