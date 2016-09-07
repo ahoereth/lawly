@@ -15,7 +15,6 @@ import {
   filterLawIndex,
   selectCollection, selectLawIndexInitial, selectLawIndexPage,
 } from '~/modules/law_index';
-import { viewLaw } from '~/modules/laws';
 import { getIndexStars, star } from '~/modules/user';
 import { getShellMode, setTitle } from '~/modules/core';
 import { LawIndex } from '~/components';
@@ -46,7 +45,6 @@ const mapDispatchToProps = {
   selectCollection,
   setTitle,
   star,
-  viewLaw,
 };
 
 
@@ -76,7 +74,6 @@ class LawIndexContainer extends React.Component {
     shells: PropTypes.bool.isRequired,
     star: PropTypes.func.isRequired,
     stars: ImmutableTypes.map.isRequired,
-    viewLaw: PropTypes.func.isRequired,
   };
 
   componentWillMount() {

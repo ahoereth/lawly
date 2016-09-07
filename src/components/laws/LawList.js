@@ -1,5 +1,6 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
+import { Link } from 'react-router';
 import { Map } from 'immutable';
 import {
   TableHeader,
@@ -8,6 +9,7 @@ import {
   Textfield,
 } from 'react-mdl';
 
+import { getNormLink } from '~/helpers';
 import { Pagination, DataTable } from '~/components';
 import styles from './lawList.sss';
 
@@ -24,7 +26,7 @@ const LawList = ({
   filter, filters,
   laws, total = laws.size,
   page, pageSize,
-  selectPage, viewLaw,
+  selectPage,
   star, stars,
 }) => {
   const areAllStarred = !!stars
@@ -61,9 +63,14 @@ const LawList = ({
         </Tooltip>
       ),
       action: (
-        <FABButton mini onClick={() => viewLaw(law)}>
-          <Icon name='launch' />
-        </FABButton>
+        <Link
+          to={getNormLink(law.get('groupkey'), law.get('enumeration'))}
+          style={{ color: 'inherit' }}
+        >
+          <FABButton mini>
+            <Icon name='launch' />
+          </FABButton>
+        </Link>
       ),
     });
   });
@@ -159,7 +166,6 @@ LawList.propTypes = {
   star: PropTypes.func,
   stars: ImmutableTypes.mapOf(PropTypes.number),
   total: PropTypes.number,
-  viewLaw: PropTypes.func.isRequired,
 };
 
 LawList.defaultProps = {

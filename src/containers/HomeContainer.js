@@ -4,7 +4,6 @@ import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
 
 import { login, logout, getUser, getUserLaws } from '~/modules/user';
-import { viewLaw } from '~/modules/laws';
 import { setTitle } from '~/modules/core';
 import { Home } from '~/components';
 
@@ -37,5 +36,5 @@ export default connect(
     user: getUser(state),
     laws: getUserLaws(state),
   }),
-  { login, logout, viewLaw, setTitle }
+  { login, logout, setTitle }
 )(HomeContainer);

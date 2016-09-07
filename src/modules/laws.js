@@ -1,10 +1,8 @@
 import { createSelector } from 'reselect';
 import { Map, List, fromJS } from 'immutable';
-import { push } from 'react-router-redux';
-import { isPlainObject, isString } from 'lodash';
+import { isPlainObject } from 'lodash';
 
 import createReducer from '~/store/createReducer';
-import { getNormLink } from '~/helpers';
 
 
 export const SCOPE = 'laws';
@@ -41,23 +39,15 @@ export const fetchLaw = groupkey => ({
   promise: api => api.get({ name: 'law', groupkey, cachable: true }),
 });
 
-export const selectLaw = groupkey => dispatch => {
+export const selectLaw = groupkey => (dispatch, getState) => {
+  // Cannot use a selector from law_index here due to circular dependencies.
+  const rootNorm = getState().getIn(['law_index', 'laws'])
+                             .find(norm => norm.get('groupkey') === groupkey);
+  if (rootNorm) {
+    dispatch({ type: FETCH_SINGLE, payload: [rootNorm.toObject()] });
+  }
   dispatch({ type: SELECT, payload: groupkey });
   return dispatch(fetchLaw(groupkey));
-};
-
-/* global encodeURIComponent */
-export const viewLaw = law => dispatch => {
-  let groupkey = isString(law) ? law : undefined;
-  let enumeration;
-  if (Map.isMap(law)) {
-    // Send the data we've got right away to avoid a blank screen.
-    dispatch({ type: FETCH_SINGLE, payload: [law.toObject()] });
-    groupkey = law.get('groupkey');
-    enumeration = law.get('enumeration');
-  }
-  enumeration = enumeration !== '0' ? enumeration : undefined;
-  dispatch(push(getNormLink(groupkey, enumeration)));
 };
 
 

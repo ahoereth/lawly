@@ -4,7 +4,7 @@ import Immutable, { List, Map } from 'immutable';
 import createReducer from '~/store/createReducer';
 import { localeCompare } from '~/helpers/utils';
 import semverCompare from '~/helpers/semverCompare';
-import { getSelection } from '~/modules/laws';
+import { getSelection } from './laws';
 
 
 export const SCOPE = 'user';

@@ -6,7 +6,7 @@ import { LawList, LoginForm } from '~/components';
 import WelcomeMessage from './WelcomeMessage';
 
 
-const Home = ({ user, laws, login, logout, viewLaw }) => (
+const Home = ({ user, laws, login, logout }) => (
   <Grid>
     <Cell col={4}>
       <WelcomeMessage {...{ user, logout }} />
@@ -18,7 +18,7 @@ const Home = ({ user, laws, login, logout, viewLaw }) => (
     }
     {!user.get('loggedin') ? null :
       <Cell col={8}>
-        <LawList laws={laws} viewLaw={viewLaw} />
+        <LawList laws={laws} />
       </Cell>
     }
   </Grid>
@@ -32,7 +32,6 @@ Home.propTypes = {
     email: PropTypes.string,
     loggedin: PropTypes.bool.isRequired,
   }).isRequired,
-  viewLaw: PropTypes.func.isRequired,
 };
 
 
