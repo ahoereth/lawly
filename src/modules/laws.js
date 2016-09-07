@@ -1,8 +1,11 @@
 import { createSelector } from 'reselect';
 import { Map, List, fromJS } from 'immutable';
-import { isPlainObject } from 'lodash';
+import { isArray, isPlainObject } from 'lodash';
 
 import createReducer from '~/store/createReducer';
+
+
+const toArray = e => (Array.isArray(e) ? e : [e]);
 
 
 export const SCOPE = 'laws';
@@ -24,9 +27,9 @@ export default createReducer(Map({
 }), {
   [SELECT]: (state, { payload }) => state.set('selected', payload),
   [FETCH_SINGLE]: (state, { payload }) => {
-    const arr = isPlainObject(payload) ? payload[Object.keys(payload)[0]]
-                                       : payload;
-    return state.setIn(['laws', arr[0].groupkey], fromJS(arr));
+    const data = isPlainObject(payload) ? payload[Object.keys(payload)[0]]
+                                        : payload;
+    return state.setIn(['laws', data[0].groupkey], fromJS(toArray(data)));
   },
 });
 
@@ -34,20 +37,18 @@ export default createReducer(Map({
 
 // ******************************************************************
 // ACTION CREATORS
-export const fetchLaw = groupkey => ({
-  type: FETCH_SINGLE,
-  promise: api => api.get({ name: 'law', groupkey, cachable: true }),
+export const fetchLaw = (groupkey, payload) => ({
+  type: FETCH_SINGLE, payload,
+  api: { method: 'get', name: 'law', groupkey, cachable: true },
 });
 
 export const selectLaw = groupkey => (dispatch, getState) => {
   // Cannot use a selector from law_index here due to circular dependencies.
-  const rootNorm = getState().getIn(['law_index', 'laws'])
-                             .find(norm => norm.get('groupkey') === groupkey);
-  if (rootNorm) {
-    dispatch({ type: FETCH_SINGLE, payload: [rootNorm.toObject()] });
-  }
+  const norm = getState().getIn(['law_index', 'laws']).find(
+    norm => norm.get('groupkey') === groupkey
+  );
   dispatch({ type: SELECT, payload: groupkey });
-  return dispatch(fetchLaw(groupkey));
+  return dispatch(fetchLaw(groupkey, norm ? norm.toObject() : undefined));
 };
 
 

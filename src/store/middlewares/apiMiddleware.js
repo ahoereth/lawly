@@ -19,9 +19,15 @@ export default function apiMiddleware(client) {
     }
 
     // Simulate the action.
-    next({ type, payload });
+    if (payload) {
+      next({ type, payload });
+    }
 
-    const { method, name } = api;
-    return client[method]({ ...payload, name, action: type });
+    const { method, name, ...rest } = api;
+    if (!name) {
+      throw new Error('no API resource name given');
+    }
+
+    return client[method]({ ...payload, ...rest, name, action: type });
   };
 }

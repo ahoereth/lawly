@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import { isUndefined, isPlainObject, isError, omit } from 'lodash';
+import { isUndefined, isPlainObject, omit, filter, partialRight } from 'lodash';
 
 import DataClient from './DataClient';
 import localSearch from './LocalSearch';
@@ -7,6 +7,9 @@ import ApiError from './ApiError';
 import { joinPath, parseJWT, obj2query } from './utils';
 import { login } from '~/modules/user';
 import { FETCH_SINGLE, getLaws } from '~/modules/laws';
+
+
+const defined = partialRight(filter, x => !isUndefined(x));
 
 
 export default class ApiClient {
@@ -199,7 +202,7 @@ export default class ApiClient {
       // Fresh response, need to parse it.
       return this.parseResponse(res).then(result => {
         if (cachable) {
-          this.storage.stash({ name, method, ...params }, result);
+          this.storage.stash({ name, method, ...defined(params) }, result);
         }
         return result;
       });
@@ -213,25 +216,37 @@ export default class ApiClient {
       }
 
       if (cachable) {
-        return this.storage.get({ name, method, ...params });
+        return this.storage.get({ name, method, ...defined(params) });
       }
 
       throw err;
     });
 
-    // If the request has an action type attached dispatch that action here.
+    // If the request has an action type attached dispatch that action.
     if (action) {
-      return request.then(
-        result => this.store.dispatch({ type: action, payload: result }),
-        err => {
-          if (err === ApiClient.NO_CONNECTION_NO_CACHE) return true;
-          return this.store.dispatch({
-            type: action,
-            error: true,
-            payload: isError(err) ? err.toString() : err,
-          });
-        }
+      request = request.then(
+        result => this.store.dispatch({ type: action, payload: result })
       );
+
+      // If the request is cachable answer using the cache right away, but do
+      // not overwrite the API result if its back first.
+      if (cachable) {
+        const pairedRequest = new Promise(resolve => {
+          let remoteRequestFinished = false;
+
+          this.storage.get({ name, method, ...params }).then(cached => {
+            if (cached && !remoteRequestFinished) {
+              resolve(this.store.dispatch({ type: action, payload: cached }));
+            }
+          });
+
+          request.then(remote => {
+            remoteRequestFinished = true;
+            resolve(remote);
+          });
+        });
+        request = pairedRequest;
+      }
     }
 
     return request;
