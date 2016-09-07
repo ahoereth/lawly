@@ -1,5 +1,5 @@
 import { b64decode } from './base64';
-import { isBoolean, endsWith } from 'lodash';
+import { isBoolean, endsWith, isString } from 'lodash';
 
 
 /**
@@ -105,6 +105,7 @@ const UMLAUTS = { '\u00e4': 'ae', '\u00fc': 'ue', '\u00f6': 'oe',
  * @return {string}
  */
 export function umlauts2digraphs(str) {
+  if (!isString(str)) { return str; }
   return str.replace(/[äöüÄÖÜß]/g, key => UMLAUTS[key]);
 }
 
