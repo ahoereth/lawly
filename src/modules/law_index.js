@@ -55,16 +55,23 @@ export const fetchLawIndex = (params) => ({
   api: { method: 'get', name: 'laws', cachable: true, ...params },
 });
 
+// TODO: Thing action creator actually is horrible.
 export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
+  const state = getState();
+  const old = state.get('routing', {}).locationBeforeTransitions.pathname;
   const pageInt = isNumeric(page) ? parseInt(page, 10) : 1;
-  const initial = getState().getIn([SCOPE, 'initial']);
-  const collection = getState().getIn([SCOPE, 'collection']);
+  const lawIndex = state.get(SCOPE);
+  const initial = lawIndex.get('initial');
+  const collection = lawIndex.get('collection');
   const collectionPath = collection ? `${collection}/` : '';
   const initialPath = initial ? `${initial}/` : '';
   // Hack for numeric initials: When initial is numeric, always show page.
   const pagePath = pageInt > 1 || isNumeric(initial) ? pageInt : '';
-  dispatch({ type: SELECT_PAGE, payload: pageInt });
-  dispatch(push(`/gesetze/${collectionPath}${initialPath}${pagePath}`));
+  const path = `/gesetze/${collectionPath}${initialPath}${pagePath}`;
+  if (old !== path) {
+    dispatch({ type: SELECT_PAGE, payload: pageInt });
+    dispatch(push(path));
+  }
 };
 
 export const selectLawIndexInitial = (initial = '') => (dispatch) => {
