@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import { batchActions } from 'redux-batched-actions';
 import { isUndefined, omit, filter, uniq } from 'lodash';
 
 import DataClient from './DataClient';
@@ -352,11 +353,13 @@ export default class ApiClient {
       })
       .then(result => {
         // Fetch all starred laws and insert them into the redux store.
-        uniq(result.laws.map(law => law.groupkey)).forEach(groupkey => {
-          this.get({
-            name: 'law', groupkey, cachable: true, action: FETCH_SINGLE,
-          });
-        });
+        const groupkeys = uniq(result.laws.map(law => law.groupkey));
+        Promise.all(groupkeys.map(groupkey => (
+          this.get({ name: 'law', groupkey, cachable: true })
+        ))).then(laws => this.store.dispatch(batchActions(
+          laws.map(payload => ({ type: FETCH_SINGLE, payload }))
+        )));
+
         return result;
       });
   }

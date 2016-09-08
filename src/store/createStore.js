@@ -2,6 +2,7 @@ import { createStore as _createStore, applyMiddleware, compose } from 'redux';
 import { routerMiddleware } from 'react-router-redux';
 import Immutable from 'immutable';
 import createDebounce from 'redux-debounced';
+import { enableBatching } from 'redux-batched-actions';
 import { isUndefined as isUndef } from 'lodash';
 
 import rootReducer from '~/modules';
@@ -28,11 +29,14 @@ export default function createStore(history, client, data = {}) {
     devToolsExtension = global.window.devToolsExtension();
   }
 
-  const finalCreateStore = compose(
-    applyMiddleware(...middlewares),
-    devToolsExtension
-  )(_createStore);
-  const store = finalCreateStore(rootReducer, Immutable.fromJS(data));
+  const store = _createStore(
+    enableBatching(rootReducer),
+    Immutable.fromJS(data),
+    compose(
+      applyMiddleware(...middlewares),
+      devToolsExtension,
+    )
+  );
 
   client.init(store);
 
