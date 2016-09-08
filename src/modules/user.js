@@ -35,18 +35,19 @@ export default createReducer(Map({
     loggedin: false, email: undefined, laws: Map(), error: undefined,
   }),
   [STAR]: (state, { payload }) => state.update('laws', laws => {
-    const { groupkey: key, enumeration } = payload;
+    const { groupkey, enumeration = '0', ...rest } = payload;
     const targetkey = laws.findKey(norm =>
-      norm.get('groupkey') === key && norm.get('enumeration') === enumeration
+      norm.get('groupkey') === groupkey &&
+      norm.get('enumeration') === enumeration
     );
 
     // Update existing.
     if (targetkey >= 0) {
-      return laws.mergeIn([targetkey], Map(payload));
+      return laws.mergeIn([targetkey], Map({ groupkey, enumeration, ...rest }));
     }
 
     // Add new and resort.
-    return laws.push(Map(payload)).sortBy(
+    return laws.push(Map({ groupkey, enumeration, ...rest })).sortBy(
       n => [n.get('groupkey'), n.get('enumeration')],
       ([k1, e1], [k2, e2]) => (k1 !== k2 ? localeCompare(k1, k2)
                                          : semverCompare(e1, e2))
@@ -72,7 +73,7 @@ export const star = (law, state = true) => {
   const { title, groupkey, enumeration } = Map.isMap(law) ? law.toJS() : law;
   return {
     type: STAR,
-    payload: { title, groupkey, enumeration: enumeration || 0, starred: state },
+    payload: { title, groupkey, enumeration, starred: state },
     api: { method: 'put', name: 'user_law' },
   };
 };
