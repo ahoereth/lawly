@@ -4,6 +4,7 @@ import Immutable, { List, Map } from 'immutable';
 import { pick } from 'lodash';
 
 import createReducer from '~/store/createReducer';
+import { escapeStringRegexp } from '~/helpers';
 import { isNumeric } from '~/helpers/utils';
 import { getIndexStars } from './user';
 
@@ -144,7 +145,8 @@ export const getLawsByInitial = createSelector(
   [getLawsByCollection, getInitial],
   (laws, char) => {
     if (!char) { return laws; }
-    return laws.filter(law => law.get('groupkey')[0].toLowerCase() === char);
+    const pattern = new RegExp(`^${char}`, 'i');
+    return laws.filter(law => pattern.test(law.get('groupkey')));
   }
 );
 
@@ -167,9 +169,10 @@ export const getStarFilteredLawsByInitial = createSelector(
 export const getStarAndKeyFilteredLawsByInitial = createSelector(
   [getStarFilteredLawsByInitial, getFilters],
   (laws, filters) => {
-    const k = filters.get('groupkey', '').toLowerCase();
-    if (k) {
-      return laws.filter(l => l.get('groupkey').toLowerCase().indexOf(k) > -1);
+    const groupkey = filters.get('groupkey');
+    if (groupkey) {
+      const pattern = new RegExp(escapeStringRegexp(groupkey), 'i');
+      return laws.filter(law => pattern.test(law.get('groupkey')));
     }
 
     return laws;
@@ -182,9 +185,10 @@ export const getStarAndKeyFilteredLawsByInitial = createSelector(
 export const getFilteredLaws = createSelector(
   [getStarAndKeyFilteredLawsByInitial, getFilters],
   (laws, filters) => {
-    const t = filters.get('title', '').toLowerCase();
-    if (t) {
-      return laws.filter(l => l.get('title').toLowerCase().indexOf(t) > -1);
+    const title = filters.get('title');
+    if (title) {
+      const pattern = new RegExp(escapeStringRegexp(title), 'i');
+      return laws.filter(law => pattern.test(law.get('title')));
     }
 
     return laws;
