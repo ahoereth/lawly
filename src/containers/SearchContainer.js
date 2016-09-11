@@ -13,10 +13,6 @@ import {
   getResultsByPage,
   getTotal,
 } from '~/modules/search';
-import {
-  star,
-  getIndexStars,
-} from '~/modules/user';
 import { setTitle } from '~/modules/core';
 import { Search } from '~/components';
 
@@ -26,7 +22,6 @@ const mapStateToProps = state => ({
   pageSize: getPageSize(state),
   query: getQuery(state),
   results: getResultsByPage(state),
-  stars: getIndexStars(state),
   total: getTotal(state),
 });
 
@@ -34,7 +29,6 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   search,
   setTitle,
-  star,
   selectPage,
 };
 
@@ -51,8 +45,6 @@ class SearchContainer extends React.Component {
     search: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
     setTitle: PropTypes.func.isRequired,
-    star: PropTypes.func.isRequired,
-    stars: ImmutableTypes.map.isRequired,
     total: PropTypes.number.isRequired,
   };
 

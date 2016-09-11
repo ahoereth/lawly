@@ -13,8 +13,6 @@ const Search = ({
   results,
   search,
   selectPage,
-  star,
-  stars,
   total,
 }) => (
   <Grid>
@@ -31,8 +29,6 @@ const Search = ({
         page={page}
         pageSize={pageSize}
         selectPage={selectPage}
-        star={star}
-        stars={stars}
         total={total}
       />
     </Cell>
@@ -46,8 +42,6 @@ Search.propTypes = {
   results: ImmutableTypes.list.isRequired,
   search: PropTypes.func.isRequired,
   selectPage: PropTypes.func.isRequired,
-  star: PropTypes.func.isRequired,
-  stars: ImmutableTypes.map.isRequired,
   total: PropTypes.number.isRequired,
 };
 

@@ -126,12 +126,11 @@ const LawList = ({
         </TableHeader>
         <TableHeader
           name='action' numeric
-          tooltip={total <= 50
-            ? (!areAllStarred ? 'Alle speichern' : 'Alle löschen')
-            : ''
+          tooltip={!star || total > 50 ? '' :
+            (!areAllStarred ? 'Alle speichern' : 'Alle löschen')
           }
         >
-          {total > 50 ? null :
+          {!star || total > 50 ? null :
             <FABButton
               mini ripple
               colored={areAllStarred}

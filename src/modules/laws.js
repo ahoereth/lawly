@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { Map, List, fromJS } from 'immutable';
-import { isArray, isPlainObject } from 'lodash';
+import { isPlainObject } from 'lodash';
 
 import createReducer from '~/store/createReducer';
 
