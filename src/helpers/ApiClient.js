@@ -20,6 +20,7 @@ export default class ApiClient {
   };
 
   static resources = {
+    base: '/',
     laws: '/laws',
     law: '/laws/:groupkey',
     users: '/users/:email',
@@ -34,7 +35,7 @@ export default class ApiClient {
   constructor(apiurl) {
     this.headers = {};
     this.apiurl = apiurl;
-    this.online = true;
+    this.online = false;
     this.storage = new DataClient();
   }
 
@@ -51,16 +52,28 @@ export default class ApiClient {
   }
 
   isConnected(status = null) {
-    if (status !== null) {
+    if (status !== null) { // set
       if (this.online !== status) {
         this.store.dispatch(setOnline(status));
+        clearInterval(this.networkCheck);
+        if (status) {
+          console.log('start checking sometimes');
+          this.networkCheck = setInterval(
+            () => this.fetch({ method: 'get', name: 'base' }),
+            20000
+          );
+        } else {
+          console.log('start checking often');
+          this.networkCheck = setInterval(
+            () => this.fetch({ method: 'get', name: 'base' }),
+            2500
+          );
+        }
       }
 
-      this.online = status; // set
+      this.online = status;
 
       if (this.online) {
-        // TODO: Stop testing network frequently.
-
         // Refire the earliest failed request if any. This triggers a loop
         // which will fire off all outstanding one by one.
         this.storage.popRequest().then(request => {
@@ -68,8 +81,6 @@ export default class ApiClient {
             this.fetch(request);
           }
         });
-      } else {
-        // TODO: Start testing network connection frequently.
       }
     }
 
