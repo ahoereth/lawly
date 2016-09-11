@@ -59,11 +59,13 @@ const AppHtml = ({
     <body>
       <div id='app'>{children}</div>
       <script
+        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: `window.__assets=${JSON.stringify(assets)}`,
         }}
       />
       <script
+        // eslint-disable-next-line react/no-danger
         dangerouslySetInnerHTML={{
           __html: `window.__state=${JSON.stringify(state.toJS())}`,
         }}

@@ -27,7 +27,6 @@ const LawIndexLead = ({
   const { groupkey, title, starred } = filters.toObject();
   const initial = rawInitial.toUpperCase();
   const filtered = groupkey || title || starred || initial;
-  const total = 5000;
   return (
     <p>
       {(!filtered && !collection.has('title')

@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
-import { TableHeader } from 'react-mdl';
 import { List } from 'immutable';
 import classNames from 'classnames';
 import { range, sample, isPlainObject as isObj } from 'lodash';

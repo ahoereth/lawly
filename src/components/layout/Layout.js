@@ -26,7 +26,7 @@ const Layout = ({
   outdated,
   navigation,
   search,
-  query
+  query,
 }) => (
   <MaterialLayout fixedHeader>
     <Header
