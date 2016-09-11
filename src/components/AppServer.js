@@ -10,8 +10,8 @@ const AppServer = ({ renderProps, store }) => (
 );
 
 AppServer.propTypes = {
-  renderProps: PropTypes.any.isRequired,
-  store: PropTypes.any.isRequired,
+  renderProps: PropTypes.objectOf(PropTypes.object).isRequired,
+  store: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 

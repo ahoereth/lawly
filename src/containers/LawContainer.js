@@ -30,10 +30,11 @@ class LawContainer extends React.Component {
   static propTypes = {
     annotations: ImmutableTypes.map.isRequired,
     norms: ImmutableTypes.list.isRequired,
-    params: PropTypes.shape({
+    // See github.com/yannickcr/eslint-plugin-react/issues/816
+    params: PropTypes.shape({ /* eslint-disable react/no-unused-prop-types */
       groupkey: PropTypes.string,
       enumeration: PropTypes.string,
-    }).isRequired,
+    }).isRequired, /* eslint-enable react/no-unused-prop-types */
     push: PropTypes.func.isRequired,
     selectLaw: PropTypes.func.isRequired,
     setTitle: PropTypes.func.isRequired,

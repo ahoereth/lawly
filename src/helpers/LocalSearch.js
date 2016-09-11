@@ -21,6 +21,21 @@ class LocalSearch {
     'body',
   ];
 
+  static parseResult({ result, laws, limit = result.length }) {
+    // Currently parsing the result outside of the web worker because
+    // sending the required laws to the worker is expensive.
+    return {
+      total: limit > result.length ? result.length : limit,
+      results: result.slice(0, limit).map(obj => {
+        const [k, n] = obj.ref.split('::');
+        return {
+          groupkey: k, enumeration: n,
+          title: laws.get(k).find(l => l.get('enumeration') === n).get('title'),
+        };
+      }),
+    };
+  }
+
   constructor() {
     /* global Worker */
     this.worker = getWorker();
@@ -36,9 +51,9 @@ class LocalSearch {
       case 'response':
         switch (cmd) {
           case 'search':
-            this.promises[id].resolve(
-              this.parseResult({ result: val, ...this.promises[id].data })
-            );
+            this.promises[id].resolve(LocalSearch.parseResult(
+              { result: val, ...this.promises[id].data }
+            ));
             delete this.promises[id];
             break;
           default:
@@ -55,21 +70,6 @@ class LocalSearch {
 
   indexLaw(norms) {
     this.worker.postMessage({ cmd: 'indexLaw', args: [norms] });
-  }
-
-  parseResult({ result, laws, limit = result.length }) {
-    // Currently parsing the result outside of the web worker because
-    // sending the required laws to the worker is expensive.
-    return {
-      total: limit > result.length ? result.length : limit,
-      results: result.slice(0, limit).map(obj => {
-        const [k, n] = obj.ref.split('::');
-        return {
-          groupkey: k, enumeration: n,
-          title: laws.get(k).find(l => l.get('enumeration') === n).get('title'),
-        };
-      }),
-    };
   }
 
   search(query, data) {

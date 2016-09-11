@@ -8,6 +8,7 @@ import { setTitle } from '~/modules/core';
 import { Home } from '~/components';
 
 
+/* eslint-disable react/no-unused-prop-types */
 class HomeContainer extends React.Component {
   static propTypes = {
     laws: ImmutableTypes.list,

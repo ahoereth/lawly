@@ -5,7 +5,7 @@ import { isUndefined } from 'lodash';
 
 
 class WorkerMock {
-  onmessage() {
+  onmessage() { // eslint-disable-line class-methods-use-this
     return;
   }
 

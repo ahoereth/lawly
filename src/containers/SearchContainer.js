@@ -33,6 +33,7 @@ const mapDispatchToProps = {
 };
 
 
+/* eslint-disable react/no-unused-prop-types */
 class SearchContainer extends React.Component {
   static propTypes = {
     page: PropTypes.number.isRequired,

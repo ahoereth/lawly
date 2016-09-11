@@ -83,7 +83,7 @@ const LawList = ({
         keyProp='key'
         shell={shell}
       >
-        {!star ? null :
+        {!!star &&
           <TableHeader
             name='star' numeric
             tooltip={!filter ? undefined : 'Nur gespeicherte Normen zeigen'}

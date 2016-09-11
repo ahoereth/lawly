@@ -19,9 +19,13 @@ class List extends React.Component {
   }
 }
 
+// See github.com/yannickcr/eslint-plugin-react/issues/816
+/* eslint-disable react/no-unused-prop-types */
 List.propTypes = {
-  children: PropTypes.array.isRequired,
-  className: PropTypes.string,
+  children: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string,
+    items: PropTypes.array,
+  })).isRequired,
 };
 
 

@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux-immutablejs';
 import { routerReducer } from 'react-router-redux';
 
+/* eslint-disable import/no-named-as-default */
 import core from '~/modules/core';
-// eslint-disable-next-line camelcase
-import law_index from '~/modules/law_index';
+import law_index from '~/modules/law_index'; // eslint-disable-line camelcase
 import laws from '~/modules/laws';
 import search from '~/modules/search';
 import user from '~/modules/user';
@@ -18,8 +18,7 @@ export default combineReducers({
 });
 
 export core from '~/modules/core';
-// eslint-disable-next-line camelcase
-export law_index from '~/modules/law_index';
+export law_index from '~/modules/law_index'; // eslint-disable-line camelcase
 export laws from '~/modules/laws';
 export search from '~/modules/search';
 export user from '~/modules/user';

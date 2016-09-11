@@ -48,6 +48,7 @@ const mapDispatchToProps = {
 };
 
 
+/* eslint-disable react/no-unused-prop-types */
 class LawIndexContainer extends React.Component {
   static propTypes = {
     collection: ImmutableTypes.map.isRequired,

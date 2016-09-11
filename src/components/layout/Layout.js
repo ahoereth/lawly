@@ -39,6 +39,8 @@ const Layout = ({ title, children, outdated, navigation, search, query }) => (
   </MaterialLayout>
 );
 
+// See github.com/yannickcr/eslint-plugin-react/issues/816
+/* eslint-disable react/no-unused-prop-types */
 Layout.propTypes = {
   children: PropTypes.node,
   outdated: PropTypes.bool.isRequired,

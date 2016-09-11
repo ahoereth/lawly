@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import { Textfield } from 'react-mdl';
 
 
-const SearchInput = ({ expandable, query, style, search }) => (
+const SearchInput = ({ expandable, query, search, ...otherProps }) => (
   <Textfield
     value={query}
     onChange={(e) => search(e.currentTarget.value)}
@@ -10,7 +10,7 @@ const SearchInput = ({ expandable, query, style, search }) => (
     expandable={expandable}
     expandableIcon='search'
     floatingLabel={!expandable}
-    style={style}
+    {...otherProps}
   />
 );
 
@@ -18,7 +18,6 @@ SearchInput.propTypes = {
   expandable: PropTypes.bool,
   query: PropTypes.string,
   search: PropTypes.func.isRequired,
-  style: PropTypes.object,
 };
 
 SearchInput.defaultProps = {
