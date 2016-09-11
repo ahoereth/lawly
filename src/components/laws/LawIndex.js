@@ -15,6 +15,7 @@ const LawIndex = ({
   filter,
   filters,
   initials,
+  isOnline,
   laws,
   page,
   pageSize,
@@ -50,6 +51,7 @@ const LawIndex = ({
         filters={filters}
       />
       <LawList
+        disableUnstarred={!isOnline}
         laws={laws}
         page={page}
         pageSize={pageSize}
@@ -64,6 +66,7 @@ const LawIndex = ({
   </Grid>
 );
 
+
 LawIndex.propTypes = {
   count: PropTypes.number.isRequired,
   collection: ImmutableTypes.mapContains({
@@ -73,6 +76,7 @@ LawIndex.propTypes = {
   filter: PropTypes.func,
   filters: ImmutableTypes.map,
   initials: ImmutableTypes.listOf(PropTypes.string).isRequired,
+  isOnline: PropTypes.bool.isRequired,
   laws: ImmutableTypes.list.isRequired,
   page: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
@@ -82,6 +86,11 @@ LawIndex.propTypes = {
   selectedInitial: PropTypes.string.isRequired,
   star: PropTypes.func.isRequired,
   stars: ImmutableTypes.map.isRequired,
+};
+
+
+LawIndex.defaultProps = {
+  isOnline: true,
 };
 
 

@@ -19,9 +19,23 @@ function reload() {
 }
 
 
-const Layout = ({ title, children, outdated, navigation, search, query }) => (
+const Layout = ({
+  isOnline,
+  title,
+  children,
+  outdated,
+  navigation,
+  search,
+  query
+}) => (
   <MaterialLayout fixedHeader>
-    <Header title={title} links={navigation} search={search} query={query} />
+    <Header
+      isOnline={isOnline}
+      title={title}
+      links={navigation}
+      search={search}
+      query={query}
+    />
     {/* <Drawer title={title} primary={navigation} /> */}
     <Content>
       {children}
@@ -43,6 +57,7 @@ const Layout = ({ title, children, outdated, navigation, search, query }) => (
 /* eslint-disable react/no-unused-prop-types */
 Layout.propTypes = {
   children: PropTypes.node,
+  isOnline: PropTypes.bool.isRequired,
   outdated: PropTypes.bool.isRequired,
   navigation: PropTypes.arrayOf(PropTypes.shape({
     to: PropTypes.string.isRequired,

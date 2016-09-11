@@ -6,6 +6,7 @@ import DataClient from './DataClient';
 import localSearch from './LocalSearch';
 import ApiError from './ApiError';
 import { joinPath, parseJWT, obj2query } from './utils';
+import { setOnline } from '~/modules/core';
 import { login } from '~/modules/user';
 import { FETCH_SINGLE, getLaws } from '~/modules/laws';
 
@@ -51,6 +52,10 @@ export default class ApiClient {
 
   isConnected(status = null) {
     if (status !== null) {
+      if (this.online !== status) {
+        this.store.dispatch(setOnline(status));
+      }
+
       this.online = status; // set
 
       if (this.online) {

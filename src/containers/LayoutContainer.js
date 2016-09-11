@@ -3,7 +3,7 @@ import shallowCompare from 'react-addons-shallow-compare';
 import { connect } from 'react-redux';
 
 import { search, getQuery } from '~/modules/search';
-import { getTitle, isUpdateAvailable } from '~/modules/core';
+import { getTitle, isUpdateAvailable, isOnline } from '~/modules/core';
 import { Layout } from '~/components';
 
 
@@ -14,9 +14,23 @@ const navigation = [
 ];
 
 
+const mapStateToProps = state => ({
+  isOnline: isOnline(state),
+  title: getTitle(state),
+  outdated: isUpdateAvailable(state),
+  query: getQuery(state),
+});
+
+
+const mapDispatchToProps = {
+  search,
+};
+
+
 class LayoutContainer extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
+    isOnline: PropTypes.bool.isRequired,
     outdated: PropTypes.bool.isRequired,
     query: PropTypes.string,
     search: PropTypes.func.isRequired,
@@ -28,10 +42,11 @@ class LayoutContainer extends React.Component {
   }
 
   render() {
-    const { children, outdated, query, search, title } = this.props;
+    const { children, isOnline, outdated, query, search, title } = this.props;
 
     return (
       <Layout
+        isOnline={isOnline}
         title={title}
         navigation={navigation}
         search={search}
@@ -43,18 +58,6 @@ class LayoutContainer extends React.Component {
     );
   }
 }
-
-
-const mapStateToProps = state => ({
-  title: getTitle(state),
-  outdated: isUpdateAvailable(state),
-  query: getQuery(state),
-});
-
-
-const mapDispatchToProps = {
-  search,
-};
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(LayoutContainer);

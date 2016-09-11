@@ -16,7 +16,7 @@ import {
   selectCollection, selectLawIndexInitial, selectLawIndexPage,
 } from '~/modules/law_index';
 import { getIndexStars, star } from '~/modules/user';
-import { getShellMode, setTitle } from '~/modules/core';
+import { getShellMode, setTitle, isOnline } from '~/modules/core';
 import { LawIndex } from '~/components';
 import { isNumeric as isNum } from '~/helpers/utils';
 
@@ -24,6 +24,7 @@ import { isNumeric as isNum } from '~/helpers/utils';
 const mapStateToProps = state => ({
   count: getFilteredLawsCount(state),
   isLoaded: isLoaded(state),
+  isOnline: isOnline(state),
   laws: getFilteredLawsByPage(state),
   initials: getInitials(state),
   page: getPage(state),
@@ -59,6 +60,7 @@ class LawIndexContainer extends React.Component {
     filters: ImmutableTypes.map,
     initials: ImmutableTypes.list.isRequired,
     isLoaded: PropTypes.bool.isRequired,
+    isOnline: PropTypes.bool.isRequired,
     laws: ImmutableTypes.list.isRequired,
     page: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,

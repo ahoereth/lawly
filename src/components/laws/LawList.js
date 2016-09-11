@@ -28,6 +28,7 @@ const LawList = ({
   page, pageSize,
   selectPage,
   star, stars,
+  disableUnstarred,
 }) => {
   const areAllStarred = !!stars
     ? laws.filter(law => stars.get(law.get('groupkey')) >= 0).size === laws.size
@@ -36,25 +37,25 @@ const LawList = ({
 
   const rows = laws.map(law => {
     const state = stars ? stars.get(law.get('groupkey'), -2) : null;
-    /* eslint-disable no-nested-ternary */
+    const groupkey = law.get('groupkey');
+    const enumeration = law.get('enumeration');
     return Map({
-      title: law.get('title'),
-      groupkey: law.get('groupkey'),
-      key: `${law.get('groupkey')}${law.get('enumeration')}`,
-      star: !star ? null : (
+      title: law.get('title'), groupkey,
+      key: `${groupkey}${enumeration}`,
+      star: star && (
         <Tooltip
           label={
-            state === -2
-              ? 'Tippen zum Speichern'
-              : state === -1
-                ? 'Beinhaltet markierte Normen, klicken zum Speichern'
-                : state === 0
-                  ? 'Tippen zum Löschen'
-                  : // state === 1
-                    'Beinhaltet markierte Normen, tippen zum Löschen'
+            /* eslint-disable no-nested-ternary */
+            disableUnstarred && state === -2 ? 'Online gehen zum speichern' :
+            state === -2 ? 'Tippen zum Speichern' :
+            state === -1 ? 'Beinhaltet Lesezeichen, klicken zum Speichern' :
+            state === 0 ? 'Tippen zum Löschen' :
+                          'Beinhaltet Lesezeichen, tippen zum Löschen'
+            /* eslint-enable no-nested-ternary */
           }
         >
           <IconButton
+            disabled={disableUnstarred && state === -2}
             ripple
             colored={state >= 0}
             name={Math.abs(state) === 1 ? 'collections_bookmark' : 'book'}
@@ -62,14 +63,13 @@ const LawList = ({
           />
         </Tooltip>
       ),
-      action: (
+      action: disableUnstarred && state === -2 ?
+        <FABButton mini disabled><Icon name='launch' /></FABButton> : (
         <Link
-          to={getNormLink(law.get('groupkey'), law.get('enumeration'))}
+          to={getNormLink(groupkey, enumeration)}
           style={{ color: 'inherit' }}
         >
-          <FABButton mini>
-            <Icon name='launch' />
-          </FABButton>
+          <FABButton mini><Icon name='launch' /></FABButton>
         </Link>
       ),
     });
@@ -126,6 +126,7 @@ const LawList = ({
         </TableHeader>
         <TableHeader
           name='action' numeric
+          // eslint-disable-next-line no-nested-ternary
           tooltip={!star || total > 50 ? '' :
             (!areAllStarred ? 'Alle speichern' : 'Alle löschen')
           }
@@ -152,7 +153,9 @@ const LawList = ({
   );
 };
 
+
 LawList.propTypes = {
+  disableUnstarred: PropTypes.bool.isRequired,
   filter: PropTypes.func,
   filters: ImmutableTypes.map,
   laws: ImmutableTypes.listOf(ImmutableTypes.mapContains({
@@ -167,7 +170,9 @@ LawList.propTypes = {
   total: PropTypes.number,
 };
 
+
 LawList.defaultProps = {
+  disableUnstarred: false,
   page: 1,
   pageSize: 20,
 };
