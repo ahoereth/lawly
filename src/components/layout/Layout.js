@@ -34,7 +34,7 @@ const Layout = ({ title, children, outdated, navigation, search, query }) => (
       timeout={15000}
       action='Jetzt laden'
     >
-      Neue Version verfügbar, Aktualisieren empfohlen.
+      Aktualisierung verfügbar
     </Snackbar>
   </MaterialLayout>
 );
