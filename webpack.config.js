@@ -129,7 +129,7 @@ if (process.env.NODE_ENV === 'development') {
   ];
 
   config = Object.assign({}, config, {
-    devtool: 'cheap-module-source-map',
+    devtool: 'eval',
     watch: true,
     entry: Object.assign({}, config.entry, {
       app: hotreloading.concat([config.entry.app]),
