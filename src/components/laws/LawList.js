@@ -31,18 +31,23 @@ const LawList = ({
   disableUnstarred,
   ...otherProps,
 }) => {
-  const areAllStarred = !!stars
-    ? laws.filter(law => stars.get(law.get('groupkey')) >= 0).size === laws.size
-    : false;
-  const starMany = laws => laws.forEach(law => star(law, !areAllStarred));
-
   const rows = laws.map(law => {
     const state = stars ? stars.get(law.get('groupkey'), -2) : null;
     const groupkey = law.get('groupkey');
+    const title = law.get('title');
     const enumeration = law.get('enumeration');
     return Map({
-      title: law.get('title'), groupkey,
       key: `${groupkey}${enumeration}`,
+      groupkey: disableUnstarred && state === -2 ? groupkey : (
+        <Link to={getNormLink(groupkey, enumeration)}>
+          {groupkey}
+        </Link>
+      ),
+      title: disableUnstarred && state === -2 ? title : (
+        <Link to={getNormLink(groupkey, enumeration)}>
+          {title}
+        </Link>
+      ),
       star: star && (
         <Tooltip
           label={
@@ -63,15 +68,6 @@ const LawList = ({
             onClick={() => star(law, state < 0)}
           />
         </Tooltip>
-      ),
-      action: disableUnstarred && state === -2 ?
-        <FABButton mini disabled><Icon name='launch' /></FABButton> : (
-        <Link
-          to={getNormLink(groupkey, enumeration)}
-          style={{ color: 'inherit' }}
-        >
-          <FABButton mini><Icon name='launch' /></FABButton>
-        </Link>
       ),
     });
   });
@@ -123,23 +119,6 @@ const LawList = ({
               label='Bezeichnung'
               floatingLabel
             />
-          }
-        </TableHeader>
-        <TableHeader
-          name='action' numeric
-          // eslint-disable-next-line no-nested-ternary
-          tooltip={!star || total > 50 ? '' :
-            (!areAllStarred ? 'Alle speichern' : 'Alle löschen')
-          }
-        >
-          {!star || total > 50 ? null :
-            <FABButton
-              mini ripple
-              colored={areAllStarred}
-              onClick={() => starMany(laws)}
-            >
-              <Icon name='save' />
-            </FABButton>
           }
         </TableHeader>
       </DataTable>
