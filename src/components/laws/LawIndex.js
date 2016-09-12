@@ -6,6 +6,7 @@ import LawList from './LawList';
 import LawIndexLead from './LawIndexLead';
 import LawInitialChooser from './LawInitialChooser';
 import LawCollectionChooser from './LawCollectionChooser';
+import { lawlist } from './lawIndex.sss';
 
 
 const LawIndex = ({
@@ -51,6 +52,7 @@ const LawIndex = ({
         filters={filters}
       />
       <LawList
+        className={lawlist}
         disableUnstarred={!isOnline}
         laws={laws}
         page={page}

@@ -29,6 +29,7 @@ const LawList = ({
   selectPage,
   star, stars,
   disableUnstarred,
+  ...otherProps,
 }) => {
   const areAllStarred = !!stars
     ? laws.filter(law => stars.get(law.get('groupkey')) >= 0).size === laws.size
@@ -76,7 +77,7 @@ const LawList = ({
   });
 
   return (
-    <div>
+    <div {...otherProps}>
       <DataTable
         rows={rows}
         className={styles.datatable}
