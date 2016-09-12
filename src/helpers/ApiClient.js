@@ -37,6 +37,7 @@ export default class ApiClient {
     this.apiurl = apiurl;
     this.online = false;
     this.storage = new DataClient();
+    this.isNode = process.env.NODE_ENV === 'node';
   }
 
   init(store) {
@@ -57,14 +58,12 @@ export default class ApiClient {
         this.store.dispatch(setOnline(status));
         clearInterval(this.networkCheck);
         if (status) {
-          console.log('start checking sometimes');
-          this.networkCheck = setInterval(
+          this.networkCheck = this.isNode || setInterval(
             () => this.fetch({ method: 'get', name: 'base' }),
             20000
           );
         } else {
-          console.log('start checking often');
-          this.networkCheck = setInterval(
+          this.networkCheck = this.isNode || setInterval(
             () => this.fetch({ method: 'get', name: 'base' }),
             2500
           );

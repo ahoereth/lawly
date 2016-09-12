@@ -67,7 +67,6 @@ var config = {
         include: SRC,
         query: { cacheDirectory: path.resolve(__dirname, 'tmp/cache') },
       },
-      { test: /\.(woff2?|eot|ttf)$/i, loader: 'file?name=[name].[ext]' },
       { test: /\.json$/, loader: 'json-loader' },
       { test: /\.ejs$/, loader: 'ejs' },
     ],
@@ -140,6 +139,7 @@ if (process.env.NODE_ENV === 'development') {
     }),
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
+        { test: /\.(woff2?|eot|ttf)$/i, loader: 'file?name=[name].[ext]' },
         {
           test: /\.c|sss$/,
           loaders: ['style', 'css', 'postcss?parser=sugarss'],
@@ -186,6 +186,11 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
     devtool: 'source-map',
     output: Object.assign({}, config.output, {
       publicPath: env.production.PUBLIC_PATH,
+    }),
+    module: Object.assign({}, config.module, {
+      loaders: config.module.loaders.concat([
+        { test: /\.(woff2?|eot|ttf)$/i, loader: 'ignore' },
+      ]),
     }),
   });
 }
