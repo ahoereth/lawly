@@ -28,6 +28,10 @@ export default class DataClient {
     return this.forage.getItem(stringify(key));
   }
 
+  remove(key) {
+    return this.forage.removeItem(stringify(key));
+  }
+
   auth(token = undefined) {
     if (token === null) { // Unset token.
       return this.forage.removeItem('auth');

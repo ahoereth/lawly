@@ -387,9 +387,11 @@ export default class ApiClient {
    * @return {Promise}
    */
   unauth(email) {
-    this.setAuthToken();
     this.storage.remove(email);
-    return this.remove({ name: 'user_sessions', email });
+    return this.remove({ name: 'user_sessions', email }).then(result => {
+      this.setAuthToken();
+      return result;
+    });
   }
 
   /**
