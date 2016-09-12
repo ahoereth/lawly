@@ -5,19 +5,21 @@ import { connect } from 'react-redux';
 import { pick } from 'lodash';
 
 import {
-  search,
-  selectPage,
   getPage,
   getPageSize,
   getQuery,
   getResultsByPage,
   getTotal,
+  isLoading,
+  search,
+  selectPage,
 } from '~/modules/search';
 import { setTitle } from '~/modules/core';
 import { Search } from '~/components';
 
 
 const mapStateToProps = state => ({
+  loading: isLoading(state),
   page: getPage(state),
   pageSize: getPageSize(state),
   query: getQuery(state),

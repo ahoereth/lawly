@@ -7,12 +7,6 @@ import { range, sample, isPlainObject as isObj } from 'lodash';
 import { getTextblock } from '~/helpers/shells';
 
 
-function getRows(rows, shellBase) {
-  const shell = shellBase.set('shell', true);
-  return rows.size ? rows : List(range(20)).map(() => shell);
-}
-
-
 // eslint-disable-next-line react/prop-types
 function renderCell({ name, numeric }, row) {
   const className = !numeric ? 'mdl-data-table__cell--non-numeric' : '';
@@ -29,8 +23,14 @@ const propTypes = {
   className: PropTypes.string,
   keyProp: PropTypes.string,
   rows: ImmutableTypes.listOf(ImmutableTypes.map).isRequired,
+  loading: PropTypes.bool.isRequired,
   children: PropTypes.arrayOf(PropTypes.node).isRequired,
   shell: ImmutableTypes.map,
+};
+
+
+const defaultProps = {
+  loading: false,
 };
 
 
@@ -38,19 +38,21 @@ const DataTable = ({
   className,
   children,
   keyProp,
+  loading,
   rows,
   shell,
   ...others,
 }) => {
   const classes = classNames('mdl-data-table', className);
   const columns = React.Children.toArray(children);
+  const shellBase = () => shell.set('shell', true);
   return (
     <table className={classes} {...others}>
       <thead>
         <tr>{columns}</tr>
       </thead>
       <tbody>
-        {getRows(rows, shell).map((row, idx) =>
+        {(loading ? List(range(20)).map(shellBase) : rows).map((row, idx) =>
           <tr key={row.get(keyProp, idx)}>
             {columns.map(column => renderCell(column.props, row))}
           </tr>
@@ -61,6 +63,7 @@ const DataTable = ({
 };
 
 DataTable.propTypes = propTypes;
+DataTable.defaultProps = defaultProps;
 
 
 export default DataTable;

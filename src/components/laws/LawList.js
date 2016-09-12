@@ -24,7 +24,8 @@ const shell = Map({
 
 const LawList = ({
   filter, filters,
-  laws, total = laws.size,
+  laws, loading,
+  total = laws.size,
   page, pageSize,
   selectPage,
   star, stars,
@@ -75,9 +76,10 @@ const LawList = ({
   return (
     <div {...otherProps}>
       <DataTable
-        rows={rows}
+        loading={loading}
         className={styles.datatable}
         keyProp='key'
+        rows={rows}
         shell={shell}
       >
         {!!star &&
@@ -142,6 +144,7 @@ LawList.propTypes = {
     groupkey: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
   })).isRequired,
+  loading: PropTypes.bool,
   page: PropTypes.number,
   pageSize: PropTypes.number,
   selectPage: PropTypes.func,

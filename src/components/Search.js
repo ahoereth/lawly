@@ -7,6 +7,7 @@ import SearchInput from './SearchInput';
 
 
 const Search = ({
+  loading,
   page,
   pageSize,
   query,
@@ -26,6 +27,7 @@ const Search = ({
     <Cell col={12}>
       <LawList
         laws={results}
+        loading={loading}
         page={page}
         pageSize={pageSize}
         selectPage={selectPage}
@@ -36,6 +38,7 @@ const Search = ({
 );
 
 Search.propTypes = {
+  loading: PropTypes.bool,
   page: PropTypes.number.isRequired,
   pageSize: PropTypes.number,
   query: PropTypes.string,
