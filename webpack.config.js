@@ -106,6 +106,11 @@ if (process.env.NODE_ENV !== 'node') {
       app: 'client',
       'web-worker': 'web-worker',
     }),
+    module: Object.assign({}, config.module, {
+      loaders: config.module.loaders.concat([
+        { test: /\.(woff2?|eot|ttf)$/i, loader: 'file?name=[name].[ext]' },
+      ]),
+    }),
     plugins: config.plugins.concat([
       new AssetsPlugin({
         filename: 'assets.json',
@@ -139,7 +144,6 @@ if (process.env.NODE_ENV === 'development') {
     }),
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
-        { test: /\.(woff2?|eot|ttf)$/i, loader: 'file?name=[name].[ext]' },
         {
           test: /\.c|sss$/,
           loaders: ['style', 'css', 'postcss?parser=sugarss'],
@@ -186,11 +190,6 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
     devtool: 'source-map',
     output: Object.assign({}, config.output, {
       publicPath: env.production.PUBLIC_PATH,
-    }),
-    module: Object.assign({}, config.module, {
-      loaders: config.module.loaders.concat([
-        { test: /\.(woff2?|eot|ttf)$/i, loader: 'ignore' },
-      ]),
     }),
   });
 }
@@ -258,6 +257,7 @@ if (process.env.NODE_ENV === 'node') {
     module: Object.assign({}, config.module, {
       loaders: config.module.loaders.concat([
         { test: /\.s|css$/, loaders: ['css', 'postcss?parser=sugarss'] },
+        { test: /\.(woff2?|eot|ttf)$/i, loader: 'ignore' },
       ]),
     }),
     node: {

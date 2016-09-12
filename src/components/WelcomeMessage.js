@@ -8,8 +8,8 @@ import {
 
 /* eslint-disable max-len */
 // https://github.com/eslint/eslint/issues/5805
-const p1 = 'Das hier ist deine persönliche Startseite, hier findest du deine gespeicherten Gesetze und Normen, persönlichen Markierungen, einen kurzen Verlauf deiner letzten Aktionen in der App und Neuigkeiten von deinem Team.';
-const p2 = 'Wir sind noch eine junge Plattform und freuen uns immer über Feedback -- positiv sowie negativ. Antworten gibts innerhalb von 24 Stunden und kleine Verbesserungen können wir oft genauso schnell umsetzen.';
+const p1 = 'Dies ist deine persönliche Startseite, hier findest du deine gespeicherten Gesetze und Normen, persönlichen Markierungen, einen kurzen Verlauf deiner letzten Aktionen in der App und Neuigkeiten von uns.';
+const p2 = 'Wir sind noch eine junge Plattform und freuen uns immer über Feedback – positiv sowie negativ. Antworten gibts innerhalb von 24 Stunden und kleine Verbesserungen können wir oft genauso schnell umsetzen.';
 
 const WelcomeMessage = ({ shadow, logout, user, ...otherProps }) => (
   <Card shadow={shadow} {...otherProps}>
