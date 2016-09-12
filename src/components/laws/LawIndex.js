@@ -18,6 +18,7 @@ const LawIndex = ({
   initials,
   isOnline,
   laws,
+  loading,
   page,
   pageSize,
   selectCollection,
@@ -55,6 +56,7 @@ const LawIndex = ({
         className={lawlist}
         disableUnstarred={!isOnline}
         laws={laws}
+        loading={!laws.size && loading}
         page={page}
         pageSize={pageSize}
         total={count}
@@ -80,6 +82,7 @@ LawIndex.propTypes = {
   initials: ImmutableTypes.listOf(PropTypes.string).isRequired,
   isOnline: PropTypes.bool.isRequired,
   laws: ImmutableTypes.list.isRequired,
+  loading: PropTypes.bool.isRequired,
   page: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
   selectCollection: PropTypes.func.isRequired,
@@ -93,6 +96,7 @@ LawIndex.propTypes = {
 
 LawIndex.defaultProps = {
   isOnline: true,
+  loading: false,
 };
 
 

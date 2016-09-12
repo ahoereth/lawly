@@ -36,11 +36,14 @@ export default createReducer(Map({
   pageSize: 20,
   total: -1,
 }), {
-  [FETCH]: (state, { payload }) => state.merge({
-    initials: List(payload.initials || []),
-    laws: Immutable.fromJS(payload.index || []),
-    collections: Immutable.fromJS(payload.collections || []),
-  }),
+  [FETCH]: (state, { payload: { initials, index, collections, total } }) => (
+    state.merge({
+      initials: List(initials || []),
+      laws: Immutable.fromJS(index || []),
+      collections: Immutable.fromJS(collections || []),
+      total,
+    })
+  ),
   [SELECT_COLLECTION]: (state, { payload }) => state.set('collection', payload),
   [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),
   [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),

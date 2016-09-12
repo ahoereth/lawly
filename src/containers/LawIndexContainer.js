@@ -23,9 +23,9 @@ import { isNumeric as isNum } from '~/helpers/utils';
 
 const mapStateToProps = state => ({
   count: getFilteredLawsCount(state),
-  isLoaded: isLoaded(state),
   isOnline: isOnline(state),
   laws: getFilteredLawsByPage(state),
+  loading: !isLoaded(state),
   initials: getInitials(state),
   page: getPage(state),
   pageSize: getPageSize(state),
@@ -59,9 +59,9 @@ class LawIndexContainer extends React.Component {
     filter: PropTypes.func.isRequired,
     filters: ImmutableTypes.map,
     initials: ImmutableTypes.list.isRequired,
-    isLoaded: PropTypes.bool.isRequired,
     isOnline: PropTypes.bool.isRequired,
     laws: ImmutableTypes.list.isRequired,
+    loading: PropTypes.bool.isRequired,
     page: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
     params: PropTypes.shape({
@@ -82,7 +82,7 @@ class LawIndexContainer extends React.Component {
   componentWillMount() {
     const {
       fetchIndex,
-      isLoaded,
+      loading,
       selectCollection,
       selectInitial,
       selectPage,
@@ -104,7 +104,7 @@ class LawIndexContainer extends React.Component {
     }
     /* eslint-enable one-var, no-nested-ternary */
 
-    isLoaded || fetchIndex();
+    loading && fetchIndex();
     selectCollection(collection);
     selectInitial(initial);
     selectPage(page);
