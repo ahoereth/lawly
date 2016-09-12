@@ -28,9 +28,9 @@ const history = syncHistoryWithStore(hist, store, {
 });
 
 // Hacky scroll to top on route change. TODO.
-history.listen(location => {
-  if (location.action === 'POP') { return; }
-  // Depending on layout settings: .mdl-layout__inner-container
+history.listen(({ action, pathname }) => {
+  if (action === 'POP') { return; }
+  if (pathname.indexOf('/suche/') === 0) { return; }
   const elem = document.querySelector('.mdl-layout__content');
   if (elem) { elem.scrollTop = 0; }
 });
