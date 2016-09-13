@@ -23,6 +23,7 @@ const shell = Map({
 
 
 const LawList = ({
+  emptysetMessage,
   filter, filters,
   laws, loading,
   total = laws.size,
@@ -125,9 +126,7 @@ const LawList = ({
         </TableHeader>
       </DataTable>
       {!rows.size &&
-        <p style={{ textAlign: 'center' }}>
-          Für den aktuellen Filter wurden keine Gesetze gefunden.
-        </p>
+        <p style={{ textAlign: 'center' }}>{emptysetMessage}</p>
       }
       {!selectPage || !rows.size ||
         <Pagination
@@ -142,6 +141,7 @@ const LawList = ({
 
 
 LawList.propTypes = {
+  emptysetMessage: PropTypes.string.isRequired,
   disableUnstarred: PropTypes.bool.isRequired,
   filter: PropTypes.func,
   filters: ImmutableTypes.map,
@@ -160,6 +160,7 @@ LawList.propTypes = {
 
 
 LawList.defaultProps = {
+  emptysetMessage: 'Für den aktuellen Filter wurden keine Gesetze gefunden.',
   disableUnstarred: false,
   page: 1,
   pageSize: 20,

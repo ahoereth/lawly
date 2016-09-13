@@ -26,6 +26,8 @@ const Search = ({
     </Cell>
     <Cell col={12}>
       <LawList
+        emptysetMessage={!query ? 'Gib oben deine Suchanfrage ein.' :
+          'Für den aktuellen Suchbegirff gibt es keine Ergebnisse'}
         laws={results}
         loading={loading}
         page={page}

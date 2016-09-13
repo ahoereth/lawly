@@ -18,6 +18,7 @@ const LawIndex = ({
   filter,
   filters,
   initials,
+  isLoggedin,
   isOnline,
   laws,
   loading,
@@ -62,7 +63,7 @@ const LawIndex = ({
         pageSize={pageSize}
         total={count}
         selectPage={selectPage}
-        star={star}
+        star={!isLoggedin ? undefined : star}
         stars={stars}
         filter={filter}
         filters={filters}
@@ -81,6 +82,7 @@ LawIndex.propTypes = {
   filter: PropTypes.func,
   filters: ImmutableTypes.map,
   initials: ImmutableTypes.listOf(PropTypes.string).isRequired,
+  isLoggedin: PropTypes.bool.isRequired,
   isOnline: PropTypes.bool.isRequired,
   laws: ImmutableTypes.list.isRequired,
   loading: PropTypes.bool.isRequired,

@@ -86,6 +86,8 @@ export const getUser = state => state.get(SCOPE);
 
 export const getUserLaws = state => state.getIn([SCOPE, 'laws']);
 
+export const isLoggedin = state => state.getIn([SCOPE, 'loggedin'], false);
+
 export const getStarredUserLaws = createSelector(
   [getUserLaws],
   laws => laws.filter(norm => norm.get('starred'))

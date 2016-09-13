@@ -18,7 +18,10 @@ const Home = ({ user, laws, login, logout }) => (
     }
     {!user.get('loggedin') ? null :
       <Cell col={8}>
-        <LawList laws={laws} />
+        <LawList
+          laws={laws}
+          emptysetMessage='Hier werden deine gespeicherten Gesetze erscheinen.'
+        />
       </Cell>
     }
   </Grid>
