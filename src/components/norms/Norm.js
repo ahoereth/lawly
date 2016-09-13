@@ -120,7 +120,7 @@ export default class Norm extends React.Component {
       <Card
         className={classNames(styles.norm, { focused, starred })}
         id={slug}
-        shadow={focused ? 1 : undefined}
+        // shadow={focused ? 1 : undefined}
         onMouseEnter={() => this.focus(true)}
         onMouseLeave={() => this.focus(false)}
         onTouchStart={() => this.focus()}
