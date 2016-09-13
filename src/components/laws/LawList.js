@@ -124,7 +124,12 @@ const LawList = ({
           }
         </TableHeader>
       </DataTable>
-      {!selectPage ? null :
+      {!rows.size &&
+        <p style={{ textAlign: 'center' }}>
+          Für den aktuellen Filter wurden keine Gesetze gefunden.
+        </p>
+      }
+      {!selectPage || !rows.size ||
         <Pagination
           page={page}
           pages={Math.ceil(total / pageSize)}

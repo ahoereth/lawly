@@ -53,7 +53,6 @@ const LawIndex = ({
         filters={filters}
       />
       <LawList
-        className={lawlist}
         disableUnstarred={!isOnline}
         laws={laws}
         loading={!laws.size && loading}

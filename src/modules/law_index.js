@@ -33,7 +33,7 @@ export default createReducer(Map({
   initial: '',
   laws: List(),
   page: 1,
-  pageSize: 20,
+  pageSize: 25,
   total: -1,
 }), {
   [FETCH]: (state, { payload: { initials, index, collections, total } }) => (
