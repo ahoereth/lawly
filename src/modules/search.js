@@ -76,7 +76,7 @@ export const getPageSize = state => state.getIn([SCOPE, 'pageSize'], 20);
 
 export const getResults = state => state.getIn([SCOPE, 'results'], List());
 
-export const getTotal = state => state.getIn([SCOPE, 'total'], 0);
+export const getTotal = state => getResults(state).size;
 
 export const isLoading = state => state.getIn([SCOPE, 'loading'], false);
 
