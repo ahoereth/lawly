@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
-import { Grid, Cell } from 'react-mdl';
+import { Grid, Cell, Button, Icon } from 'react-mdl';
 
 import LawList from './LawList';
 import LawIndexLead from './LawIndexLead';
@@ -28,18 +28,41 @@ const LawIndex = ({
   selectInitial,
   selectPage,
   selectedInitial,
+  showToggles,
   star,
   stars,
+  togglesVisible,
 }) => (
   <Grid>
-    <Cell col={12} tablet={8} phone={4} style={noVerticalMargin}>
+    <Cell hideDesktop hideTablet hidePhone={togglesVisible} phone={4}>
+      <Button
+        ripple
+        style={{ width: '92%', marginLeft: '4%' }}
+        onClick={showToggles}
+      >
+        Gruppierungsfilter anzeigen <Icon name='filter_list' />
+      </Button>
+    </Cell>
+    <Cell
+      col={12}
+      tablet={8}
+      phone={4}
+      hidePhone={!togglesVisible}
+      style={noVerticalMargin}
+    >
       <LawCollectionChooser
         collections={collections}
         selected={collection.get('title')}
         onSelect={selectCollection}
       />
     </Cell>
-    <Cell col={1} tablet={1} phone={4} style={noVerticalMargin}>
+    <Cell
+      col={1}
+      tablet={1}
+      phone={4}
+      hidePhone={!togglesVisible}
+      style={noVerticalMargin}
+    >
       <LawInitialChooser
         initials={initials}
         selected={selectedInitial}
@@ -92,8 +115,10 @@ LawIndex.propTypes = {
   selectInitial: PropTypes.func.isRequired,
   selectPage: PropTypes.func.isRequired,
   selectedInitial: PropTypes.string.isRequired,
+  showToggles: PropTypes.func.isRequired,
   star: PropTypes.func.isRequired,
   stars: ImmutableTypes.map.isRequired,
+  togglesVisible: PropTypes.bool.isRequired,
 };
 
 

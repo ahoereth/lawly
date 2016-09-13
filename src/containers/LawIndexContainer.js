@@ -10,10 +10,12 @@ import {
   getFilters, getFilteredLawsByPage, getFilteredLawsCount,
   getInitial, getInitials,
   getPage, getPageSize,
+  getToggles,
   isLoaded,
   fetchLawIndex,
   filterLawIndex,
   selectCollection, selectLawIndexInitial, selectLawIndexPage,
+  showToggles,
 } from '~/modules/law_index';
 import { getIndexStars, isLoggedin, star } from '~/modules/user';
 import { getShellMode, setTitle, isOnline } from '~/modules/core';
@@ -33,6 +35,7 @@ const mapStateToProps = state => ({
   selectedInitial: getInitial(state),
   shells: getShellMode(state),
   stars: getIndexStars(state),
+  togglesVisible: getToggles(state),
   filters: getFilters(state),
   collections: getCollectionTitles(state),
   collection: getCollection(state),
@@ -46,6 +49,7 @@ const mapDispatchToProps = {
   filter: filterLawIndex,
   selectCollection,
   setTitle,
+  showToggles,
   star,
 };
 

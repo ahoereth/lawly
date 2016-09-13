@@ -19,6 +19,7 @@ export const SELECT_INITIAL = 'law_index/SELECT_INITIAL';
 export const SELECT_PAGE = 'law_index/SELECT_PAGE';
 export const SELECT_COLLECTION = 'law_index/SELECT_COLLECTION';
 export const FILTER = 'law_index/FILTER';
+export const SHOW_TOGGLES = 'law_index/SHOW_TOGGLES';
 
 
 
@@ -35,6 +36,7 @@ export default createReducer(Map({
   page: 1,
   pageSize: 25,
   total: -1,
+  showToggles: false,
 }), {
   [FETCH]: (state, { payload: { initials, index, collections, total } }) => (
     state.merge({
@@ -44,6 +46,7 @@ export default createReducer(Map({
       total,
     })
   ),
+  [SHOW_TOGGLES]: (state, { payload }) => state.set('showToggles', payload),
   [SELECT_COLLECTION]: (state, { payload }) => state.set('collection', payload),
   [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),
   [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
@@ -59,6 +62,10 @@ export const fetchLawIndex = (params) => ({
   api: { method: 'get', name: 'laws', cachable: true, ...params },
 });
 
+export const showToggles = (state = true) => (
+  { type: SHOW_TOGGLES, payload: !!state }
+);
+
 // TODO: Thing action creator actually is horrible.
 export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
   const state = getState();
@@ -73,6 +80,7 @@ export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
   const pagePath = pageInt > 1 || isNumeric(initial) ? pageInt : '';
   const path = `/gesetze/${collectionPath}${initialPath}${pagePath}`;
   if (old !== path) {
+    dispatch(showToggles(false));
     dispatch({ type: SELECT_PAGE, payload: pageInt });
     dispatch(push(path));
   }
@@ -115,6 +123,8 @@ export const getPage = (state) => state.getIn([SCOPE, 'page']);
 export const getPageSize = (state) => state.getIn([SCOPE, 'pageSize']);
 
 export const getTotal = (state) => state.getIn([SCOPE, 'total']);
+
+export const getToggles = (state) => state.getIn([SCOPE, 'showToggles']);
 
 export const isLoaded = createSelector(
   [getTotal, getLawIndex],
