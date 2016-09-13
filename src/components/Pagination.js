@@ -2,19 +2,17 @@ import React, { PropTypes } from 'react';
 import { Button, Icon } from 'react-mdl';
 
 
-const iconAdjust = { marginBottom: '3px' };
-
 const Pagination = ({ page, pages, selectPage }) => (
-  <div style={{ textAlign: 'right', margin: '1em .4em 0 0' }}>
+  <div style={{ textAlign: 'right', margin: '1em 0' }}>
     <Button disabled>Seite {page} von {pages}</Button>
     {page === 1 ? null :
-      <Button onClick={() => selectPage(page - 1)}>
-        <Icon name='keyboard_arrow_left' style={iconAdjust} />
+      <Button onClick={() => selectPage(page - 1)} ripple>
+        <Icon name='keyboard_arrow_left' />
       </Button>
     }
     {page === pages ? null :
-      <Button onClick={() => selectPage(page + 1)}>
-        <Icon name='keyboard_arrow_right' style={iconAdjust} />
+      <Button onClick={() => selectPage(page + 1)} ripple>
+        <Icon name='keyboard_arrow_right' />
       </Button>
     }
   </div>

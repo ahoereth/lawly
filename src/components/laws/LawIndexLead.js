@@ -28,7 +28,7 @@ const LawIndexLead = ({
   const initial = rawInitial.toUpperCase();
   const filtered = groupkey || title || starred || initial;
   return (
-    <p>
+    <p style={{ padding: '0 1em' }}>
       {(!filtered && !collection.has('title')
         ? <span>In der Datenbank finden sich insgesamt <strong>{count} Gesetze und Verodnungen</strong>. Nutze die Schalter und Eingabefelder um die angezeigte Auswahl zu filtern.</span>
         : (collection.has('title')

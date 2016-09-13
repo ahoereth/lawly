@@ -9,7 +9,7 @@ const shell = List(range(4).map(() => ''));
 
 
 const LawCollectionChooser = ({ collections, selected, onSelect }) => (
-  <Grid>
+  <Grid style={{ paddingTop: 0, paddingBottom: 0 }}>
     {(collections.size ? collections : shell).map((title, idx) => (
       <Cell
         key={title || `shell-${idx}`}

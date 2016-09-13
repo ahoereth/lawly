@@ -6,7 +6,9 @@ import LawList from './LawList';
 import LawIndexLead from './LawIndexLead';
 import LawInitialChooser from './LawInitialChooser';
 import LawCollectionChooser from './LawCollectionChooser';
-import { lawlist } from './lawIndex.sss';
+
+
+const noVerticalMargin = { marginTop: 0, marginBottom: 0 };
 
 
 const LawIndex = ({
@@ -29,14 +31,14 @@ const LawIndex = ({
   stars,
 }) => (
   <Grid>
-    <Cell col={12} tablet={8} phone={4}>
+    <Cell col={12} tablet={8} phone={4} style={noVerticalMargin}>
       <LawCollectionChooser
         collections={collections}
         selected={collection.get('title')}
         onSelect={selectCollection}
       />
     </Cell>
-    <Cell col={1} tablet={1} phone={4}>
+    <Cell col={1} tablet={1} phone={4} style={noVerticalMargin}>
       <LawInitialChooser
         initials={initials}
         selected={selectedInitial}
