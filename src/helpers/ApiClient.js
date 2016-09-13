@@ -402,6 +402,10 @@ export default class ApiClient {
    * @return {Promise}
    */
   search(query) {
+    if (!query) {
+      return Promise.resolve({ total: null, results: null });
+    }
+
     return this.get({ name: 'laws', search: query }).catch(() => {
       const laws = getLaws(this.store.getState());
       return localSearch.search(query, { laws, limit: 100 });

@@ -59,7 +59,7 @@ export const search = (query = '') => (dispatch) => {
   dispatch(selectPage(1));
   return dispatch({
     type: SEARCHED,
-    meta: { debounce: { time: 500 } },
+    meta: { debounce: { time: 100 } },
     promise: api => api.search(query),
   });
 };
