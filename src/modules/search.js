@@ -55,8 +55,8 @@ export const search = (query = '') => (dispatch) => {
     { type: SEARCH, payload: query },
     { type: SEARCHED, payload: {} },
     { type: LOADING, payload: true },
-    selectPage(1),
   ]));
+  dispatch(selectPage(1));
   return dispatch({
     type: SEARCHED,
     meta: { debounce: { time: 500 } },
