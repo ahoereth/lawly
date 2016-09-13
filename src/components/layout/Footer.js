@@ -8,9 +8,9 @@ import {
 
 
 const Footer = ({ title, primary }) => (
-  <MaterialFooter size='mega'>
-    <FooterSection type='bottom' logo={title || 'Lawly'}>
-      <FooterLinkList style={{ float: 'right' }}>
+  <MaterialFooter size='mini'>
+    <FooterSection logo='lawly.org'>
+      <FooterLinkList>
         {primary.map((item, idx) => (
           <Link to={item.to} key={idx} className='mdl-navigation__link'>
             {item.text}
