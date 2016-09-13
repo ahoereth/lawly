@@ -35,7 +35,7 @@ const LawIndexLead = ({
           ? (filtered
             ? <span>Aus der Sammlung <strong>{collection.get('title')}</strong> werden durch die aktuellen Filter <strong>{count} Gesetze und Verdnungen</strong> von insgesamt {collection.get('laws').size} angezeigt.&nbsp;</span>
             : <span>Die Sammlung <strong>{collection.get('title')}</strong> beinhaltet insgesamt {collection.get('laws').size} Gesetze und Verordnungen.</span>
-          ) : <span>Durch den aktuellen Filter werden aktuell <strong>{count} Gesetze und Verodnungen</strong> angezeigt.&nbsp;</span>
+          ) : <span>Durch die aktuell gesetzten Filter werden <strong>{count} Gesetze und Verodnungen</strong> angezeigt.&nbsp;</span>
         )
       )}
       {(initial
@@ -77,7 +77,7 @@ const LawIndexLead = ({
           )
         )
       )}
-      <span>&nbsp;Aktuell wird <strong>Seite {page} von {Math.ceil(count / pageSize)}</strong> angezeigt.</span>
+      <span>&nbsp;Du befindest dich auf <strong>Seite {page} von {Math.ceil(count / pageSize)}</strong>.</span>
     </p>
   );
 };
