@@ -24,8 +24,6 @@ const LawIndex = ({
   loading,
   page,
   pageSize,
-  selectCollection,
-  selectInitial,
   selectPage,
   selectedInitial,
   showToggles,
@@ -53,7 +51,6 @@ const LawIndex = ({
       <LawCollectionChooser
         collections={collections}
         selected={collection.get('title')}
-        onSelect={selectCollection}
       />
     </Cell>
     <Cell
@@ -63,11 +60,7 @@ const LawIndex = ({
       hidePhone={!togglesVisible}
       style={noVerticalMargin}
     >
-      <LawInitialChooser
-        initials={initials}
-        selected={selectedInitial}
-        onSelect={selectInitial}
-      />
+      <LawInitialChooser initials={initials} selected={selectedInitial} />
     </Cell>
     <Cell col={11} tablet={7} phone={4}>
       <LawIndexLead
@@ -111,8 +104,6 @@ LawIndex.propTypes = {
   loading: PropTypes.bool.isRequired,
   page: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
-  selectCollection: PropTypes.func.isRequired,
-  selectInitial: PropTypes.func.isRequired,
   selectPage: PropTypes.func.isRequired,
   selectedInitial: PropTypes.string.isRequired,
   showToggles: PropTypes.func.isRequired,

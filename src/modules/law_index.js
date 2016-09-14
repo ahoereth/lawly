@@ -1,5 +1,6 @@
 import { createSelector } from 'reselect';
 import { push } from 'react-router-redux';
+import { batchActions } from 'redux-batched-actions';
 import Immutable, { List, Map } from 'immutable';
 import { pick } from 'lodash';
 
@@ -86,14 +87,12 @@ export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
   }
 };
 
-export const selectLawIndexInitial = (initial = '') => (dispatch) => {
-  dispatch({ type: SELECT_INITIAL, payload: initial.toLowerCase() });
-  dispatch(selectLawIndexPage(1));
-};
-
-export const selectCollection = (collection = '') => dispatch => {
-  dispatch({ type: SELECT_COLLECTION, payload: collection });
-  dispatch(selectLawIndexInitial(''));
+export const select = ({ collection, initial = '', page = 1 }) => dispatch => {
+  dispatch(batchActions([
+    { type: SELECT_COLLECTION, payload: collection },
+    { type: SELECT_INITIAL, payload: initial.toLowerCase() },
+    { type: SELECT_PAGE, payload: parseInt(page, 10) },
+  ]));
 };
 
 export const filterLawIndex = (filters = {}) => (dispatch) => {

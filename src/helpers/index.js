@@ -1,2 +1,2 @@
-export getNormLink from './getNormLink';
+export { getNormLink, getIndexLink } from './linkUtils';
 export escapeStringRegexp from './escapeStringRegexp';

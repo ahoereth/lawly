@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { connect } from 'react-redux';
-import { pick, isUndefined } from 'lodash';
+import { pick, isUndefined, isEqual } from 'lodash';
 import { List } from 'immutable';
 
 import {
@@ -14,7 +14,8 @@ import {
   isLoaded,
   fetchLawIndex,
   filterLawIndex,
-  selectCollection, selectLawIndexInitial, selectLawIndexPage,
+  selectLawIndexPage,
+  select,
   showToggles,
 } from '~/modules/law_index';
 import { getIndexStars, isLoggedin, star } from '~/modules/user';
@@ -44,10 +45,9 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   fetchIndex: fetchLawIndex,
-  selectInitial: selectLawIndexInitial,
   selectPage: selectLawIndexPage,
   filter: filterLawIndex,
-  selectCollection,
+  select,
   setTitle,
   showToggles,
   star,
@@ -75,9 +75,8 @@ class LawIndexContainer extends React.Component {
       initialOrPage: PropTypes.string,
       page: PropTypes.number,
     }).isRequired,
-    selectCollection: PropTypes.func.isRequired,
-    selectInitial: PropTypes.func.isRequired,
     selectPage: PropTypes.func.isRequired,
+    select: PropTypes.func.isRequired,
     selectedInitial: PropTypes.string,
     setTitle: PropTypes.func.isRequired,
     shells: PropTypes.bool.isRequired,
@@ -85,16 +84,14 @@ class LawIndexContainer extends React.Component {
     stars: ImmutableTypes.map.isRequired,
   };
 
-  componentWillMount() {
+  componentWillMount(props) {
     const {
       fetchIndex,
       loading,
-      selectCollection,
-      selectInitial,
-      selectPage,
+      select,
       setTitle,
       params,
-    } = this.props;
+    } = props || this.props;
 
     setTitle('Übersicht');
 
@@ -103,7 +100,6 @@ class LawIndexContainer extends React.Component {
     const { a, b, c } = params;
     if (!isUndefined(a)) {
       collection = !isNum(a) && a.length > 1 ? a : undefined;
-      // Hack for numeric initials: When initial is numeric, always show page.
       const aInit = a.length === 1 && (!isNum(a) || isNum(b)) ? a : undefined;
       initial = !aInit && (!isNum(b) || isNum(c)) ? b : aInit;
       page = isNum(c) ? c : isNum(b) ? b : isNum(a) ? a : undefined;
@@ -111,9 +107,13 @@ class LawIndexContainer extends React.Component {
     /* eslint-enable one-var, no-nested-ternary */
 
     loading && fetchIndex();
-    selectCollection(collection);
-    selectInitial(initial);
-    selectPage(page);
+    select({ collection, initial, page });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!isEqual(nextProps.params, this.props.params)) {
+      this.componentWillMount(nextProps);
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
