@@ -7,7 +7,7 @@ import {
 } from 'react-mdl';
 
 
-const Footer = ({ title, primary }) => (
+const Footer = ({ primary }) => (
   <MaterialFooter size='mini'>
     <FooterSection logo='lawly.org'>
       <FooterLinkList>
@@ -23,7 +23,6 @@ const Footer = ({ title, primary }) => (
 
 Footer.propTypes = {
   primary: PropTypes.arrayOf(PropTypes.object),
-  title: PropTypes.string,
 };
 
 
