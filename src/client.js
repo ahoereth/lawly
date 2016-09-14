@@ -29,10 +29,10 @@ const history = syncHistoryWithStore(hist, store, {
 
 // Hacky scroll to top on route change. TODO.
 history.listen(({ action, pathname }) => {
-  if (action === 'POP') { return; }
-  if (pathname.indexOf('/suche/') === 0) { return; }
-  const elem = document.querySelector('.mdl-layout__content');
-  if (elem) { elem.scrollTop = 0; }
+  if (action !== 'POP' && pathname.indexOf('/suche/') !== 0) {
+    const elem = document.querySelector('.mdl-layout__content');
+    elem.scrollTop = 1; // 1px distance to avoid expanding the headbar.
+  }
 });
 
 // Turn shell-only rendering off ASAP on the client side.
