@@ -23,14 +23,16 @@ const shell = Map({
 
 
 const LawList = ({
+  disableUnstarred,
   emptysetMessage,
   filter, filters,
   laws, loading,
-  total = laws.size,
+  nextPageLink,
   page, pageSize,
+  prevPageLink,
   selectPage,
   star, stars,
-  disableUnstarred,
+  total = laws.size,
   ...otherProps,
 }) => {
   const rows = laws.map(law => {
@@ -128,21 +130,21 @@ const LawList = ({
       {!rows.size &&
         <p style={{ textAlign: 'center' }}>{emptysetMessage}</p>
       }
-      {!selectPage || !rows.size ||
-        <Pagination
-          page={page}
-          pages={Math.ceil(total / pageSize)}
-          selectPage={selectPage}
-        />
-      }
+      <Pagination
+        page={page}
+        pages={Math.ceil(total / pageSize)}
+        selectPage={selectPage}
+        prevPageLink={prevPageLink}
+        nextPageLink={nextPageLink}
+      />
     </div>
   );
 };
 
 
 LawList.propTypes = {
-  emptysetMessage: PropTypes.string.isRequired,
   disableUnstarred: PropTypes.bool.isRequired,
+  emptysetMessage: PropTypes.string.isRequired,
   filter: PropTypes.func,
   filters: ImmutableTypes.map,
   laws: ImmutableTypes.listOf(ImmutableTypes.mapContains({
@@ -150,8 +152,10 @@ LawList.propTypes = {
     title: PropTypes.string.isRequired,
   })).isRequired,
   loading: PropTypes.bool,
+  nextPageLink: PropTypes.string,
   page: PropTypes.number,
   pageSize: PropTypes.number,
+  prevPageLink: PropTypes.string,
   selectPage: PropTypes.func,
   star: PropTypes.func,
   stars: ImmutableTypes.mapOf(PropTypes.number),

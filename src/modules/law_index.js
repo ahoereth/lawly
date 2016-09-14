@@ -1,12 +1,10 @@
 import { createSelector } from 'reselect';
-import { push } from 'react-router-redux';
 import { batchActions } from 'redux-batched-actions';
 import Immutable, { List, Map } from 'immutable';
 import { pick } from 'lodash';
 
 import createReducer from '~/store/createReducer';
 import { escapeStringRegexp } from '~/helpers';
-import { isNumeric } from '~/helpers/utils';
 import { getIndexStars } from './user';
 
 
@@ -67,26 +65,6 @@ export const showToggles = (state = true) => (
   { type: SHOW_TOGGLES, payload: !!state }
 );
 
-// TODO: Thing action creator actually is horrible.
-export const selectLawIndexPage = (page = 1) => (dispatch, getState) => {
-  const state = getState();
-  const old = state.get('routing', {}).locationBeforeTransitions.pathname;
-  const pageInt = isNumeric(page) ? parseInt(page, 10) : 1;
-  const lawIndex = state.get(SCOPE);
-  const initial = lawIndex.get('initial');
-  const collection = lawIndex.get('collection');
-  const collectionPath = collection ? `${collection}/` : '';
-  const initialPath = initial ? `${initial}/` : '';
-  // Hack for numeric initials: When initial is numeric, always show page.
-  const pagePath = pageInt > 1 || isNumeric(initial) ? pageInt : '';
-  const path = `/gesetze/${collectionPath}${initialPath}${pagePath}`;
-  if (old !== path) {
-    dispatch(showToggles(false));
-    dispatch({ type: SELECT_PAGE, payload: pageInt });
-    dispatch(push(path));
-  }
-};
-
 export const select = ({ collection, initial = '', page = 1 }) => dispatch => {
   dispatch(batchActions([
     { type: SELECT_COLLECTION, payload: collection },
@@ -97,8 +75,10 @@ export const select = ({ collection, initial = '', page = 1 }) => dispatch => {
 
 export const filterLawIndex = (filters = {}) => (dispatch) => {
   const payload = pick(filters, ['starred', 'title', 'groupkey']);
-  dispatch({ type: FILTER, payload });
-  dispatch(selectLawIndexPage(1));
+  dispatch(batchActions([
+    { type: FILTER, payload },
+    { type: SELECT_PAGE, payload: 1 },
+  ]));
 };
 
 

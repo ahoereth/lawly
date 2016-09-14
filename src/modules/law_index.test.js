@@ -13,9 +13,6 @@ import reducer, {
   FILTER,
 
   fetchLawIndex,
-  selectLawIndexPage,
-  selectLawIndexInitial,
-  selectCollection,
   filterLawIndex,
 
   getLawIndex,
@@ -112,34 +109,6 @@ describe('law_index', () => {
         expect(mockApi.get).to.be.called.once;
         expect(dispatchedAction).to.deep.equal(action);
       }).then(done, done);
-    });
-
-    it('selectLawIndexPage() should dispatch SELECT_PAGE', () => {
-      const action = { type: SELECT_PAGE, payload: 7 };
-      const store = mockStore(initialState);
-      store.dispatch(selectLawIndexPage(7));
-      expect(store.getActions()).to.deep.contain(action);
-    });
-
-    it('selectLawIndexInitial() should dispatch SELECT_INITIAL', () => {
-      const action = { type: SELECT_INITIAL, payload: 'z' };
-      const store = mockStore(initialState);
-      store.dispatch(selectLawIndexInitial('z'));
-      expect(store.getActions()).to.deep.contain(action);
-    });
-
-    it('selectLawIndexInitial() should dispatch SELECT_PAGE', () => {
-      const action = { type: SELECT_PAGE, payload: 1 };
-      const store = mockStore(initialState);
-      store.dispatch(selectLawIndexInitial('z'));
-      expect(store.getActions()).to.deep.contain(action);
-    });
-
-    it('selectCollection() should dispatch SELECT_COLLECTION', () => {
-      const action = { type: SELECT_COLLECTION, payload: 'a' };
-      const store = mockStore(initialState);
-      store.dispatch(selectCollection('a'));
-      expect(store.getActions()).to.deep.contain(action);
     });
 
     it('filterLawIndex should dispatch FILTER', () => {

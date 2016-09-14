@@ -2,6 +2,7 @@ import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Grid, Cell, Button, Icon } from 'react-mdl';
 
+import { getIndexLink } from '~/helpers';
 import LawList from './LawList';
 import LawIndexLead from './LawIndexLead';
 import LawInitialChooser from './LawInitialChooser';
@@ -24,7 +25,6 @@ const LawIndex = ({
   loading,
   page,
   pageSize,
-  selectPage,
   selectedInitial,
   showToggles,
   star,
@@ -75,10 +75,19 @@ const LawIndex = ({
         disableUnstarred={!isOnline}
         laws={laws}
         loading={!laws.size && loading}
+        nextPageLink={getIndexLink({
+          collection: collection.get('title'),
+          initial: selectedInitial,
+          page: page + 1,
+        })}
         page={page}
         pageSize={pageSize}
+        prevPageLink={getIndexLink({
+          collection: collection.get('title'),
+          initial: selectedInitial,
+          page: page - 1,
+        })}
         total={count}
-        selectPage={selectPage}
         star={!isLoggedin ? undefined : star}
         stars={stars}
         filter={filter}
@@ -104,7 +113,6 @@ LawIndex.propTypes = {
   loading: PropTypes.bool.isRequired,
   page: PropTypes.number.isRequired,
   pageSize: PropTypes.number.isRequired,
-  selectPage: PropTypes.func.isRequired,
   selectedInitial: PropTypes.string.isRequired,
   showToggles: PropTypes.func.isRequired,
   star: PropTypes.func.isRequired,

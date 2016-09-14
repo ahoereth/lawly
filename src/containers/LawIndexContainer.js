@@ -14,7 +14,6 @@ import {
   isLoaded,
   fetchLawIndex,
   filterLawIndex,
-  selectLawIndexPage,
   select,
   showToggles,
 } from '~/modules/law_index';
@@ -45,7 +44,6 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = {
   fetchIndex: fetchLawIndex,
-  selectPage: selectLawIndexPage,
   filter: filterLawIndex,
   select,
   setTitle,
@@ -75,7 +73,6 @@ class LawIndexContainer extends React.Component {
       initialOrPage: PropTypes.string,
       page: PropTypes.number,
     }).isRequired,
-    selectPage: PropTypes.func.isRequired,
     select: PropTypes.func.isRequired,
     selectedInitial: PropTypes.string,
     setTitle: PropTypes.func.isRequired,
@@ -85,6 +82,20 @@ class LawIndexContainer extends React.Component {
   };
 
   componentWillMount(props) {
+    this.init(props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!isEqual(nextProps.params, this.props.params)) {
+      this.init(nextProps);
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return shallowCompare(this, nextProps, nextState);
+  }
+
+  init(props) {
     const {
       fetchIndex,
       loading,
@@ -108,16 +119,6 @@ class LawIndexContainer extends React.Component {
 
     loading && fetchIndex();
     select({ collection, initial, page });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!isEqual(nextProps.params, this.props.params)) {
-      this.componentWillMount(nextProps);
-    }
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    return shallowCompare(this, nextProps, nextState);
   }
 
   render() {
