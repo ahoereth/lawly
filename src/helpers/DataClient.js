@@ -25,7 +25,13 @@ export default class DataClient {
   }
 
   get(key) {
-    return this.forage.getItem(stringify(key));
+    return this.forage.getItem(stringify(key)).then((cache) => {
+      if (!cache) {
+        throw new Error('NO_CACHE');
+      }
+
+      return cache;
+    });
   }
 
   remove(key) {

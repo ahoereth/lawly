@@ -176,6 +176,8 @@ export default class ApiClient {
   /**
    * Wrapper around the fetch api for smoother response handling.
    *
+   * TODO: Maybe just hit API if cached data is old/expired?
+   *
    * @param  {string} url
    * @param  {object} options (optional)
    * @return {Promise}
@@ -185,116 +187,52 @@ export default class ApiClient {
       url, body, name, params, method, action, cachable,
     } = this.parseFetchOptions(options);
 
-    let expired = true;
-    let cache = Promise.resolve();
+    let gotRemoteResponse = false;
+    const remote = fetch(url, {
+      method,
+      body: JSON.stringify(body),
+      headers: {
+        ...ApiClient.jsonHeaders,
+        ...this.headers,
+        ...options.headers,
+      },
+    }).then(this.parseResponse).then((data) => {
+      this.isConnected(true);
+      gotRemoteResponse = true;
+      if (cachable) {
+        const expire = Date.now() + (1 * 24 * 60 * 60 * 1000); // TOMORROW
+        this.storage.stash({ name, method, ...params }, { expire, data });
+      }
+      return data;
+    });
 
-    if (cachable) {
-      cache = this.storage.get({ name, method, ...params }).then(cached => {
-        if (cached) {
-          const { data = cached, expire } = cached;
-          expired = expire && expire < Date.now();
-          if (action) {
-            this.store.dispatch({ type: action, payload: data });
-          }
+    const cache = cachable ? this.storage.get({ name, method, ...params })
+                           : Promise.reject();
 
-          return cached.data;
+    // We have an REDUX action to dispatch! Use whatever is faster, but give
+    // the remote endpoint precedence over the cache.
+    if (action) {
+      return cache.then((cached) => {
+        // Remote was faster: Use it right away.
+        if (gotRemoteResponse) {
+          return remote;
         }
 
-        return undefined;
-      });
+        // Remote did not reply yet. Use cached data and dispatch remote data
+        // later on.
+        remote.then(payload => this.store.dispatch({ type: action, payload }));
+        return cached.data;
+      }).catch(() => remote); // Data not found in cache.
     }
 
-    let request = cache.then(cachedResult => {
-      if (!cachedResult || expired) {
-        return fetch(url, {
-          method,
-          body: JSON.stringify(body),
-          headers: {
-            ...ApiClient.jsonHeaders,
-            ...this.headers,
-            ...options.headers,
-          },
-        });
-      }
-
-      throw new Error('FROM_CACHE');
-    });
-
-
-    // Server responded.
-    request = request.then(res => {
-      this.isConnected(true);
-      // if (!this.isConnected()) {
-      // // TODO: Here not only the connection status is updated, but
-      // // additionally the current triggering request performed again.
-      // // Reasoning is, that one of the previously stashed requests
-      // // might undo the triggering one which is undesired behavior.
-      // this.storage.stashRequest(options).then(() => this.isConnected(true));
-      // } else {
-      //   this.isConnected(true);
-      // }
-
-      // Got raw data, probably from cache.
-      if (!res.headers || !res.headers.get('content-type')) {
-        return res;
-      }
-
-      // Fresh response, need to parse it.
-      return this.parseResponse(res).then(data => {
-        if (cachable) {
-          const expire = Date.now() + (1 * 24 * 60 * 60 * 1000); // TOMORROW
-          this.storage.stash({ name, method, ...params }, { expire, data });
-        }
-        return data;
-      });
-    });
-
-    // Network error.
-    request = request.catch(err => {
-      if (err.message === 'FROM_CACHE') {
-        return cache;
-      }
-
-      if (err.name !== 'ApiError' && !cachable) {
-        // Seemingly a network error. Stash to retry later if its not cachable.
-        this.storage.stashRequest(options).then(() => this.isConnected(false));
-      }
-
-      if (cachable) {
+    return remote.catch((err) => {
+      if (err.name !== 'ApiError' && cachable) {
         return this.storage.get({ name, method, ...params });
       }
 
+      this.storage.stashRequest(options).then(() => this.isConnected(false));
       throw err;
     });
-
-    // If the request has an action type attached dispatch that action.
-    if (action) {
-      // If the request is cachable answer using the cache right away, but do
-      // not overwrite the API result if its back first.
-      if (cachable) {
-        const pairedRequest = new Promise(resolve => {
-          let remoteRequestFinished = false;
-
-          this.storage.get({ name, method, ...params }).then(cached => {
-            if (cached && !remoteRequestFinished) {
-              resolve(this.store.dispatch({ type: action, payload: cached }));
-            }
-          });
-
-          request.then(remote => {
-            remoteRequestFinished = true;
-            resolve(this.store.dispatch({ type: action, payload: remote }));
-          });
-        });
-        request = pairedRequest;
-      } else {
-        request = request.then(result =>
-          this.store.dispatch({ type: action, payload: result })
-        );
-      }
-    }
-
-    return request;
   }
 
   /**
@@ -356,13 +294,9 @@ export default class ApiClient {
           this.unauth(email);
           throw err;
         } else {
-          return this.storage.get(email).then(cachedUser => {
-            if (!cachedUser) {
-              this.unauth(email);
-              return Promise.reject();
-            }
-
-            return cachedUser;
+          return this.storage.get(email).catch((err) => {
+            this.unauth(email, true);
+            throw err;
           });
         }
       })
