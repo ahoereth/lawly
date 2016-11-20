@@ -2,13 +2,13 @@ import fetch from 'isomorphic-fetch';
 import { batchActions } from 'redux-batched-actions';
 import { isUndefined, omit, filter, uniq } from 'lodash';
 
+import { setOnline } from '~/modules/core';
+import { login } from '~/modules/user';
+import { FETCH_SINGLE, getLaws } from '~/modules/laws';
 import DataClient from './DataClient';
 import localSearch from './LocalSearch';
 import ApiError from './ApiError';
 import { joinPath, parseJWT, obj2query } from './utils';
-import { setOnline } from '~/modules/core';
-import { login } from '~/modules/user';
-import { FETCH_SINGLE, getLaws } from '~/modules/laws';
 
 
 export default class ApiClient {
@@ -44,7 +44,7 @@ export default class ApiClient {
     this.store = store;
 
     // Initialize authentication.
-    this.storage.auth().then(token => {
+    this.storage.auth().then((token) => {
       if (!token) { return; }
       this.setAuthToken(token);
       const { payload } = parseJWT(token);
@@ -60,12 +60,12 @@ export default class ApiClient {
         if (status) {
           this.networkCheck = this.isNode || setInterval(
             () => this.fetch({ method: 'get', name: 'base' }),
-            20000
+            20000,
           );
         } else {
           this.networkCheck = this.isNode || setInterval(
             () => this.fetch({ method: 'get', name: 'base' }),
-            2500
+            2500,
           );
         }
       }
@@ -75,7 +75,7 @@ export default class ApiClient {
       if (this.online) {
         // Refire the earliest failed request if any. This triggers a loop
         // which will fire off all outstanding one by one.
-        this.storage.popRequest().then(request => {
+        this.storage.popRequest().then((request) => {
           if (request) {
             this.fetch(request);
           }
@@ -148,7 +148,7 @@ export default class ApiClient {
       return response.text();
     }
 
-    return response.json().then(result => {
+    return response.json().then((result) => {
       const { status, message, data, token } = result;
 
       if (!status) {
@@ -289,7 +289,7 @@ export default class ApiClient {
   auth(email, password = undefined, signup = false) {
     return this.post({ name: 'users', email, password, signup })
       .then(result => this.storage.stash(email, result))
-      .catch(err => {
+      .catch((err) => {
         if (err.name === 'ApiError') {
           this.unauth(email, true);
           throw err;
@@ -300,13 +300,13 @@ export default class ApiClient {
           });
         }
       })
-      .then(result => {
+      .then((result) => {
         // Fetch all starred laws and insert them into the redux store.
         const groupkeys = uniq(result.laws.map(law => law.groupkey));
         Promise.all(groupkeys.map(groupkey => (
           this.get({ name: 'law', groupkey, cachable: true })
         ))).then(laws => this.store.dispatch(batchActions(
-          laws.map(payload => ({ type: FETCH_SINGLE, payload }))
+          laws.map(payload => ({ type: FETCH_SINGLE, payload })),
         )));
 
         return result;

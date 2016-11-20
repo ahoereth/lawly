@@ -20,7 +20,7 @@ const WelcomeMessage = ({ shadow, logout, user, ...otherProps }) => (
     </CardText>
     <CardActions>
       <Button>Schreib uns was du denkst</Button>
-      {!user.get('loggedin') ? null :
+      {user.get('loggedin') && (
         <Button
           ripple raised
           onClick={() => logout(user.get('email'))}
@@ -28,7 +28,7 @@ const WelcomeMessage = ({ shadow, logout, user, ...otherProps }) => (
         >
           Logout
         </Button>
-      }
+      )}
     </CardActions>
   </Card>
 );

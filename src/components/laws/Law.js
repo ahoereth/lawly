@@ -58,7 +58,7 @@ export default class Law extends React.Component {
 
     return (
       <Grid>
-        {fullscreenIndex ? null :
+        {fullscreenIndex || (
           <Cell col={fullscreenNorms ? 12 : 8} className='law'>
             <Norms
               annotations={annotations}
@@ -69,15 +69,15 @@ export default class Law extends React.Component {
               star={star}
             />
           </Cell>
-        }
-        {fullscreenNorms ? null :
+        )}
+        {fullscreenNorms || (
           <Cell col={fullscreenIndex ? 12 : 4} className='law-sidebar'>
             <Card className={styles.normlist} shadow={1}>
               <CardTitle><h2>Inhaltsübersicht</h2></CardTitle>
               <CardText><NormList nodes={norms.slice(1)} /></CardText>
             </Card>
           </Cell>
-        }
+        )}
         <Link
           to={getNormLink(groupkey)}
           style={{ color: 'inherit' }}

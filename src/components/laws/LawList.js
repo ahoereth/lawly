@@ -33,9 +33,9 @@ const LawList = ({
   selectPage,
   star, stars,
   total = laws.size,
-  ...otherProps,
+  ...otherProps
 }) => {
-  const rows = laws.map(law => {
+  const rows = laws.map((law) => {
     const state = stars ? stars.get(law.get('groupkey'), -2) : null;
     const groupkey = law.get('groupkey');
     const title = law.get('title');
@@ -90,46 +90,46 @@ const LawList = ({
             name='star' numeric
             tooltip={!filter ? undefined : 'Nur gespeicherte Normen zeigen'}
           >
-            {!filter ? <span /> :
+            {!filter ? <span /> : (
               <IconButton
                 ripple
                 name='stars'
                 colored={filters.get('starred')}
                 onClick={() => filter({ starred: !filters.get('starred') })}
               />
-            }
+            )}
           </TableHeader>
         }
         <TableHeader
           name='groupkey'
           tooltip={!filter ? undefined : 'Nach Abkürzung filtern'}
         >
-          {!filter || !filters ? 'Abkürzung' :
+          {!filter || !filters ? 'Abkürzung' : (
             <Textfield
               onChange={({ target }) => filter({ groupkey: target.value })}
               value={filters.get('groupkey', '')}
               label='Abkürzung'
               floatingLabel
             />
-          }
+          )}
         </TableHeader>
         <TableHeader
           name='title'
           tooltip={!filter ? undefined : 'Nach Bezeichnung filtern'}
         >
-          {!filter || !filters ? 'Bezeichnung' :
+          {!filter || !filters ? 'Bezeichnung' : (
             <Textfield
               onChange={({ target }) => filter({ title: target.value })}
               value={filters.get('title', '')}
               label='Bezeichnung'
               floatingLabel
             />
-          }
+          )}
         </TableHeader>
       </DataTable>
-      {!rows.size &&
+      {!rows.size && (
         <p style={{ textAlign: 'center' }}>{emptysetMessage}</p>
-      }
+      )}
       <Pagination
         page={page}
         pages={Math.ceil(total / pageSize)}

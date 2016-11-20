@@ -57,7 +57,6 @@ class LoginForm extends React.Component {
   render() {
     const { email, password } = this.state;
     const { shadow, ...otherProps } = this.props;
-
     return (
       <form onSubmit={this.submit}>
         <Card shadow={shadow} {...omit(otherProps, ['login', 'user'])}>

@@ -29,12 +29,12 @@ const props = {
 
 function testListLevel(ul) {
   expect(ul.type).to.equal('ul');
-  ul.props.children.forEach(li => {
+  ul.props.children.forEach((li) => {
     expect(li.type).to.equal('li');
     const children = li.props.children;
     if (isUndefined(children)) { return; }
 
-    children.forEach(child => {
+    children.forEach((child) => {
       if (isUndefined(child.type)) {
         expect(child).to.be.a('boolean');
         expect(child).to.be.false;

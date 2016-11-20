@@ -45,7 +45,7 @@ export const fetchLaw = (groupkey, payload) => ({
 export const selectLaw = groupkey => (dispatch, getState) => {
   // Cannot use a selector from law_index here due to circular dependencies.
   const norm = getState().getIn(['law_index', 'laws']).find(
-    norm => norm.get('groupkey') === groupkey
+    norm => norm.get('groupkey') === groupkey,
   );
   dispatch({ type: SELECT, payload: groupkey });
   return dispatch(fetchLaw(groupkey, norm ? norm.toObject() : undefined));
@@ -65,7 +65,7 @@ export const getNormHierarchy = createSelector(
   (norms = List()) => {
     let nodes = List();
     let path = List();
-    norms.forEach(norm => {
+    norms.forEach((norm) => {
       const depth = norm.get('enumeration', '0').split('.').length - 1;
       if ((depth * 2) > path.size) {
         path = path.push(nodes.getIn(path).size - 1, 'children');
@@ -79,5 +79,5 @@ export const getNormHierarchy = createSelector(
     });
 
     return nodes;
-  }
+  },
 );

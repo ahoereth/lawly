@@ -51,7 +51,7 @@ describe('user', () => {
     it('should handle LOGOUT', () => {
       const state = reducer(
         { loggedin: true, email: 'mail', laws: Map({ a: 'a' }) },
-        { type: LOGOUT, payload: null }
+        { type: LOGOUT, payload: null },
       );
       expect(state.get('loggedin')).to.be.false;
       expect(state.get('email')).to.be.undefined;
@@ -78,7 +78,7 @@ describe('user', () => {
       };
       const store = mockStore(initialState);
       mockApi.reset(() => Promise.resolve(expectedAction.payload));
-      store.dispatch(login('mail', 'pw')).then(action => {
+      store.dispatch(login('mail', 'pw')).then((action) => {
         expect(action).to.deep.equal(expectedAction);
         expect(mockApi.auth).to.be.called.once;
       }).then(done).catch(done);
@@ -88,7 +88,7 @@ describe('user', () => {
       const expectedAction = { type: LOGOUT, payload: undefined };
       const store = mockStore(initialState);
       mockApi.reset(() => Promise.resolve());
-      store.dispatch(logout('mail')).then(action => {
+      store.dispatch(logout('mail')).then((action) => {
         expect(action).to.deep.equal(expectedAction);
         expect(mockApi.unauth).to.be.called.once;
       }).then(done).catch(done);

@@ -56,7 +56,7 @@ export default createReducer(Map({
 
 // ******************************************************************
 // ACTION CREATORS
-export const fetchLawIndex = (params) => ({
+export const fetchLawIndex = params => ({
   type: FETCH,
   api: { method: 'get', name: 'laws', cachable: true, ...params },
 });
@@ -65,11 +65,11 @@ export const showToggles = (state = true) => (
   { type: SHOW_TOGGLES, payload: !!state }
 );
 
-export const select = ({ collection, initial = '', page = 1 }) => dispatch => {
+export const select = ({ collection, initial = '', p = 1 }) => (dispatch) => {
   dispatch(batchActions([
     { type: SELECT_COLLECTION, payload: collection },
     { type: SELECT_INITIAL, payload: initial.toLowerCase() },
-    { type: SELECT_PAGE, payload: parseInt(page, 10) },
+    { type: SELECT_PAGE, payload: parseInt(p, 10) },
   ]));
 };
 
@@ -89,30 +89,30 @@ export const getCollections = state => state.getIn([SCOPE, 'collections']);
 
 export const getCollectionTitle = state => state.getIn([SCOPE, 'collection']);
 
-export const getFilters = (state) => state.getIn([SCOPE, 'filters']);
+export const getFilters = state => state.getIn([SCOPE, 'filters']);
 
-export const getInitial = (state) => state.getIn([SCOPE, 'initial']);
+export const getInitial = state => state.getIn([SCOPE, 'initial']);
 
-export const getInitials = (state) => state.getIn([SCOPE, 'initials']);
+export const getInitials = state => state.getIn([SCOPE, 'initials']);
 
-export const getLawIndex = (state) => state.getIn([SCOPE, 'laws']);
+export const getLawIndex = state => state.getIn([SCOPE, 'laws']);
 
-export const getPage = (state) => state.getIn([SCOPE, 'page']);
+export const getPage = state => state.getIn([SCOPE, 'page']);
 
-export const getPageSize = (state) => state.getIn([SCOPE, 'pageSize']);
+export const getPageSize = state => state.getIn([SCOPE, 'pageSize']);
 
-export const getTotal = (state) => state.getIn([SCOPE, 'total']);
+export const getTotal = state => state.getIn([SCOPE, 'total']);
 
-export const getToggles = (state) => state.getIn([SCOPE, 'showToggles']);
+export const getToggles = state => state.getIn([SCOPE, 'showToggles']);
 
 export const isLoaded = createSelector(
   [getTotal, getLawIndex],
-  (total, laws) => total > -1 && total === laws.size
+  (total, laws) => total > -1 && total === laws.size,
 );
 
 export const getCollectionTitles = createSelector(
   [getCollections],
-  collections => collections.map(coll => coll.get('title'))
+  collections => collections.map(coll => coll.get('title')),
 );
 
 export const getCollection = createSelector(
@@ -121,7 +121,7 @@ export const getCollection = createSelector(
     if (!title) { return Map(); }
     const result = collections.find(coll => coll.get('title') === title);
     return result || Map();
-  }
+  },
 );
 
 export const getLawsByCollection = createSelector(
@@ -130,7 +130,7 @@ export const getLawsByCollection = createSelector(
     if (!collection.has('laws')) { return laws; }
     const keys = collection.get('laws').map(groupkey => groupkey.toLowerCase());
     return laws.filter(l => keys.includes(l.get('groupkey').toLowerCase()));
-  }
+  },
 );
 
 export const getLawsByInitial = createSelector(
@@ -139,7 +139,7 @@ export const getLawsByInitial = createSelector(
     if (!char) { return laws; }
     const pattern = new RegExp(`^${char}`, 'i');
     return laws.filter(law => pattern.test(law.get('groupkey')));
-  }
+  },
 );
 
 // Filter laws of the specified initial by starred if requested.
@@ -152,7 +152,7 @@ export const getStarFilteredLawsByInitial = createSelector(
     }
 
     return laws;
-  }
+  },
 );
 
 // Filter laws of the specified initial probably already filtered by starred
@@ -168,7 +168,7 @@ export const getStarAndKeyFilteredLawsByInitial = createSelector(
     }
 
     return laws;
-  }
+  },
 );
 
 // Filter laws of the specified initial probably already filtered by starred
@@ -184,12 +184,12 @@ export const getFilteredLaws = createSelector(
     }
 
     return laws;
-  }
+  },
 );
 
-export const getFilteredLawsCount = (state) => getFilteredLaws(state).size;
+export const getFilteredLawsCount = state => getFilteredLaws(state).size;
 
 export const getFilteredLawsByPage = createSelector(
   [getFilteredLaws, getPage, getPageSize],
-  (laws, page, size) => laws.slice(size * (page - 1), size * page)
+  (laws, page, size) => laws.slice(size * (page - 1), size * page),
 );

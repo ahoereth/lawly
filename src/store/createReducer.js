@@ -19,7 +19,7 @@ import { isFunction } from 'lodash';
 export default function createReducer(
   initialState,
   handlers,
-  constructor = (state) => Immutable.fromJS(state)
+  constructor = state => Immutable.fromJS(state),
 ) {
   return (rawState = initialState, action) => {
     let state = rawState;

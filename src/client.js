@@ -1,5 +1,5 @@
 /* global document, window, module, process */
-/* eslint-disable global-require */
+/* eslint-disable global-require, import/first */
 
 import './polyfills';
 
@@ -15,8 +15,11 @@ import createStore from './store/createStore';
 import AppClient from './components/AppClient';
 import { updateAvailable, renderShells } from './modules/core';
 
+
 import 'react-mdl/extra/material';
-import 'react-mdl/extra/css/material.red-amber.min.css';
+/* eslint-disable import/no-webpack-loader-syntax, max-len */
+import '!!style-loader!css-loader!react-mdl/extra/css/material.red-amber.min.css';
+/* eslint-enable import/no-webpack-loader-syntax, max-len */
 
 
 const client = new ApiClient(process.env.APIURL);
@@ -56,7 +59,7 @@ if (process.env.NODE_ENV === 'production') {
       <AppContainer>
         <AppClient store={store} renderProps={props} />
       </AppContainer>,
-      target
+      target,
     );
   });
 } else {
@@ -64,7 +67,7 @@ if (process.env.NODE_ENV === 'production') {
     <AppContainer>
       <AppClient store={store} renderProps={{ history }} />
     </AppContainer>,
-    target
+    target,
   );
 
   if (module.hot) {
@@ -73,7 +76,7 @@ if (process.env.NODE_ENV === 'production') {
         <AppContainer>
           <AppClient store={store} renderProps={{ history }} />
         </AppContainer>,
-        target
+        target,
       );
     });
   }

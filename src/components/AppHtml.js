@@ -48,13 +48,13 @@ const AppHtml = ({
       <meta name='viewport' content='width=device-width, minimum-scale=1.0' />
       <link rel='manifest' href={manifest} />
       <link rel='shortcut icon' sizes='16x16 24x24 32x32 48x48 64x64' href='/static/img/icon.ico' />
-      {meta.map(([tag, props], idx) =>
+      {meta.map(([tag, props], idx) => (
         React.createElement(tag, { ...props, key: idx })
-      )}
+      ))}
       <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i' />
-      {css.map(src =>
+      {css.map(src => (
         <link rel='stylesheet' href={src} key={src} />
-      )}
+      ))}
     </head>
     <body>
       <div id='app'>{children}</div>
@@ -70,9 +70,9 @@ const AppHtml = ({
           __html: `window.__state=${JSON.stringify(state.toJS())}`,
         }}
       />
-      {js.map(src =>
+      {js.map(src => (
         <script src={src} key={src} />
-      )}
+      ))}
     </body>
   </html>
 );

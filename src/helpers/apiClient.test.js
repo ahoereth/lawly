@@ -16,28 +16,28 @@ describe('ApiClient', () => {
   // });
 
   it('provides get() for GET', () => {
-    client.fetch = chai.spy(f => { tmp = f; });
+    client.fetch = chai.spy((f) => { tmp = f; });
     client.get({ name: 'none' });
     expect(client.fetch).to.be.called.once;
     expect(tmp).to.have.property('method', 'get');
   });
 
   it('provides post() for POST', () => {
-    client.fetch = chai.spy(f => { tmp = f; });
+    client.fetch = chai.spy((f) => { tmp = f; });
     client.post({ name: 'none' });
     expect(client.fetch).to.be.called.once;
     expect(tmp).to.have.property('method', 'post');
   });
 
   it('provides put() for PUT', () => {
-    client.fetch = chai.spy(f => { tmp = f; });
+    client.fetch = chai.spy((f) => { tmp = f; });
     client.put({ name: 'none' });
     expect(client.fetch).to.be.called.once;
     expect(tmp).to.have.property('method', 'put');
   });
 
   it('provides auth() for POST authentication', (done) => {
-    client.fetch = chai.spy(f => { tmp = f; return Promise.resolve('res'); });
+    client.fetch = chai.spy((f) => { tmp = f; return Promise.resolve('res'); });
     client.unauth = chai.spy(f => f);
     client.storage.stash = chai.spy(() => Promise.reject({}));
     client.auth('mail', 'pw', true).then(() => {
@@ -53,7 +53,7 @@ describe('ApiClient', () => {
         expect(client.fetch).to.be.called.twice;
         expect(tmp).to.have.property('signup', false);
         expect(client.fetch).to.be.called.twice;
-      })
+      }),
     ).then(done, done);
   });
 
@@ -61,7 +61,7 @@ describe('ApiClient', () => {
   // search
 
   it('provides remove() for DELETE', () => {
-    client.fetch = chai.spy(f => { tmp = f; });
+    client.fetch = chai.spy((f) => { tmp = f; });
     client.remove({ name: 'none' });
     expect(client.fetch).to.be.called.once;
     expect(tmp).to.have.property('method', 'delete');

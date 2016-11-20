@@ -34,11 +34,11 @@ export default createReducer(Map({
   [LOGOUT]: state => state.merge({
     loggedin: false, email: undefined, laws: Map(), error: undefined,
   }),
-  [STAR]: (state, { payload }) => state.update('laws', laws => {
+  [STAR]: (state, { payload }) => state.update('laws', (laws) => {
     const { groupkey, enumeration = '0', ...rest } = payload;
     const targetkey = laws.findKey(norm =>
       norm.get('groupkey') === groupkey &&
-      norm.get('enumeration') === enumeration
+      norm.get('enumeration') === enumeration,
     );
 
     // Update existing.
@@ -50,7 +50,7 @@ export default createReducer(Map({
     return laws.push(Map({ groupkey, enumeration, ...rest })).sortBy(
       n => [n.get('groupkey'), n.get('enumeration')],
       ([k1, e1], [k2, e2]) => (k1 !== k2 ? localeCompare(k1, k2)
-                                         : semverCompare(e1, e2))
+                                         : semverCompare(e1, e2)),
     );
   }),
 });
@@ -64,7 +64,7 @@ export const login = (email, password, signup = false) => ({
   promise: client => client.auth(email, password, signup),
 });
 
-export const logout = (email) => ({
+export const logout = email => ({
   type: LOGOUT,
   promise: client => client.unauth(email),
 });
@@ -90,12 +90,12 @@ export const isLoggedin = state => state.getIn([SCOPE, 'loggedin'], false);
 
 export const getStarredUserLaws = createSelector(
   [getUserLaws],
-  laws => laws.filter(norm => norm.get('starred'))
+  laws => laws.filter(norm => norm.get('starred')),
 );
 
 export const getIndexStars = createSelector(
   [getStarredUserLaws],
-  (laws) => laws.reduce((map, norm) => {
+  laws => laws.reduce((map, norm) => {
     const key = norm.get('groupkey');
     const child = norm.get('enumeration') !== '0';
     const state = map.get(key, null);
@@ -108,13 +108,13 @@ export const getIndexStars = createSelector(
     }
 
     return map;
-  }, Map({}))
+  }, Map({})),
 );
 
 export const getSelectionAnnotations = createSelector(
   [getUserLaws, getSelection],
   (norms, groupkey) => Map(
     norms.filter(law => law.get('groupkey') === groupkey)
-         .map(norm => [norm.get('enumeration'), norm])
-  )
+         .map(norm => [norm.get('enumeration'), norm]),
+  ),
 );

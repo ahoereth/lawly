@@ -5,13 +5,10 @@ import { isUndefined } from 'lodash';
 
 
 class WorkerMock {
-  onmessage() { // eslint-disable-line class-methods-use-this
-    return;
-  }
+  onmessage() {} // eslint-disable-line class-methods-use-this
 
   postMessage(data) {
     this.onmessage({ data });
-    return;
   }
 }
 

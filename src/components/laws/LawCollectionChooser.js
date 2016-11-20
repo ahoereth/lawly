@@ -20,17 +20,17 @@ const LawCollectionChooser = ({ collections, selected }) => (
         tablet={4}
         phone={4}
       >
-      {title === '' ? <Button raised disabled /> : (
-        <Link to={to({ collection: selected !== title ? title : '' })}>
-          <Button
-            ripple raised
-            accent={selected === title}
-            style={{ width: '100%' }}
-          >
-            {title}
-          </Button>
-        </Link>
-      )}
+        {title === '' ? <Button raised disabled /> : (
+          <Link to={to({ collection: selected !== title ? title : '' })}>
+            <Button
+              ripple raised
+              accent={selected === title}
+              style={{ width: '100%' }}
+            >
+              {title}
+            </Button>
+          </Link>
+        )}
       </Cell>
     ))}
   </Grid>

@@ -83,7 +83,7 @@ export default class Norm extends React.Component {
     this.setState({ focused: !!state });
   }
 
-  saveElemRef = ref => {
+  saveElemRef = (ref) => {
     this.elem = ref;
   }
 

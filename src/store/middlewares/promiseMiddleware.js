@@ -10,7 +10,7 @@ import { isFunction, isError } from 'lodash';
  * @return {Function} Redux Middleware
  */
 export default function promiseMiddleware(client) {
-  return (/* store */) => next => action => {
+  return (/* store */) => next => (action) => {
     const { promise, type } = action;
     if (!type || !promise || !isFunction(promise)) {
       return next(action);
@@ -21,7 +21,7 @@ export default function promiseMiddleware(client) {
       error => next({
         type, error: true,
         payload: isError(error) ? error.toString() : error,
-      })
+      }),
     );
   };
 }

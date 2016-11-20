@@ -14,21 +14,21 @@ const shell = List(range(20).map(() => ''));
 
 const LawInitialChooser = ({ initials, selected }) => (
   <Grid>
-    {(initials.size ? initials : shell).map((char, idx) => (
+    {(initials.size ? initials : shell).map((ch, idx) => (
       <Cell
-        key={char || `shell-${idx}`}
+        key={ch || `shell-${idx}`}
         col={12}
         tablet={8}
         phone={1}
         className={styles.cell}
       >
-      {char === '' ? <Button raised disabled /> : (
-        <Link to={to({ initial: selected !== char.toLowerCase() ? char : '' })}>
-          <Button ripple raised accent={selected === char.toLowerCase()}>
-            {char}
-          </Button>
-        </Link>
-      )}
+        {ch === '' ? <Button raised disabled /> : (
+          <Link to={to({ initial: selected !== ch.toLowerCase() ? ch : '' })}>
+            <Button ripple raised accent={selected === ch.toLowerCase()}>
+              {ch}
+            </Button>
+          </Link>
+        )}
       </Cell>
     ))}
   </Grid>

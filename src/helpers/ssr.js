@@ -38,7 +38,7 @@ let manifest = false;
 
 export default function (location, { manifest: devMan, asyncDeps = [] } = {}) {
   manifest = devMan || (manifest || readJSON(DIST_MANIFEST_PATH));
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const memoryHistory = createMemoryHistory(location);
     const store = createStore(memoryHistory, client, {});
     const history = syncHistoryWithStore(memoryHistory, store, {
@@ -64,7 +64,7 @@ export default function (location, { manifest: devMan, asyncDeps = [] } = {}) {
       ]);
 
       Promise.all(asyncDeps.map(settle)).then(() => {
-        const page = renderToString(
+        const page = renderToString((
           <AppHtml
             appcache={prefixPath('manifest.appcache')}
             assets={assets}
@@ -77,7 +77,7 @@ export default function (location, { manifest: devMan, asyncDeps = [] } = {}) {
           >
             <AppServer renderProps={props} store={store} />
           </AppHtml>
-        );
+        ));
         resolve(`<!doctype html>\n${page}\n`);
       });
     });

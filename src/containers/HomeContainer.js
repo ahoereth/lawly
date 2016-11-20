@@ -33,9 +33,9 @@ class HomeContainer extends React.Component {
 
 
 export default connect(
-  (state) => ({
+  state => ({
     user: getUser(state),
     laws: getUserLaws(state),
   }),
-  { login, logout, setTitle }
+  { login, logout, setTitle },
 )(HomeContainer);

@@ -10,7 +10,7 @@ import { isPlainObject } from 'lodash';
  * @return {Function} Redux Middleware
  */
 export default function apiMiddleware(client) {
-  return (/* store */) => next => action => {
+  return (/* store */) => next => (action) => {
     const { api, type, payload } = action;
 
     // Check wheather this is the correct middleware to handle this action.

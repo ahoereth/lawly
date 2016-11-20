@@ -8,7 +8,7 @@ import { isFunction } from 'lodash';
  * @return {Function} Redux Middleware
  */
 export default function functionsMiddleware() {
-  return ({ dispatch, getState }) => next => action => {
+  return ({ dispatch, getState }) => next => (action) => {
     if (!isFunction(action)) {
       return next(action);
     }

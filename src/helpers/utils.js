@@ -1,5 +1,6 @@
-import { b64decode } from './base64';
 import { isBoolean, endsWith, isString } from 'lodash';
+
+import { b64decode } from './base64';
 
 
 /**
@@ -22,7 +23,7 @@ export function isNumeric(val) {
  */
 export function obj2query(obj = null, seperator = false) {
   if (!obj) { return ''; }
-  const str = Object.keys(obj).map(key => {
+  const str = Object.keys(obj).map((key) => {
     if (isBoolean(obj[key])) {
       return encodeURIComponent(key) + (obj[key] === false ? '=0' : '');
     }
@@ -58,7 +59,7 @@ export function joinPath(...args) {
     parts = parts.slice(0, -1);
   }
 
-  const path = parts.map(part => {
+  const path = parts.map((part) => {
     let clean = part;
     while (clean.indexOf('/') === 0) { clean = clean.slice(1); }
     while (endsWith(clean, '/')) { clean = clean.slice(0, -1); }
@@ -92,9 +93,10 @@ export function parseJWT(token) {
 // const UMLAUTS = { 'ä': 'ae', 'ü': 'ue', 'ö': 'oe',
 //                   'Ä': 'AE', 'Ü': 'UE', 'Ö': 'OE',
 //                   'ß': 'ss' };
-const UMLAUTS = { '\u00e4': 'ae', '\u00fc': 'ue', '\u00f6': 'oe',
-                  '\u00c4': 'AE', '\u00dc': 'UE', '\u00d6': 'OE',
-                  '\u00df': 'ss' };
+const UMLAUTS = {
+  '\u00e4': 'ae', '\u00fc': 'ue', '\u00f6': 'oe',
+  '\u00c4': 'AE', '\u00dc': 'UE', '\u00d6': 'OE', '\u00df': 'ss',
+};
 /* eslint-enable quote-props */
 
 /**

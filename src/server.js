@@ -23,10 +23,10 @@ http.createServer((req, res) => {
   }
 
   // Dynamic routes.
-  ssr(url).then(rendered => {
+  ssr(url).then((rendered) => {
     res.writeHead(200);
     res.end(rendered);
-  }).catch(err => {
+  }).catch((err) => {
     res.writeHead(404);
     res.end(err);
   });

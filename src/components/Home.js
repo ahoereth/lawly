@@ -11,19 +11,19 @@ const Home = ({ user, laws, login, logout }) => (
     <Cell col={4}>
       <WelcomeMessage {...{ user, logout }} />
     </Cell>
-    {user.get('loggedin') ? null :
+    {user.get('loggedin') || (
       <Cell col={4}>
         <LoginForm shadow={1} {...{ user, login }} />
       </Cell>
-    }
-    {!user.get('loggedin') ? null :
+    )}
+    {user.get('loggedin') && (
       <Cell col={8}>
         <LawList
           laws={laws}
           emptysetMessage='Hier werden deine gespeicherten Gesetze erscheinen.'
         />
       </Cell>
-    }
+    )}
   </Grid>
 );
 

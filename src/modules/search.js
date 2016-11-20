@@ -82,5 +82,5 @@ export const isLoading = state => state.getIn([SCOPE, 'loading'], false);
 
 export const getResultsByPage = createSelector(
   [getResults, getPage, getPageSize],
-  (results, page, size) => results.slice(size * (page - 1), size * page)
+  (results, page, size) => results.slice(size * (page - 1), size * page),
 );

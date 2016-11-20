@@ -49,7 +49,7 @@ export const updateAvailable = () => ({
   payload: true,
 });
 
-export const setOnline = (isConnected) => ({
+export const setOnline = isConnected => ({
   type: ONLINE,
   payload: !!isConnected,
 });

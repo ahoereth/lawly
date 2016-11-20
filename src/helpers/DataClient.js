@@ -50,7 +50,7 @@ export default class DataClient {
   }
 
   stashRequest(request) {
-    return this.forage.getItem('requests').then(requests => {
+    return this.forage.getItem('requests').then((requests) => {
       const reqStr = stringify(request);
       const value = (requests || []).filter(req => stringify(req) !== reqStr)
                                     .concat([request]);
@@ -59,7 +59,7 @@ export default class DataClient {
   }
 
   popRequest() {
-    return this.forage.getItem('requests').then(requests => {
+    return this.forage.getItem('requests').then((requests) => {
       if (!Array.isArray(requests) || !requests.length) { return undefined; }
       return this.forage.setItem('requests', requests.slice(1))
                         .then(() => requests[0]);

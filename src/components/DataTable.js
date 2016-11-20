@@ -41,7 +41,7 @@ const DataTable = ({
   loading,
   rows,
   shell,
-  ...others,
+  ...others
 }) => {
   const classes = classNames('mdl-data-table', className);
   const columns = React.Children.toArray(children);
@@ -52,11 +52,11 @@ const DataTable = ({
         <tr>{columns}</tr>
       </thead>
       <tbody>
-        {(loading ? List(range(20)).map(shellBase) : rows).map((row, idx) =>
+        {(loading ? List(range(20)).map(shellBase) : rows).map((row, idx) => (
           <tr key={row.get(keyProp, idx)}>
             {columns.map(column => renderCell(column.props, row))}
           </tr>
-        )}
+        ))}
       </tbody>
     </table>
   );

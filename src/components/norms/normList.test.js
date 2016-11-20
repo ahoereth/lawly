@@ -4,8 +4,9 @@ import React from 'react';
 import { fromJS } from 'immutable';
 import { shallow, render } from 'enzyme';
 
-import NormList from './NormList';
 import { getNormLink } from '~/helpers';
+import NormList from './NormList';
+
 
 /* eslint-disable max-len */
 const props = {
@@ -38,7 +39,7 @@ describe('NormList', () => {
 
   it('all items have a link', () => {
     expect(wrapper.children()).to.have.lengthOf(5);
-    wrapper.find('>li').forEach(li => {
+    wrapper.find('>li').forEach((li) => {
       expect(li.find('Link')).to.have.lengthOf(1);
     });
   });

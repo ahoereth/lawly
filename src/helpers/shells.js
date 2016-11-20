@@ -11,7 +11,7 @@ export const getTextline = (key, w = sample(range(widths.length - 1))) => (
   <span className={`${textline} ${widths[w]}`} key={key} />
 );
 
-export const getTextblock = (n) => (
+export const getTextblock = n => (
   range(n).map((val, idx) => getTextline(idx))
 );
 

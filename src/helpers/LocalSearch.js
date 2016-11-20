@@ -26,7 +26,7 @@ class LocalSearch {
     // sending the required laws to the worker is expensive.
     return {
       total: limit > result.length ? result.length : limit,
-      results: result.slice(0, limit).map(obj => {
+      results: result.slice(0, limit).map((obj) => {
         const [k, n] = obj.ref.split('::');
         return {
           groupkey: k, enumeration: n,
@@ -52,7 +52,7 @@ class LocalSearch {
         switch (cmd) {
           case 'search':
             this.promises[id].resolve(LocalSearch.parseResult(
-              { result: val, ...this.promises[id].data }
+              { result: val, ...this.promises[id].data },
             ));
             delete this.promises[id];
             break;

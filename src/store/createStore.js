@@ -35,7 +35,7 @@ export default function createStore(history, client, data = {}) {
     compose(
       applyMiddleware(...middlewares),
       devToolsExtension,
-    )
+    ),
   );
 
   client.init(store);

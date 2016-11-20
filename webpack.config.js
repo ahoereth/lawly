@@ -56,14 +56,17 @@ let config = {
     modules: ['node_modules', 'src'],
     alias: { '~': SRC },
   },
+  resolveLoader: {
+    moduleExtensions: ['-loader'],
+  },
   module: {
     rules: [
       {
         test: /\.js$/,
         include: SRC,
         loaders: [
-          'eslint-loader',
           'babel-loader?cacheDirectory=tmp/cache',
+          'eslint-loader',
         ],
       },
       { test: /\.json$/, loader: 'json-loader' },
@@ -89,6 +92,7 @@ let config = {
     }),
     new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
     new LodashPlugin({
+      paths: true,
       collections: true,
       currying: true,
       flattening: true,
@@ -141,7 +145,7 @@ if (process.env.NODE_ENV === 'development') {
     watch: true,
     entry: Object.assign({}, config.entry, {
       app: hotreloading.concat([config.entry.app]),
-      tests: hotreloading.concat(['mocha!./tests.js']),
+      tests: hotreloading.concat(['mocha-loader!./tests.js']),
     }),
     output: Object.assign({}, config.output, {
       pathinfo: true,
