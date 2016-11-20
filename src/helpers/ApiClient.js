@@ -291,7 +291,7 @@ export default class ApiClient {
       .then(result => this.storage.stash(email, result))
       .catch(err => {
         if (err.name === 'ApiError') {
-          this.unauth(email);
+          this.unauth(email, true);
           throw err;
         } else {
           return this.storage.get(email).catch((err) => {
@@ -320,9 +320,11 @@ export default class ApiClient {
    * @param  {string} email
    * @return {Promise}
    */
-  unauth(email) {
+  unauth(email, localOnly = false) {
     this.storage.remove(email);
-    return this.remove({ name: 'user_sessions', email }).then(result => {
+    this.setAuthToken();
+    if (localOnly) { return true; }
+    return this.remove({ name: 'user_sessions', email }).then((result) => {
       this.setAuthToken();
       return result;
     });
