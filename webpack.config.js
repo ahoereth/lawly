@@ -1,27 +1,27 @@
-/* eslint-disable no-var, vars-on-top, import/no-commonjs, object-shorthand */
+/* eslint-disable import/no-commonjs, object-shorthand */
 /* eslint-disable prefer-template */
 /* global process */
-var path = require('path');
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var autoprefixer = require('autoprefixer');
-var precss = require('precss');
-var LodashPlugin = require('lodash-webpack-plugin');
-var AssetsPlugin = require('assets-webpack-plugin');
-var StaticSiteGeneratorPlugin = require('static-site-generator-webpack-plugin');
-var DashboardPlugin = require('webpack-dashboard/plugin');
-var mapValues = require('lodash/fp/mapValues');
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const autoprefixer = require('autoprefixer');
+const precss = require('precss');
+const LodashPlugin = require('lodash-webpack-plugin');
+const AssetsPlugin = require('assets-webpack-plugin');
+const StaticSiteGenPlugin = require('static-site-generator-webpack-plugin');
+const DashboardPlugin = require('webpack-dashboard/plugin');
+const mapValues = require('lodash/fp/mapValues');
 
-var stringifyValues = mapValues(JSON.stringify);
+const stringifyValues = mapValues(JSON.stringify);
 
 
-var SRC = path.resolve(__dirname, 'src');
-var DST = path.resolve(__dirname, 'dist');
-var DEV_HOST = 'localhost';
-var DEV_PORT = 8080;
+const SRC = path.resolve(__dirname, 'src');
+const DST = path.resolve(__dirname, 'dist');
+const DEV_HOST = 'localhost';
+const DEV_PORT = 8080;
 
-var env = {
+const env = {
   development: {
     NODE_ENV: 'development',
     APIURL: 'http://localhost:3000/v0',
@@ -43,7 +43,7 @@ var env = {
 
 // *****************************************************************************
 // Base
-var config = {
+let config = {
   devtool: 'source-map',
   context: SRC,
   entry: {},
@@ -57,35 +57,36 @@ var config = {
     alias: { '~': SRC },
   },
   module: {
-    preLoaders: [
-      { test: /\.js$/, loader: 'eslint', include: SRC },
-    ],
-    loaders: [
+    rules: [
       {
         test: /\.js$/,
-        loader: 'babel',
         include: SRC,
-        query: { cacheDirectory: path.resolve(__dirname, 'tmp/cache') },
+        loaders: [
+          'eslint-loader',
+          'babel-loader?cacheDirectory=tmp/cache',
+        ],
       },
       { test: /\.json$/, loader: 'json-loader' },
-      { test: /\.ejs$/, loader: 'ejs' },
+      { test: /\.ejs$/, loader: 'ejs-loader' },
     ],
   },
-  externals: {},
-  postcss: function () {
-    return [
-      precss,
-      autoprefixer({
-        browsers: [
-          '>1%',
-          'last 4 versions',
-          'Firefox ESR',
-          'not ie < 9', // React doesn't support IE8 anyway
-        ],
-      }),
-    ];
-  },
+  externals: [],
   plugins: [
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        postcss: () => ([
+          precss,
+          autoprefixer({
+            browsers: [
+              '>1%',
+              'last 4 versions',
+              'Firefox ESR',
+              'not ie < 9', // React doesn't support IE8 anyway
+            ],
+          }),
+        ]),
+      },
+    }),
     new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
     new LodashPlugin({
       collections: true,
@@ -107,8 +108,11 @@ if (process.env.NODE_ENV !== 'node') {
       'web-worker': 'web-worker',
     }),
     module: Object.assign({}, config.module, {
-      loaders: config.module.loaders.concat([
-        { test: /\.(woff2?|eot|ttf)$/i, loader: 'file?name=[name].[ext]' },
+      rules: config.module.rules.concat([
+        {
+          test: /\.(woff2?|eot|ttf)$/i,
+          loader: 'file-loader?name=[name].[ext]',
+        },
       ]),
     }),
     plugins: config.plugins.concat([
@@ -126,7 +130,7 @@ if (process.env.NODE_ENV !== 'node') {
 // *****************************************************************************
 // Development
 if (process.env.NODE_ENV === 'development') {
-  var hotreloading = [
+  const hotreloading = [
     'react-hot-loader/patch',
     'webpack-dev-server/client?http://' + DEV_HOST + ':' + DEV_PORT + '/',
     'webpack/hot/only-dev-server',
@@ -143,19 +147,23 @@ if (process.env.NODE_ENV === 'development') {
       pathinfo: true,
     }),
     module: Object.assign({}, config.module, {
-      loaders: config.module.loaders.concat([
+      rules: config.module.rules.concat([
         {
           test: /\.c|sss$/,
-          loaders: ['style', 'css', 'postcss?parser=sugarss'],
+          loaders: [
+            'style-loader',
+            'css-loader?modules&importLoaders=1',
+            'postcss-loader?parser=sugarss',
+          ],
         },
       ]),
     }),
-    externals: Object.assign({}, config.externals, {
+    externals: config.externals.concat([
       // See http://airbnb.io/enzyme/docs/guides/webpack.html
-      'react/addons': true,
-      'react/lib/ExecutionEnvironment': true,
-      'react/lib/ReactContext': true,
-    }),
+      'react/addons',
+      'react/lib/ExecutionEnvironment',
+      'react/lib/ReactContext',
+    ]),
     plugins: config.plugins.concat([
       new HtmlWebpackPlugin({
         template: 'client.ejs',
@@ -175,10 +183,6 @@ if (process.env.NODE_ENV === 'development') {
       }),
       new DashboardPlugin(),
     ]),
-    server: {
-      host: DEV_HOST,
-      port: DEV_PORT,
-    },
   });
 }
 
@@ -204,18 +208,20 @@ if (process.env.NODE_ENV === 'production') {
       path: path.resolve(DST, 'static'),
     }),
     module: Object.assign({}, config.module, {
-      loaders: config.module.loaders.concat([
+      rules: config.module.rules.concat([
         {
           test: /\.s|css$/,
           loader: ExtractTextPlugin.extract({
-            loader: ['css?minimize', 'postcss?parser=sugarss'],
-            fallbackLoader: 'style',
+            loader: [
+              'css-loader?modules&importLoaders=1&minimize',
+              'postcss-loader?parser=sugarss',
+            ],
+            fallbackLoader: 'style-loader',
           }),
         },
       ]),
     }),
     plugins: config.plugins.concat([
-      new webpack.optimize.DedupePlugin(),
       // TODO: Stop generating a file when in node environment.
       // See: https://github.com/webpack/extract-text-webpack-plugin/issues/164
       new ExtractTextPlugin('[name].[contenthash:8].css'),
@@ -255,9 +261,15 @@ if (process.env.NODE_ENV === 'node') {
       libraryTarget: 'umd',
     }),
     module: Object.assign({}, config.module, {
-      loaders: config.module.loaders.concat([
-        { test: /\.s|css$/, loaders: ['css', 'postcss?parser=sugarss'] },
-        { test: /\.(woff2?|eot|ttf)$/i, loader: 'ignore' },
+      rules: config.module.rules.concat([
+        { test:
+          /\.s|css$/,
+          loaders: [
+            'css-loader?modules&importLoaders=1',
+            'postcss-loader?parser=sugarss',
+          ],
+        },
+        { test: /\.(woff2?|eot|ttf)$/i, loader: 'ignore-loader' },
       ]),
     }),
     node: {
@@ -265,7 +277,7 @@ if (process.env.NODE_ENV === 'node') {
       __filename: false,
     },
     plugins: config.plugins.concat([
-      new StaticSiteGeneratorPlugin('shells', [
+      new StaticSiteGenPlugin('shells', [
         '/static/manifest.json',
         '/static/manifest.appcache',
         '/',

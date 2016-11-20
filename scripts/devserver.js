@@ -3,9 +3,8 @@ const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const config = require('../webpack.config');
 
-
-// When changing something here, also change webpack.config.
-const { host, port } = config.server;
+const DEV_HOST = 'localhost';
+const DEV_PORT = 8080;
 
 
 new WebpackDevServer(webpack(config), {
@@ -15,10 +14,10 @@ new WebpackDevServer(webpack(config), {
     disableDotRule: true,
   },
   quiet: true,
-}).listen(port, host, (err) => {
+}).listen(DEV_PORT, DEV_HOST, (err) => {
   if (err) {
     console.log(err);
   } else {
-    console.log(`Listening at ${host}:${port}`);
+    console.log(`Listening at ${DEV_HOST}:${DEV_PORT}`);
   }
 });
