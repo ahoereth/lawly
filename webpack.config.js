@@ -53,7 +53,7 @@ let config = {
     publicPath: '/',
   },
   resolve: {
-    modules: ['node_modules', 'src'],
+    modules: ['node_modules', 'src', 'assets'],
     alias: { '~': SRC },
   },
   resolveLoader: {
@@ -116,7 +116,7 @@ if (process.env.NODE_ENV !== 'node') {
       rules: config.module.rules.concat([
         {
           test: /\.(woff2?|eot|ttf|png|svg)$/i,
-          loader: 'file-loader?name=[name].[ext]',
+          loader: 'file-loader',
         },
       ]),
     }),
@@ -216,6 +216,7 @@ if (process.env.NODE_ENV === 'production') {
       rules: config.module.rules.concat([
         {
           test: /\.s|css$/,
+          exclude: /\.svg$/,
           loader: ExtractTextPlugin.extract({
             loader: [
               'css-loader?importLoaders=1&minimize',
@@ -274,7 +275,7 @@ if (process.env.NODE_ENV === 'node') {
             'postcss-loader?parser=sugarss',
           ],
         },
-        { test: /\.(woff2?|eot|ttf)$/i, loader: 'ignore-loader' },
+        { test: /\.(woff2?|eot|ttf|png|svg)$/i, loader: 'ignore-loader' },
       ]),
     }),
     node: {

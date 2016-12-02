@@ -3,6 +3,7 @@ import ImmutableTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import { Grid, Cell, Card, CardTitle, CardText, CardActions, Button, IconButton } from 'react-mdl';
 
+import screenshot from 'screenshots/urhg_horizontal.png';
 import { getNormLink } from '~/helpers';
 import { LoginForm } from '~/components';
 
@@ -43,12 +44,7 @@ const Landing = ({ user, login }) => (
       </Card>
     </Cell>
     <Cell col={6} tablet={8}>
-      <Card
-        shadow={1}
-        style={{
-          background: 'url(/assets/screenshots/urhg_horizontal.png) top / cover',
-        }}
-      >
+      <Card shadow={1} style={{ background: `url(${screenshot}) top / cover` }}>
         <CardTitle expand />
         <CardActions
           style={{
