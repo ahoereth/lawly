@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import Immutable from 'immutable';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { omit } from 'lodash';
@@ -21,12 +22,13 @@ class LoginForm extends React.Component {
 
   static defaultProps = {
     shadow: 0,
+    user: Immutable.Map(),
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      email: props.user.email || '',
+      email: props.user.get('email', ''),
       password: '',
     };
   }
@@ -58,7 +60,7 @@ class LoginForm extends React.Component {
     const { email, password } = this.state;
     const { shadow, ...otherProps } = this.props;
     return (
-      <form onSubmit={this.submit}>
+      <form onSubmit={this.submit} style={{ height: '100%' }}>
         <Card shadow={shadow} {...omit(otherProps, ['login', 'user'])}>
           <CardTitle>Login</CardTitle>
           <CardText>

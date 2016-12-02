@@ -3,14 +3,13 @@ import shallowCompare from 'react-addons-shallow-compare';
 import { connect } from 'react-redux';
 
 import { search, getQuery } from '~/modules/search';
-import { getTitle, isUpdateAvailable, isOnline } from '~/modules/core';
+import { getTitle, isUpdateAvailable, isOnline, getPathname } from '~/modules/core';
 import { Layout } from '~/components';
 
 
 const navigation = [
-  { to: '/', text: 'Home' },
-  { to: '/gesetze', text: 'Gesetz Index' },
-  { to: '/suche', text: 'Suche' },
+  { to: '/', text: 'Heimatseite' },
+  { to: '/gesetze', text: 'Gesetzesübersicht' },
 ];
 
 
@@ -19,6 +18,7 @@ const mapStateToProps = state => ({
   title: getTitle(state),
   outdated: isUpdateAvailable(state),
   query: getQuery(state),
+  pathname: getPathname(state),
 });
 
 
@@ -32,6 +32,7 @@ class LayoutContainer extends React.Component {
     children: PropTypes.node.isRequired,
     isOnline: PropTypes.bool.isRequired,
     outdated: PropTypes.bool.isRequired,
+    pathname: PropTypes.string.isRequired,
     query: PropTypes.string,
     search: PropTypes.func.isRequired,
     title: PropTypes.string.isRequired,
@@ -42,16 +43,19 @@ class LayoutContainer extends React.Component {
   }
 
   render() {
-    const { children, isOnline, outdated, query, search, title } = this.props;
+    const {
+      children, isOnline, outdated, query, search, title, pathname,
+    } = this.props;
 
     return (
       <Layout
         isOnline={isOnline}
+        outdated={outdated}
+        pathname={pathname}
+        query={query}
+        search={search}
         title={title}
         navigation={navigation}
-        search={search}
-        query={query}
-        outdated={outdated}
       >
         {children}
       </Layout>

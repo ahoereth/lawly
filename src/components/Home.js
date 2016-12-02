@@ -2,29 +2,26 @@ import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Grid, Cell } from 'react-mdl';
 
-import { LawList, LoginForm } from '~/components';
+import { LawList } from '~/components';
 import WelcomeMessage from './WelcomeMessage';
-
+import Landing from './Landing';
 
 const Home = ({ user, laws, login, logout }) => (
-  <Grid>
-    <Cell col={4}>
-      <WelcomeMessage {...{ user, logout }} />
-    </Cell>
-    {user.get('loggedin') || (
+  user.get('loggedin') ? (
+    <Grid>
       <Cell col={4}>
-        <LoginForm shadow={1} {...{ user, login }} />
+        <WelcomeMessage user={user} logout={logout} />
       </Cell>
-    )}
-    {user.get('loggedin') && (
       <Cell col={8}>
         <LawList
           laws={laws}
           emptysetMessage='Hier werden deine gespeicherten Gesetze erscheinen.'
         />
       </Cell>
-    )}
-  </Grid>
+    </Grid>
+  ) : (
+    <Landing login={login} user={user} />
+  )
 );
 
 Home.propTypes = {

@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import cn from 'classnames';
 import { isUndefined } from 'lodash';
 import {
   Layout as MaterialLayout,
@@ -9,7 +10,7 @@ import {
 import Header from './Header';
 // import Drawer from './Drawer';
 import Footer from './Footer';
-import './layout.sss';
+import { background } from './layout.sss';
 
 
 function reload() {
@@ -24,17 +25,22 @@ const Layout = ({
   title,
   children,
   outdated,
+  pathname,
   navigation,
   search,
   query,
 }) => (
-  <MaterialLayout fixedHeader>
+  <MaterialLayout
+    fixedHeader
+    className={cn({ [background]: pathname === '/' })}
+  >
     <Header
       isOnline={isOnline}
-      title={title}
       links={navigation}
-      search={search}
+      pathname={pathname}
       query={query}
+      search={search}
+      title={title}
     />
     {/* <Drawer title={title} primary={navigation} /> */}
     <Content>
@@ -59,6 +65,7 @@ Layout.propTypes = {
   children: PropTypes.node,
   isOnline: PropTypes.bool.isRequired,
   outdated: PropTypes.bool.isRequired,
+  pathname: PropTypes.string.isRequired,
   navigation: PropTypes.arrayOf(PropTypes.shape({
     to: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,

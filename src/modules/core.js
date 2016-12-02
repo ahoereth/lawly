@@ -61,3 +61,4 @@ export const getShellMode = state => state.getIn([SCOPE, 'shells'], false);
 export const getTitle = state => state.getIn([SCOPE, 'title']);
 export const isUpdateAvailable = state => state.getIn([SCOPE, 'update'], false);
 export const isOnline = state => state.getIn([SCOPE, 'online'], true);
+export const getPathname = state => state.get('routing').locationBeforeTransitions.pathname;
