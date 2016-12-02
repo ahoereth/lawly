@@ -28,6 +28,9 @@ export default function apiMiddleware(client) {
       throw new Error('no API resource name given');
     }
 
-    return client[method]({ ...payload, ...rest, name, action: type });
+    const request = { ...payload, ...rest, name, action: type };
+    return client[method](request).then(payload => next({
+      type, payload,
+    }));
   };
 }
