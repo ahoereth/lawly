@@ -18,7 +18,8 @@ rules:
       ignoreComments: false
       ignoreTrailingComments: false
       ignoreUrls: true
-      # ignoreStringLiterals: true # https://github.com/eslint/eslint/issues/5805
+      ignoreStrings: true
+      ignoreTemplateLiterals: true
   func-names: off # TODO: airbnb link?
   spaced-comment: warn
   space-infix-ops: warn

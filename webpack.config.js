@@ -91,6 +91,7 @@ let config = {
       },
     }),
     new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
+    new webpack.NamedModulesPlugin(),
     new LodashPlugin({
       paths: true,
       collections: true,
@@ -114,7 +115,7 @@ if (process.env.NODE_ENV !== 'node') {
     module: Object.assign({}, config.module, {
       rules: config.module.rules.concat([
         {
-          test: /\.(woff2?|eot|ttf)$/i,
+          test: /\.(woff2?|eot|ttf|png|svg)$/i,
           loader: 'file-loader?name=[name].[ext]',
         },
       ]),
@@ -156,7 +157,7 @@ if (process.env.NODE_ENV === 'development') {
           test: /\.c|sss$/,
           loaders: [
             'style-loader',
-            'css-loader?modules&importLoaders=1',
+            'css-loader?importLoaders=1',
             'postcss-loader?parser=sugarss',
           ],
         },
@@ -217,7 +218,7 @@ if (process.env.NODE_ENV === 'production') {
           test: /\.s|css$/,
           loader: ExtractTextPlugin.extract({
             loader: [
-              'css-loader?modules&importLoaders=1&minimize',
+              'css-loader?importLoaders=1&minimize',
               'postcss-loader?parser=sugarss',
             ],
             fallbackLoader: 'style-loader',
@@ -269,7 +270,7 @@ if (process.env.NODE_ENV === 'node') {
         { test:
           /\.s|css$/,
           loaders: [
-            'css-loader?modules&importLoaders=1',
+            'css-loader?importLoaders=1',
             'postcss-loader?parser=sugarss',
           ],
         },
