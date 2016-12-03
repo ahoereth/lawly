@@ -69,6 +69,14 @@ let config = {
           'eslint-loader',
         ],
       },
+      {
+        test: /\.(woff2?|eot|ttf|png)$/i,
+        loader: 'url-loader?limit=4096',
+      },
+      {
+        test: /\.svg$/i,
+        loader: 'svg-url-loader?noquotes&limit=4096',
+      },
       { test: /\.json$/, loader: 'json-loader' },
       { test: /\.ejs$/, loader: 'ejs-loader' },
     ],
@@ -112,18 +120,6 @@ if (process.env.NODE_ENV !== 'node') {
       app: 'client',
       'web-worker': 'web-worker',
     }),
-    module: Object.assign({}, config.module, {
-      rules: config.module.rules.concat([
-        {
-          test: /\.(woff2?|eot|ttf|png)$/i,
-          loader: 'file-loader',
-        },
-        {
-          test: /\.svg$/i,
-          loader: 'svg-url-loader?noquotes&limit=4096',
-        },
-      ]),
-    }),
     plugins: config.plugins.concat([
       new AssetsPlugin({
         filename: 'assets.json',
@@ -158,13 +154,14 @@ if (process.env.NODE_ENV === 'development') {
     module: Object.assign({}, config.module, {
       rules: config.module.rules.concat([
         {
-          test: /\.c|sss$/,
+          test: /\.sss$/,
           loaders: [
             'style-loader',
             'css-loader?importLoaders=1',
             'postcss-loader?parser=sugarss',
           ],
         },
+        { test: /\.css$/, loaders: ['style-loader', 'css-loader'] },
       ]),
     }),
     externals: config.externals.concat([
@@ -219,8 +216,7 @@ if (process.env.NODE_ENV === 'production') {
     module: Object.assign({}, config.module, {
       rules: config.module.rules.concat([
         {
-          test: /\.s|css$/,
-          exclude: /\.svg$/,
+          test: /\.sss$/,
           loader: ExtractTextPlugin.extract({
             loader: [
               'css-loader?importLoaders=1&minimize',
@@ -229,12 +225,20 @@ if (process.env.NODE_ENV === 'production') {
             fallbackLoader: 'style-loader',
           }),
         },
+        {
+          test: /\.css$/,
+          loader: ExtractTextPlugin.extract({
+            loader: 'css-loader?minimize',
+            fallbackLoader: 'style-loader',
+          }),
+        },
       ]),
     }),
     plugins: config.plugins.concat([
-      // TODO: Stop generating a file when in node environment.
-      // See: https://github.com/webpack/extract-text-webpack-plugin/issues/164
-      new ExtractTextPlugin('[name].[contenthash:8].css'),
+      new ExtractTextPlugin({
+        filename: '[name].[contenthash:8].css',
+        allChunks: true,
+      }),
       new webpack.optimize.UglifyJsPlugin({
         compress: {
           screw_ie8: true, // React doesn't support IE8
@@ -272,13 +276,14 @@ if (process.env.NODE_ENV === 'node') {
     }),
     module: Object.assign({}, config.module, {
       rules: config.module.rules.concat([
-        { test:
-          /\.s|css$/,
+        {
+          test: /\.sss$/,
           loaders: [
             'css-loader?importLoaders=1',
             'postcss-loader?parser=sugarss',
           ],
         },
+        { test: /\.css$/, loader: 'css-loader' },
         { test: /\.(woff2?|eot|ttf|png|svg)$/i, loader: 'ignore-loader' },
       ]),
     }),

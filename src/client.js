@@ -17,9 +17,7 @@ import { updateAvailable, renderShells } from './modules/core';
 
 
 import 'react-mdl/extra/material';
-/* eslint-disable import/no-webpack-loader-syntax, max-len */
-import '!!style-loader!css-loader!react-mdl/extra/css/material.red-amber.min.css';
-/* eslint-enable import/no-webpack-loader-syntax, max-len */
+import 'react-mdl/extra/css/material.red-amber.min.css';
 
 
 const client = new ApiClient(process.env.APIURL);

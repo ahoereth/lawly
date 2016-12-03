@@ -37,9 +37,14 @@ fi
 #fi
 
 
+for png in $DIST/static/*.png; do
+  pngcrush -ow -q $png
+done
+
+
 if [[ $@ != **nouber** ]]; then
   echo "Uberspace..."
-  scp -r scripts/robots.txt $DIST/index.html $DIST/static $UBERSPACE/
+  scp -r scripts/robots.txt $DIST/static $DIST/index.html $UBERSPACE/
   scp scripts/htaccess $UBERSPACE/.htaccess
   scp scripts/htaccessWWW $UBERSPACE_WWW/.htaccess
 fi

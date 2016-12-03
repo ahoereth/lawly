@@ -13,7 +13,7 @@ new WebpackDevServer(webpack(config), {
   historyApiFallback: {
     disableDotRule: true,
   },
-  quiet: true,
+  // quiet: true,
 }).listen(DEV_PORT, DEV_HOST, (err) => {
   if (err) {
     console.log(err);

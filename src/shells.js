@@ -2,9 +2,10 @@ import fs from 'fs';
 import { endsWith, trimEnd, trimStart } from 'lodash';
 import { map, mapValues, flow, flattenDeep } from 'lodash/fp';
 
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import manifest from '!!json-loader!./manifest.json';
 import ssr, { assets, prefixPath, stripPath } from './helpers/ssr';
 import appcacheTemplate from './appcache.ejs';
-import manifest from './manifest.json';
 
 
 const join = a => b => `${trimEnd(a, '/')}/${trimStart(b, '/')}`;
