@@ -6,6 +6,7 @@ import { Grid, Cell, Card, CardTitle, CardText, CardActions, Button, IconButton 
 import screenshot from 'screenshots/urhg_horizontal.png';
 import { getNormLink } from '~/helpers';
 import { LoginForm } from '~/components';
+import { imageCard } from './common.sss';
 
 
 const lead = [
@@ -18,70 +19,87 @@ const urhg = [
 ];
 
 
-const Landing = ({ user, login }) => (
-  <Grid>
-    <Cell col={6} offsetDesktop={1} tablet={6} offsetTablet={1} phone={8}>
-      <Card shadow={1} style={{ height: '100%' }}>
-        <CardTitle>Willkommen bei Lawly!</CardTitle>
-        <CardText style={{ alignItems: 'stretch' }}>
-          {lead.map((par, i) => <p key={i}>{par}</p>)}
-        </CardText>
-        <CardActions>
-          <Button>Schreib uns was du denkst</Button>
-        </CardActions>
-      </Card>
-    </Cell>
-    <Cell col={4} tablet={6} offsetTablet={1} phone={8}>
-      <LoginForm shadow={1} user={user} login={login} />
-    </Cell>
-    <Cell col={4} offsetDesktop={1} tablet={6} offsetTablet={1} phone={8}>
-      <Card shadow={1} style={{ height: '100%' }}>
-        <CardTitle>Urheberrechtsgesetz</CardTitle>
-        <CardText>{urhg.map((par, i) => <p key={i}>{par}</p>)}</CardText>
-      </Card>
-    </Cell>
-    <Cell col={6} tablet={6} offsetTablet={1} phone={8}>
-      <Card
-        shadow={1}
-        style={{
-          background: `url(${screenshot}) top / cover`,
-          backgroundPositionX: '-30px',
-        }}
-      >
-        <CardTitle expand />
-        <CardActions
-          style={{
-            fontSize: '.9em',
-            lineHeight: '2.3em',
-            padding: '.5em 1em',
-            background: 'rgba(0, 0, 0, 0.7)',
-          }}
-        >
-          <span style={{ color: '#fff', fontWeight: '500' }}>
-            Gesetzestexte sind in Deutschland nicht urheberrechtlich geschützt.
-          </span>
-          <Link
-            to={getNormLink('UrhG', '1.2.4', '5-amtliche-werke')}
-            style={{ color: 'inherit' }}
+export default class Landing extends React.Component {
+  static propTypes = {
+    login: PropTypes.func.isRequired,
+    user: ImmutableTypes.mapContains({
+      email: PropTypes.string,
+      loggedin: PropTypes.bool.isRequired,
+    }).isRequired,
+  };
+
+  constructor(props) {
+    super(props);
+    this.state = { hover: 0 };
+  }
+
+  hover(idx) {
+    this.setState({ hover: idx });
+  }
+
+  render() {
+    const { user, login } = this.props;
+    const { hover } = this.state;
+    return (
+      <Grid>
+        <Cell col={6} offsetDesktop={1} tablet={6} offsetTablet={1} phone={8}>
+          <Card
+            shadow={hover === 1 ? 4 : 0}
+            onMouseEnter={() => this.hover(1)}
+            onMouseLeave={() => this.hover(0)}
           >
-            <IconButton
-              ripple raised accent name='center_focus_strong'
-              style={{ float: 'right' }}
-            />
-          </Link>
-        </CardActions>
-      </Card>
-    </Cell>
-  </Grid>
-);
-
-Landing.propTypes = {
-  login: PropTypes.func.isRequired,
-  user: ImmutableTypes.mapContains({
-    email: PropTypes.string,
-    loggedin: PropTypes.bool.isRequired,
-  }).isRequired,
-};
-
-
-export default Landing;
+            <CardTitle>Willkommen bei Lawly!</CardTitle>
+            <CardText>
+              {lead.map((par, i) => <p key={i}>{par}</p>)}
+            </CardText>
+            <CardActions>
+              <Button>Schreib uns was du denkst</Button>
+            </CardActions>
+          </Card>
+        </Cell>
+        <Cell col={4} tablet={6} offsetTablet={1} phone={8}>
+          <LoginForm
+            shadow={hover === 2 ? 4 : 0}
+            onMouseEnter={() => this.hover(2)}
+            onMouseLeave={() => this.hover(0)}
+            user={user} login={login}
+          />
+        </Cell>
+        <Cell col={4} offsetDesktop={1} tablet={6} offsetTablet={1} phone={8}>
+          <Card
+            shadow={hover === 3 ? 4 : 0}
+            onMouseEnter={() => this.hover(3)}
+            onMouseLeave={() => this.hover(0)}
+          >
+            <CardTitle>Urheberrechtsgesetz</CardTitle>
+            <CardText>{urhg.map((par, i) => <p key={i}>{par}</p>)}</CardText>
+          </Card>
+        </Cell>
+        <Cell col={6} tablet={6} offsetTablet={1} phone={8}>
+          <Card
+            shadow={hover === 4 ? 4 : 0}
+            onMouseEnter={() => this.hover(4)}
+            onMouseLeave={() => this.hover(0)}
+            className={imageCard}
+            style={{
+              backgroundImage: `url('${screenshot}')`,
+              backgroundPositionY: 'top',
+              backgroundPositionX: '-30px',
+            }}
+          >
+            <CardTitle expand />
+            <CardText>
+              Gesetze sind in Deutschland urheberrechtsfrei.
+              <Link to={getNormLink('UrhG', '1.2.4', '5-amtliche-werke')}>
+                <IconButton
+                  ripple raised accent name='center_focus_strong'
+                  style={{ float: 'right' }}
+                />
+              </Link>
+            </CardText>
+          </Card>
+        </Cell>
+      </Grid>
+    );
+  }
+}
