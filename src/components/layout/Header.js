@@ -9,15 +9,11 @@ import {
 
 import { SearchInput } from '~/components';
 import { connectivity } from './header.sss';
+import { background } from './layout.sss';
 
 
 const Header = ({ isOnline, title, links, search, query, pathname = true }) => (
-//         {isOnline ||
-//         <Tooltip label='Verbindung zum Server nicht verfügbar.'>
-//         <Icon name='flash_off' className={connectivity} />
-//         </Tooltip>
-//         }
-  <MaterialHeader transparent={pathname === '/'} waterfall>
+  <MaterialHeader transparent={pathname === '/'} waterfall className={background}>
     <HeaderRow title={title}>
       {isOnline ||
         <Tooltip label='Verbindung zum Server nicht verfügbar.'>
@@ -38,7 +34,6 @@ const Header = ({ isOnline, title, links, search, query, pathname = true }) => (
       />
     </HeaderRow>
   </MaterialHeader>
-  // )
 );
 
 Header.propTypes = {
