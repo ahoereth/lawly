@@ -20,7 +20,7 @@ const urhg = [
 
 const Landing = ({ user, login }) => (
   <Grid>
-    <Cell col={6} offsetDesktop={1} tablet={8}>
+    <Cell col={6} offsetDesktop={1} tablet={6} offsetTablet={1} phone={8}>
       <Card shadow={1} style={{ height: '100%' }}>
         <CardTitle>Willkommen bei Lawly!</CardTitle>
         <CardText style={{ alignItems: 'stretch' }}>
@@ -31,20 +31,23 @@ const Landing = ({ user, login }) => (
         </CardActions>
       </Card>
     </Cell>
-    <Cell col={4} phone={12}>
+    <Cell col={4} tablet={6} offsetTablet={1} phone={8}>
       <LoginForm shadow={1} user={user} login={login} />
     </Cell>
-    <Cell col={4} offsetDesktop={1} phone={12}>
+    <Cell col={4} offsetDesktop={1} tablet={6} offsetTablet={1} phone={8}>
       <Card shadow={1} style={{ height: '100%' }}>
         <CardTitle>Urheberrechtsgesetz</CardTitle>
         <CardText>{urhg.map((par, i) => <p key={i}>{par}</p>)}</CardText>
-        {/* <CardActions>
-          <Button>Schreib uns was du denkst</Button>
-        </CardActions> */}
       </Card>
     </Cell>
-    <Cell col={6} tablet={8}>
-      <Card shadow={1} style={{ background: `url(${screenshot}) top / cover` }}>
+    <Cell col={6} tablet={6} offsetTablet={1} phone={8}>
+      <Card
+        shadow={1}
+        style={{
+          background: `url(${screenshot}) top / cover`,
+          backgroundPositionX: '-30px',
+        }}
+      >
         <CardTitle expand />
         <CardActions
           style={{
