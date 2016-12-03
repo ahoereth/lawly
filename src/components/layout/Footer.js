@@ -5,6 +5,7 @@ import {
   FooterSection,
   FooterLinkList,
 } from 'react-mdl';
+import github from 'icons/github.svg';
 
 
 const Footer = ({ primary }) => (
@@ -16,6 +17,14 @@ const Footer = ({ primary }) => (
             {item.text}
           </Link>
         ))}
+        <Link to='/kontakt' className='mdl-navigation__link'>Kontakt</Link>
+      </FooterLinkList>
+    </FooterSection>
+    <FooterSection type='right'>
+      <FooterLinkList>
+        <Link to='https://github.com/ahoereth/lawly' className='mdl-navigation__link'>
+          <img alt='github' src={github} style={{ width: 24, height: 24 }} />
+        </Link>
       </FooterLinkList>
     </FooterSection>
   </MaterialFooter>

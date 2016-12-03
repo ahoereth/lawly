@@ -115,8 +115,12 @@ if (process.env.NODE_ENV !== 'node') {
     module: Object.assign({}, config.module, {
       rules: config.module.rules.concat([
         {
-          test: /\.(woff2?|eot|ttf|png|svg)$/i,
+          test: /\.(woff2?|eot|ttf|png)$/i,
           loader: 'file-loader',
+        },
+        {
+          test: /\.svg$/i,
+          loader: 'svg-url-loader?noquotes&limit=4096',
         },
       ]),
     }),
