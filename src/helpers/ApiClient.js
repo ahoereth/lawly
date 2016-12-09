@@ -196,7 +196,7 @@ export default class ApiClient {
         ...this.headers,
         ...options.headers,
       },
-    }).then(this.parseResponse).then((data) => {
+    }).then(res => this.parseResponse(res)).then((data) => {
       this.isConnected(true);
       gotRemoteResponse = true;
       if (cachable) {
@@ -321,13 +321,11 @@ export default class ApiClient {
    * @return {Promise}
    */
   unauth(email, localOnly = false) {
+    const req = !localOnly ? this.remove({ name: 'user_sessions', email })
+                           : Promise.resolve();
     this.storage.remove(email);
     this.setAuthToken();
-    if (localOnly) { return true; }
-    return this.remove({ name: 'user_sessions', email }).then((result) => {
-      this.setAuthToken();
-      return result;
-    });
+    return req;
   }
 
   /**
