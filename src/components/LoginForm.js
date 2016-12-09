@@ -28,7 +28,7 @@ class LoginForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: props.user.get('email', ''),
+      email: props.user.get('email') || '',
       password: '',
     };
   }

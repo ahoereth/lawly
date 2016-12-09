@@ -5,13 +5,13 @@ import { Grid, Cell, Card, CardTitle, CardText, CardActions, Button, IconButton 
 
 import screenshot from 'screenshots/urhg_horizontal.png';
 import { getNormLink } from '~/helpers';
-import { LoginForm } from '~/components';
+import { UserForm } from '~/components';
 import { imageCard } from './common.sss';
 
 
 const lead = [
   'Lawly ist eine neue Art Gesetzestexte zu durchsuchen, zu lesen und zu verwalten.',
-  'Enim labore aliqua consequat ut quis ad occaecat aliquip incididunt. Sunt nulla eu enim irure enim nostrud aliqua consectetur ad consectetur sunt ullamco officia. Ex officia laborum et consequat duis.',
+  'Dabei verfolgt Lawly das Ziel freie Informationen breit zugänglich zu machen. Lawly wird regelmäßig mit den neuesten Gesetzestexten ergänzt und bietet dir die Möglichkeit diese zu sammeln und (soon) über Änderungen benachrichtigt zu werden.',
 ];
 
 const urhg = [
@@ -22,6 +22,7 @@ const urhg = [
 export default class Landing extends React.Component {
   static propTypes = {
     login: PropTypes.func.isRequired,
+    logout: PropTypes.func.isRequired,
     user: ImmutableTypes.mapContains({
       email: PropTypes.string,
       loggedin: PropTypes.bool.isRequired,
@@ -38,7 +39,7 @@ export default class Landing extends React.Component {
   }
 
   render() {
-    const { user, login } = this.props;
+    const { user, login, logout } = this.props;
     const { hover } = this.state;
     return (
       <Grid>
@@ -58,11 +59,13 @@ export default class Landing extends React.Component {
           </Card>
         </Cell>
         <Cell col={4} tablet={6} offsetTablet={1} phone={8}>
-          <LoginForm
+          <UserForm
             shadow={hover === 2 ? 4 : 0}
             onMouseEnter={() => this.hover(2)}
             onMouseLeave={() => this.hover(0)}
-            user={user} login={login}
+            user={user}
+            login={login}
+            logout={logout}
           />
         </Cell>
         <Cell col={4} offsetDesktop={1} tablet={6} offsetTablet={1} phone={8}>
