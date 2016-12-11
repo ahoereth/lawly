@@ -9,7 +9,7 @@ import {
 } from 'react-mdl';
 
 import { SearchInput } from '~/components';
-import { header, row, nav, searchinput, connectivity } from './header.sss';
+import { header, row, nav, searchinput } from './header.sss';
 import { background } from './layout.sss';
 
 
@@ -22,7 +22,7 @@ const Header = ({ isOnline, title, links, search, query }) => (
     <HeaderRow title={title} className={row}>
       {isOnline ||
         <Tooltip label='Verbindung zum Server nicht verfügbar.'>
-          <Icon name='flash_off' className={connectivity} />
+          <Icon name='flash_off' />
         </Tooltip>
       }
       <Navigation className={nav}>

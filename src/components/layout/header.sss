@@ -1,27 +1,13 @@
-:local(.connectivity)
-  position: absolute
-  left: 0
-  top: 0
-  height: 64px
-  width: 80px
-  line-height: 64px !important
-  text-align: center
-
 :local(.header)
-  .offline
-    :local(.row)
-      padding-left: 72px
-
-  &.online
-    :local(.row)
-      @media (min-width: 500px)
-        padding-left: 16px
+  :local(.row)
+    padding-left: 72px
+    @media (min-width: 500px)
+      padding-left: 16px
 
 @media (max-width: 499px)
   :local(.nav),
   :local(.searchinput)
     display: none !important
-
 
 .mdl-layout__drawer-button
   @media (min-width: 500px)
