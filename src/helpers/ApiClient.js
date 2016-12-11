@@ -226,11 +226,12 @@ export default class ApiClient {
     }
 
     return remote.catch((err) => {
-      if (err.name !== 'ApiError' && cachable) {
-        return this.storage.get({ name, method, ...params });
+      if (err.name !== 'ApiError') {
+        this.storage.stashRequest(options).then(() => this.isConnected(false));
+        if (cachable) {
+          return this.storage.get({ name, method, ...params });
+        }
       }
-
-      this.storage.stashRequest(options).then(() => this.isConnected(false));
       throw err;
     });
   }
