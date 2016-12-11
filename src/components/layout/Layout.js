@@ -29,10 +29,16 @@ export default class Layout extends React.Component {
     isOnline: PropTypes.bool.isRequired,
     outdated: PropTypes.bool.isRequired,
     pathname: PropTypes.string.isRequired,
-    navigation: PropTypes.arrayOf(PropTypes.shape({
-      to: PropTypes.string.isRequired,
-      text: PropTypes.string.isRequired,
-    })),
+    navigation: PropTypes.shape({
+      primary: PropTypes.arrayOf(PropTypes.shape({
+        to: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
+      })),
+      secondary: PropTypes.arrayOf(PropTypes.shape({
+        to: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired,
+      })),
+    }),
     query: PropTypes.string,
     search: PropTypes.func.isRequired,
     title: PropTypes.string,
@@ -73,20 +79,20 @@ export default class Layout extends React.Component {
       >
         <Header
           isOnline={isOnline}
-          links={navigation}
+          links={navigation.primary}
           pathname={pathname}
           query={query}
           search={search}
           title={title}
           toggleDrawer={() => this.toggleDrawer()}
         />
-        <Drawer title='Lawly' primary={navigation} />
+        <Drawer title='Lawly' navigation={navigation} />
         <Content className={wrapper}>
           <div className={content}>
             {children}
             <div className={push} />
           </div>
-          <Footer primary={navigation} />
+          <Footer navigation={navigation} />
         </Content>
         <Snackbar
           active={outdated}

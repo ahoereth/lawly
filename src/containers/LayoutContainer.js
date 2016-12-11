@@ -7,10 +7,15 @@ import { getTitle, isUpdateAvailable, isOnline, getPathname } from '~/modules/co
 import { Layout } from '~/components';
 
 
-const navigation = [
-  { to: '/', text: 'Heimatseite' },
-  { to: '/gesetze', text: 'Gesetzesübersicht' },
-];
+const navigation = {
+  primary: [
+    { to: '/', text: 'Heimatseite' },
+    { to: '/gesetze', text: 'Gesetzesübersicht' },
+  ],
+  secondary: [
+    { to: '/impressum', text: 'Impressum' },
+  ],
+};
 
 
 const mapStateToProps = state => ({

@@ -9,6 +9,7 @@ export Home from './Home';
 export Html from './Html';
 export Layout from './layout';
 export Landing from './Landing';
+export LegalNotice from './LegalNotice';
 export List from './List';
 export LoginForm from './LoginForm';
 export Pagination from './Pagination';

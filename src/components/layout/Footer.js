@@ -8,7 +8,7 @@ import {
 import github from 'icons/github.svg';
 
 
-const Footer = ({ primary }) => (
+const Footer = ({ navigation: { primary, secondary } }) => (
   <MaterialFooter size='mini'>
     <FooterSection logo='lawly.org'>
       <FooterLinkList>
@@ -17,7 +17,11 @@ const Footer = ({ primary }) => (
             {item.text}
           </Link>
         ))}
-        <Link to='/kontakt' className='mdl-navigation__link'>Kontakt</Link>
+        {secondary.map((item, idx) => (
+          <Link to={item.to} key={idx} className='mdl-navigation__link'>
+            {item.text}
+          </Link>
+        ))}
       </FooterLinkList>
     </FooterSection>
     <FooterSection type='right'>
@@ -31,7 +35,16 @@ const Footer = ({ primary }) => (
 );
 
 Footer.propTypes = {
-  primary: PropTypes.arrayOf(PropTypes.object),
+  navigation: PropTypes.shape({
+    primary: PropTypes.arrayOf(PropTypes.shape({
+      to: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
+    })),
+    secondary: PropTypes.arrayOf(PropTypes.shape({
+      to: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
+    })),
+  }),
 };
 
 
