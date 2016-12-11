@@ -8,7 +8,7 @@ import {
 } from 'react-mdl';
 
 import Header from './Header';
-// import Drawer from './Drawer';
+import Drawer from './Drawer';
 import Footer from './Footer';
 import { wrapper, content, push, background } from './layout.sss';
 
@@ -42,7 +42,7 @@ const Layout = ({
       search={search}
       title={title}
     />
-    {/* <Drawer title={title} primary={navigation} /> */}
+    <Drawer title='Lawly' primary={navigation} />
     <Content className={wrapper}>
       <div className={content}>
         {children}

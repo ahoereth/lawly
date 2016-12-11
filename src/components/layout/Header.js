@@ -1,4 +1,5 @@
 import React, { PropTypes } from 'react';
+import cn from 'classnames';
 import { Link } from 'react-router';
 import {
   Icon, Tooltip,
@@ -8,19 +9,23 @@ import {
 } from 'react-mdl';
 
 import { SearchInput } from '~/components';
-import { connectivity } from './header.sss';
+import { header, row, nav, searchinput, connectivity } from './header.sss';
 import { background } from './layout.sss';
 
 
-const Header = ({ isOnline, title, links, search, query, pathname = true }) => (
-  <MaterialHeader transparent={pathname === '/'} waterfall className={background}>
-    <HeaderRow title={title}>
+const Header = ({ isOnline, title, links, search, query }) => (
+  <MaterialHeader
+    transparent
+    waterfall
+    className={cn(header, background, { online: isOnline, offline: !isOnline })}
+  >
+    <HeaderRow title={title} className={row}>
       {isOnline ||
         <Tooltip label='Verbindung zum Server nicht verfügbar.'>
           <Icon name='flash_off' className={connectivity} />
         </Tooltip>
       }
-      <Navigation>
+      <Navigation className={nav}>
         {links.map((item, idx) => (
           <Link to={item.to} key={idx} className='mdl-navigation__link'>
             {item.text}
@@ -28,6 +33,7 @@ const Header = ({ isOnline, title, links, search, query, pathname = true }) => (
         ))}
       </Navigation>
       <SearchInput
+        className={searchinput}
         query={query}
         search={search}
         expandable
@@ -38,7 +44,7 @@ const Header = ({ isOnline, title, links, search, query, pathname = true }) => (
 
 Header.propTypes = {
   isOnline: PropTypes.bool.isRequired,
-  pathname: PropTypes.string,
+  // pathname: PropTypes.string,
   links: PropTypes.arrayOf(PropTypes.object),
   query: PropTypes.string,
   search: PropTypes.func.isRequired,

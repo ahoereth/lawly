@@ -11,6 +11,9 @@ const Drawer = ({ primary, title }) => (
           {item.text}
         </Link>
       ))}
+      <Link to='/suche' className='mdl-navigation__link'>
+        Suche
+      </Link>
     </Navigation>
   </MaterialDrawer>
 );
