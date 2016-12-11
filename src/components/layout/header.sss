@@ -1,8 +1,9 @@
 :local(.header)
   :local(.row)
-    padding-left: 72px
-    @media (min-width: 500px)
+    @media (min-width: 500px) and (max-width: 1023px)
       padding-left: 16px
+    @media (min-width: 1024px)
+      padding-left: 40px
 
 @media (max-width: 499px)
   :local(.nav),
