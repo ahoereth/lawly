@@ -9,7 +9,7 @@ const Home = ({ user, laws, login, logout }) => (
   <div>
     {user.get('loggedin') && (
       <Grid>
-        <Cell col={10} offsetDesktop={1} tablet={8} offsetTablet={1} phone={8}>
+        <Cell col={10} offsetDesktop={1} tablet={6} offsetTablet={1} phone={6}>
           <Card shadow={1}>
             <LawList
               laws={laws}

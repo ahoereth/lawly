@@ -11,11 +11,11 @@ import { imageCard } from './common.sss';
 
 const lead = [
   'Lawly ist eine neue Art Gesetzestexte zu durchsuchen, zu lesen und zu verwalten.',
-  'Dabei verfolgt Lawly das Ziel freie Informationen breit zugänglich zu machen. Lawly wird regelmäßig mit den neuesten Gesetzestexten ergänzt und bietet dir die Möglichkeit diese zu sammeln und (soon) über Änderungen benachrichtigt zu werden.',
+  'Wir verfolgen das Ziel, freie Informationen breit zugänglich zu machen. Lawly wird regelmäßig mit den neuesten Gesetzestexten ergänzt und bietet dir die Möglichkeit auf diese Geräteübergreifend zuzugreifen. Mithilfe eines Kontos können Gesetze gesammelt werden und diese dann auch ohne bestehende Internetverbindung abgerufen werden.',
 ];
 
 const urhg = [
-  'Nach dem Verständnis vieler Menschenrechtler gehört der freie und umfängliche Zugriff auf Gesetzestexte zur Grundlage einer mündigen Teilhabe am öffentlichen Leben und ist eine Notwendigkeit für die aktive Mitgestaltung  eines demokratischen Landes. Obwohl dies sogar in europäischen Gesetzen niedergeschrieben ist kümmert sich die deutsche Regierung nur eingeschränkt um dieses Recht.',
+  'Nach dem Verständnis vieler Menschenrechtler gehört der freie und umfängliche Zugriff auf Gesetzestexte zur Grundlage einer mündigen Teilhabe am öffentlichen Leben und ist eine Notwendigkeit für die aktive Mitgestaltung  eines demokratischen Landes. In Deutschland sind Gesetzestexte und Rechtssprechungen urheberrechtsfrei, allerdings nicht immer angemessen Verfügbar.',
 ];
 
 
@@ -43,7 +43,7 @@ export default class Landing extends React.Component {
     const { hover } = this.state;
     return (
       <Grid>
-        <Cell col={6} offsetDesktop={1} tablet={6} offsetTablet={1} phone={8}>
+        <Cell col={6} offsetDesktop={1} tablet={6} offsetTablet={1} phone={6}>
           <Card
             shadow={hover === 1 ? 4 : 0}
             onMouseEnter={() => this.hover(1)}
@@ -58,7 +58,7 @@ export default class Landing extends React.Component {
             </CardActions>
           </Card>
         </Cell>
-        <Cell col={4} tablet={6} offsetTablet={1} phone={8}>
+        <Cell col={4} tablet={6} offsetTablet={1} phone={6}>
           <UserForm
             shadow={hover === 2 ? 4 : 0}
             onMouseEnter={() => this.hover(2)}
@@ -68,7 +68,7 @@ export default class Landing extends React.Component {
             logout={logout}
           />
         </Cell>
-        <Cell col={4} offsetDesktop={1} tablet={6} offsetTablet={1} phone={8}>
+        <Cell col={4} offsetDesktop={1} tablet={6} offsetTablet={1} phone={6}>
           <Card
             shadow={hover === 3 ? 4 : 0}
             onMouseEnter={() => this.hover(3)}
@@ -78,7 +78,7 @@ export default class Landing extends React.Component {
             <CardText>{urhg.map((par, i) => <p key={i}>{par}</p>)}</CardText>
           </Card>
         </Cell>
-        <Cell col={6} tablet={6} offsetTablet={1} phone={8}>
+        <Cell col={6} tablet={6} offsetTablet={1} phone={6}>
           <Card
             shadow={hover === 4 ? 4 : 0}
             onMouseEnter={() => this.hover(4)}
