@@ -39,6 +39,13 @@ export default class UserForm extends React.Component {
           >
             Logout
           </Button>
+          <Button
+            ripple raised
+            onClick={() => logout(user.get('email'), /* deleteUser: */ true)}
+            style={{ float: 'right', marginRight: '1em' }}
+          >
+            Konto auflösen
+          </Button>
         </CardActions>
       </Card>
     ) : (

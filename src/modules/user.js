@@ -64,9 +64,9 @@ export const login = (email, password, signup = false) => ({
   promise: client => client.auth(email, password, signup),
 });
 
-export const logout = email => ({
+export const logout = (email, deleteUser = false) => ({
   type: LOGOUT,
-  promise: client => client.unauth(email),
+  promise: client => client.unauth(email, { deleteUser: !!deleteUser }),
 });
 
 export const star = (law, state = true) => {
