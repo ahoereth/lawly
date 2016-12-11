@@ -10,7 +10,7 @@ import {
 import Header from './Header';
 // import Drawer from './Drawer';
 import Footer from './Footer';
-import { background } from './layout.sss';
+import { wrapper, content, push, background } from './layout.sss';
 
 
 function reload() {
@@ -43,8 +43,11 @@ const Layout = ({
       title={title}
     />
     {/* <Drawer title={title} primary={navigation} /> */}
-    <Content>
-      {children}
+    <Content className={wrapper}>
+      <div className={content}>
+        {children}
+        <div className={push} />
+      </div>
       <Footer primary={navigation} />
     </Content>
     <Snackbar

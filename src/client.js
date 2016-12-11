@@ -32,7 +32,7 @@ const history = syncHistoryWithStore(hist, store, {
 history.listen(({ action, pathname }) => {
   if (action !== 'POP' && pathname.indexOf('/suche/') !== 0) {
     const elem = document.querySelector('.mdl-layout__content');
-    elem.scrollTop = 1; // 1px distance to avoid expanding the headbar.
+    elem.scrollTop = 0; // use 1px distance to avoid expanding the headbar.
   }
 });
 
