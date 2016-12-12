@@ -45,7 +45,8 @@ module.exports = function render(locals, callback) {
       fallback: mapValues(prefixPath, {
         '/gesetze': 'gesetze.html',
         '/gesetz': 'gesetz.html',
-        '/suche': 'home.html', // TODO: Needs shell.
+        '/impressum': 'impressum.html',
+        '/suche': 'home.html',
         '/index.html': 'index.html',
       }),
     });

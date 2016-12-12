@@ -51,6 +51,7 @@ RewriteRule ^.*$ - [NC,L]
 RewriteRule ^gesetze(.*) /static/gesetze.html [NC,L]
 RewriteRule ^gesetz(.*) /static/gesetz.html [NC,L]
 RewriteRule ^suche(.*) /static/home.html [NC,L]
+RewriteRule ^impressum(.*) /static/impressum.html [NC,L]
 RewriteRule ^(.*) /static/home.html [NC,L]
 
 

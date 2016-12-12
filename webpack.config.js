@@ -299,6 +299,7 @@ if (process.env.NODE_ENV === 'node') {
         '/static/home.html',
         '/static/gesetz.html',
         '/static/gesetze.html',
+        '/static/impressum.html',
       ], {}),
       new webpack.DefinePlugin({
         'process.env': stringifyValues(env.node),
