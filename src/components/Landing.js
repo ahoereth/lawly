@@ -3,7 +3,7 @@ import ImmutableTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import { Grid, Cell, Card, CardTitle, CardText, CardActions, Button, IconButton } from 'react-mdl';
 
-import screenshot from 'screenshots/urhg_horizontal.png';
+import screenshot from 'screenshots/urhg.png';
 import { getNormLink } from '~/helpers';
 import { UserForm } from '~/components';
 import { imageCard } from './common.sss';
@@ -86,8 +86,7 @@ export default class Landing extends React.Component {
             className={imageCard}
             style={{
               backgroundImage: `url('${screenshot}')`,
-              backgroundPositionY: 'top',
-              backgroundPositionX: '-30px',
+              backgroundPosition: 'top left',
             }}
           >
             <CardTitle expand />
