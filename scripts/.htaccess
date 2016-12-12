@@ -55,13 +55,13 @@ RewriteRule ^(.*) /static/home.html [NC,L]
 
 
 ### Authentication
-AuthType Basic
-AuthName "Private Alpha"
-AuthUserFile /var/www/virtual/lawly/.htuser
-Order Deny,Allow
-Deny from all
-Satisfy Any
-Allow from env=!HTTPS
-SetEnvIf REQUEST_URI "^/static/.*(?!\.html)" allow
-Allow from env=allow
-Require valid-user
+#AuthType Basic
+#AuthName "Private Alpha"
+#AuthUserFile /var/www/virtual/lawly/.htuser
+#Order Deny,Allow
+#Deny from all
+#Satisfy Any
+#Allow from env=!HTTPS
+#SetEnvIf REQUEST_URI "^/static/.*(?!\.html)" allow
+#Allow from env=allow
+#Require valid-user
