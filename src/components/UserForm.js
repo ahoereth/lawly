@@ -19,14 +19,27 @@ export default class UserForm extends React.Component {
     }).isRequired,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = { actuallyDeleteUser: false };
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     return shallowCompare(this, nextProps, nextState);
   }
 
-  //  style={{ display: 'table-cell', height: '50%' }
+  deleteUserMock() {
+    if (!this.state.actuallyDeleteUser) {
+      this.setState({ actuallyDeleteUser: true });
+    } else {
+      const { logout, user } = this.props;
+      logout(user.get('email'), /* deleteUser: */ true);
+    }
+  }
 
   render() {
     const { user, login, logout, shadow, ...otherProps } = this.props;
+    const { actuallyDeleteUser } = this.state;
     return user.get('loggedin') ? (
       <Card shadow={shadow} {...otherProps} style={{ alignItems: 'stretch' }}>
         <CardTitle>{user.get('email')}</CardTitle>
@@ -40,11 +53,13 @@ export default class UserForm extends React.Component {
             Logout
           </Button>
           <Button
-            ripple raised
-            onClick={() => logout(user.get('email'), /* deleteUser: */ true)}
+            ripple={actuallyDeleteUser}
+            raised={actuallyDeleteUser}
+            accent={actuallyDeleteUser}
+            onClick={() => this.deleteUserMock()}
             style={{ float: 'right', marginRight: '1em' }}
           >
-            Konto auflösen
+            Konto auflösen {actuallyDeleteUser && 'bestätigen'}
           </Button>
         </CardActions>
       </Card>
