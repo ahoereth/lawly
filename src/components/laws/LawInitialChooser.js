@@ -12,20 +12,25 @@ import styles from './lawInitialChooser.sss';
 const shell = List(range(20).map(() => ''));
 
 
-const LawInitialChooser = ({ initials, selected }) => (
+const LawInitialChooser = ({ collection = '', initials, selected }) => (
   <Grid>
-    {(initials.size ? initials : shell).map((ch, idx) => (
+    {(initials.size ? initials : shell).map((initial, idx) => (
       <Cell
-        key={ch || `shell-${idx}`}
+        key={initial || `shell-${idx}`}
         col={12}
         tablet={8}
         phone={1}
         className={styles.cell}
       >
-        {ch === '' ? <Button raised disabled /> : (
-          <Link to={to({ initial: selected !== ch.toLowerCase() ? ch : '' })}>
-            <Button ripple raised accent={selected === ch.toLowerCase()}>
-              {ch}
+        {initial === '' ? <Button raised disabled /> : (
+          <Link
+            to={to({
+              collection,
+              initial: selected !== initial.toLowerCase() ? initial : '',
+            })}
+          >
+            <Button ripple raised accent={selected === initial.toLowerCase()}>
+              {initial}
             </Button>
           </Link>
         )}
@@ -35,6 +40,7 @@ const LawInitialChooser = ({ initials, selected }) => (
 );
 
 LawInitialChooser.propTypes = {
+  collection: PropTypes.string,
   initials: ImmutableTypes.listOf(PropTypes.string).isRequired,
   selected: PropTypes.string,
 };

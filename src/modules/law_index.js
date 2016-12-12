@@ -65,11 +65,12 @@ export const showToggles = (state = true) => (
   { type: SHOW_TOGGLES, payload: !!state }
 );
 
-export const select = ({ collection, initial = '', p = 1 }) => (dispatch) => {
+export const select = options => (dispatch) => {
+  const { collection, initial = '', page = 1 } = options;
   dispatch(batchActions([
     { type: SELECT_COLLECTION, payload: collection },
     { type: SELECT_INITIAL, payload: initial.toLowerCase() },
-    { type: SELECT_PAGE, payload: parseInt(p, 10) },
+    { type: SELECT_PAGE, payload: parseInt(page, 10) },
   ]));
 };
 

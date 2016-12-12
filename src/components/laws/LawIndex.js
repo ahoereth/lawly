@@ -60,7 +60,11 @@ const LawIndex = ({
       hidePhone={!togglesVisible}
       style={noVerticalMargin}
     >
-      <LawInitialChooser initials={initials} selected={selectedInitial} />
+      <LawInitialChooser
+        initials={initials}
+        selected={selectedInitial}
+        collection={collection.get('title')}
+      />
     </Cell>
     <Cell col={11} tablet={7} phone={4}>
       <LawIndexLead
