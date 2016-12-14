@@ -2,24 +2,16 @@ import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import { Map } from 'immutable';
-import {
-  TableHeader,
-  IconButton, Icon, Tooltip,
-  FABButton,
-  Textfield,
-} from 'react-mdl';
+import { TableHeader, Tooltip, Textfield } from 'react-mdl';
+
+import CollectionsBookmarkIcon from 'react-icons/md/collections-bookmark';
+import LaunchIcon from 'react-icons/md/launch';
+import StarsIcon from 'react-icons/md/stars';
+import BookIcon from 'react-icons/md/book';
 
 import { getNormLink } from '~/helpers';
-import { Pagination, DataTable } from '~/components';
+import { Pagination, DataTable, IconButton } from '~/components';
 import styles from './lawList.sss';
-
-
-
-const shell = Map({
-  star: <IconButton disabled name='book' />,
-  action: <FABButton mini disabled><Icon name='launch' /></FABButton>,
-  title: { type: 'shell', lines: [1, 2] },
-});
 
 
 const LawList = ({
@@ -35,6 +27,12 @@ const LawList = ({
   total = laws.size,
   ...otherProps
 }) => {
+  const shell = Map({
+    star: <IconButton disabled icon={BookIcon} />,
+    action: <IconButton raised disabled icon={LaunchIcon} />,
+    title: { type: 'shell', lines: [1, 2] },
+  });
+
   const rows = laws.map((law) => {
     const state = stars ? stars.get(law.get('groupkey'), -2) : null;
     const groupkey = law.get('groupkey');
@@ -66,9 +64,8 @@ const LawList = ({
         >
           <IconButton
             disabled={disableUnstarred && state === -2}
-            ripple
             colored={state >= 0}
-            name={Math.abs(state) === 1 ? 'collections_bookmark' : 'book'}
+            icon={Math.abs(state) === 1 ? CollectionsBookmarkIcon : BookIcon}
             onClick={() => star(law, state < 0)}
           />
         </Tooltip>
@@ -92,8 +89,7 @@ const LawList = ({
           >
             {!filter ? <span /> : (
               <IconButton
-                ripple
-                name='stars'
+                icon={StarsIcon}
                 colored={filters.get('starred')}
                 onClick={() => filter({ starred: !filters.get('starred') })}
               />

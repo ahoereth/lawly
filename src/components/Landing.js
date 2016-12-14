@@ -1,11 +1,13 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
-import { Grid, Cell, Card, CardTitle, CardText, CardActions, Button, IconButton } from 'react-mdl';
+import { Grid, Cell, Card, CardTitle, CardText, CardActions, Button } from 'react-mdl';
+
+import CenterFocusStrongIcon from 'react-icons/md/center-focus-strong';
 
 import screenshot from 'screenshots/urhg.png';
 import { getNormLink } from '~/helpers';
-import { UserForm } from '~/components';
+import { UserForm, IconButton } from '~/components';
 import { imageCard } from './common.sss';
 
 
@@ -94,8 +96,8 @@ export default class Landing extends React.Component {
               Gesetze sind in Deutschland urheberrechtsfrei.
               <Link to={getNormLink('UrhG', '1.2.4', '5-amtliche-werke')}>
                 <IconButton
-                  ripple raised accent name='center_focus_strong'
-                  style={{ float: 'right' }}
+                  raised accent style={{ float: 'right' }}
+                  icon={CenterFocusStrongIcon}
                 />
               </Link>
             </CardText>

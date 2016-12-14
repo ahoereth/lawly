@@ -1,6 +1,11 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { Button, Icon } from 'react-mdl';
+import { Button } from 'react-mdl';
+
+import KeyboardArrowLeftIcon from 'react-icons/md/keyboard-arrow-left';
+import KeyboardArrowRightIcon from 'react-icons/md/keyboard-arrow-right';
+
+import { IconButton } from '~/components';
 
 
 const Pagination = ({
@@ -14,25 +19,25 @@ const Pagination = ({
     {!page || !pages || <Button disabled>Seite {page} von {pages}</Button>}
     {page === 1 ? null : (prevPageLink ? ( // eslint-disable-line
       <Link to={prevPageLink}>
-        <Button ripple>
-          <Icon name='keyboard_arrow_left' />
-        </Button>
+        <IconButton square icon={KeyboardArrowLeftIcon} />
       </Link>
     ) : (!!selectPage &&
-      <Button onClick={() => selectPage(page - 1)} ripple>
-        <Icon name='keyboard_arrow_left' />
-      </Button>
+      <IconButton
+        square
+        icon={KeyboardArrowLeftIcon}
+        onClick={() => selectPage(page - 1)}
+      />
     ))}
     {page === pages ? null : (nextPageLink ? ( // eslint-disable-line
       <Link to={nextPageLink}>
-        <Button ripple>
-          <Icon name='keyboard_arrow_right' />
-        </Button>
+        <IconButton square icon={KeyboardArrowRightIcon} />
       </Link>
     ) : (!!selectPage &&
-      <Button onClick={() => selectPage(page + 1)} ripple>
-        <Icon name='keyboard_arrow_right' />
-      </Button>
+      <IconButton
+        square
+        icon={KeyboardArrowRightIcon}
+        onClick={() => selectPage(page + 1)}
+      />
     ))}
   </div>
 );

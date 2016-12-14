@@ -2,11 +2,10 @@ import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
-import {
-  Grid, Cell,
-  Card, CardTitle, CardText,
-  FABButton, Icon,
-} from 'react-mdl';
+import { Grid, Cell, Card, CardTitle, CardText, FABButton } from 'react-mdl';
+
+import FormatIndentIncreaseIcon from 'react-icons/md/format-indent-increase';
+import MenuIcon from 'react-icons/md/menu';
 
 import { NormList, Norms } from '~/components';
 import { getNormLink } from '~/helpers';
@@ -87,7 +86,7 @@ export default class Law extends React.Component {
             className={styles.fab}
             onClick={this.toggleFullscreenIndex}
           >
-            <Icon name={fullscreenIndex ? 'format_indent_increase' : 'menu'} />
+            {fullscreenIndex ? <FormatIndentIncreaseIcon /> : <MenuIcon />}
           </FABButton>
         </Link>
       </Grid>

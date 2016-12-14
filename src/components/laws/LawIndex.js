@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
-import { Grid, Cell, Button, Icon } from 'react-mdl';
+import { Grid, Cell, Button } from 'react-mdl';
+
+import FilterListIcon from 'react-icons/md/filter-list';
 
 import { getIndexLink } from '~/helpers';
 import LawList from './LawList';
@@ -38,7 +40,7 @@ const LawIndex = ({
         style={{ width: '92%', marginLeft: '4%' }}
         onClick={showToggles}
       >
-        Gruppierungsfilter anzeigen <Icon name='filter_list' />
+        Gruppierungsfilter anzeigen <FilterListIcon />
       </Button>
     </Cell>
     <Cell

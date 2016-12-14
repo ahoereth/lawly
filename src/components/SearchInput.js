@@ -1,5 +1,8 @@
 import React, { PropTypes } from 'react';
-import { Textfield } from 'react-mdl';
+
+import SearchIcon from 'react-icons/md/search';
+
+import Textfield from './Textfield';
 
 
 function submit({ nativeEvent, currentTarget }, handler) {
@@ -15,7 +18,7 @@ const SearchInput = ({ expandable, query, search, ...otherProps }) => (
     onKeyPress={e => submit(e, search)}
     label='Suchanfrage'
     expandable={expandable}
-    expandableIcon='search'
+    expandableIcon={<SearchIcon />}
     floatingLabel={!expandable}
     {...otherProps}
   />

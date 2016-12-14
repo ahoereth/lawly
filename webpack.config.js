@@ -74,6 +74,11 @@ let config = {
         loader: 'url-loader?limit=4096',
       },
       {
+        test: /\.js$/,
+        include: path.resolve(__dirname, 'node_modules/react-icons'),
+        loader: 'babel-loader?cacheDirectory=tmp/cache',
+      },
+      {
         test: /\.svg$/i,
         loader: 'svg-url-loader?noquotes&limit=4096',
       },

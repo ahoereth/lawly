@@ -4,14 +4,17 @@ import Immutable from 'immutable';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
 import classNames from 'classnames';
-import {
-  Card, CardTitle, CardMenu, CardText,
-  Button, IconButton,
-} from 'react-mdl';
+import { Card, CardTitle, CardMenu, CardText, Button } from 'react-mdl';
+
+import BookIcon from 'react-icons/md/book';
+import BookmarkIcon from 'react-icons/md/bookmark';
+import BookmarkOutlineIcon from 'react-icons/md/bookmark-outline';
+import CenterFocusWeakIcon from 'react-icons/md/center-focus-weak';
+import CenterFocusStrongIcon from 'react-icons/md/center-focus-strong';
 
 import { getNormLink } from '~/helpers';
 import { slugify } from '~/helpers/utils';
-import { Html, Norms } from '~/components';
+import { Html, Norms, IconButton } from '~/components';
 import { getTextblock, getTextline } from '~/helpers/shells';
 import styles from './norm.sss';
 
@@ -97,7 +100,8 @@ export default class Norm extends React.Component {
     const lead = enumeration === '0';
     const level = lead ? 1 : enumeration.split('.').length + 1;
     const heading = level > 6 ? 6 : level;
-    const icons = lead ? ['book', 'book'] : ['bookmark', 'bookmark_border'];
+    const icons = lead ? [BookIcon, BookIcon]
+                       : [BookmarkIcon, BookmarkOutlineIcon];
 
     const groupkey = data.get('groupkey');
     let title = data.get('title');
@@ -133,14 +137,14 @@ export default class Norm extends React.Component {
           <IconButton
             ripple
             colored={starred}
-            name={starred ? icons[0] : icons[1]}
+            icon={starred ? icons[0] : icons[1]}
             onClick={() => star(data, !starred)}
             className={classNames({ visible: starred || focused })}
           />
           {deeplinked ? (
             <IconButton
               ripple disabled
-              name={'center_focus_strong'}
+              icon={CenterFocusStrongIcon}
               className='visible'
             />
           ) : (
@@ -149,7 +153,7 @@ export default class Norm extends React.Component {
               style={{ color: 'inherit' }}
             >
               <IconButton
-                ripple name='center_focus_weak'
+                ripple icon={CenterFocusWeakIcon}
                 className={classNames({ visible: focused })}
               />
             </Link>

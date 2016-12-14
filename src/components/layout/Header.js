@@ -1,12 +1,9 @@
 import React, { PropTypes } from 'react';
 import cn from 'classnames';
 import { Link } from 'react-router';
-import {
-  Icon, Tooltip,
-  Header as MaterialHeader,
-  HeaderRow,
-  Navigation,
-} from 'react-mdl';
+import { Tooltip, Header as MdHeader, HeaderRow, Navigation } from 'react-mdl';
+
+import FlashOffIcon from 'react-icons/md/flash-off';
 
 import { SearchInput } from '~/components';
 import { header, row, nav, searchinput } from './header.sss';
@@ -14,7 +11,7 @@ import { background } from './layout.sss';
 
 
 const Header = ({ isOnline, title, links, search, query }) => (
-  <MaterialHeader
+  <MdHeader
     transparent
     waterfall
     className={cn(header, background, { online: isOnline, offline: !isOnline })}
@@ -22,7 +19,7 @@ const Header = ({ isOnline, title, links, search, query }) => (
     <HeaderRow title={title} className={row}>
       {isOnline ||
         <Tooltip label='Verbindung zum Server nicht verfügbar.'>
-          <Icon name='flash_off' />
+          <FlashOffIcon />
         </Tooltip>
       }
       <Navigation className={nav}>
@@ -39,7 +36,7 @@ const Header = ({ isOnline, title, links, search, query }) => (
         expandable
       />
     </HeaderRow>
-  </MaterialHeader>
+  </MdHeader>
 );
 
 Header.propTypes = {

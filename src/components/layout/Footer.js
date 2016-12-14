@@ -5,7 +5,7 @@ import {
   FooterSection,
   FooterLinkList,
 } from 'react-mdl';
-import github from 'icons/github.svg';
+import GitHubIcon from 'react-icons/go/mark-github';
 
 
 const Footer = ({ navigation: { primary, secondary } }) => (
@@ -26,8 +26,12 @@ const Footer = ({ navigation: { primary, secondary } }) => (
     </FooterSection>
     <FooterSection type='right'>
       <FooterLinkList>
-        <Link to='https://github.com/ahoereth/lawly' className='mdl-navigation__link'>
-          <img alt='github' src={github} style={{ width: 24, height: 24 }} />
+        <Link
+          to='https://github.com/ahoereth/lawly'
+          className='mdl-navigation__link'
+          style={{ fontSize: '1.5em', color: '#000' }}
+        >
+          <GitHubIcon />
         </Link>
       </FooterLinkList>
     </FooterSection>

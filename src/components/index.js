@@ -7,6 +7,7 @@ export AppServer from './AppServer';
 export DataTable from './DataTable';
 export Home from './Home';
 export Html from './Html';
+export IconButton from './IconButton';
 export Layout from './layout';
 export Landing from './Landing';
 export LegalNotice from './LegalNotice';
