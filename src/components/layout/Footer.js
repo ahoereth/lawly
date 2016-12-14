@@ -26,13 +26,15 @@ const Footer = ({ navigation: { primary, secondary } }) => (
     </FooterSection>
     <FooterSection type='right'>
       <FooterLinkList>
-        <Link
-          to='https://github.com/ahoereth/lawly'
+        <a
+          href='https://github.com/ahoereth/lawly'
+          target='_blank'
+          rel='noopener noreferrer'
           className='mdl-navigation__link'
           style={{ fontSize: '1.5em', color: '#000' }}
         >
           <GitHubIcon />
-        </Link>
+        </a>
       </FooterLinkList>
     </FooterSection>
   </MaterialFooter>
