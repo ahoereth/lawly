@@ -38,6 +38,7 @@ export default class ApiClient {
     this.online = false;
     this.storage = new DataClient();
     this.isNode = process.env.NODE_ENV === 'node';
+    this.DEBUG = process.env.NODE_ENV === 'development';
   }
 
   init(store) {
@@ -187,8 +188,7 @@ export default class ApiClient {
       url, body, name, params, method, action, cachable,
     } = this.parseFetchOptions(options);
 
-    let gotRemoteResponse = false;
-    const remote = fetch(url, {
+    const fetchRemote = (dispatch = false) => fetch(url, {
       method,
       body: JSON.stringify(body),
       headers: {
@@ -198,42 +198,41 @@ export default class ApiClient {
       },
     }).then(res => this.parseResponse(res)).then((data) => {
       this.isConnected(true);
-      gotRemoteResponse = true;
       if (cachable) {
         const expire = Date.now() + (1 * 24 * 60 * 60 * 1000); // TOMORROW
         this.storage.stash({ name, method, ...params }, { expire, data });
       }
+
+      if (dispatch) {
+        this.store.dispatch({ type: action, payload: data });
+      }
+
       return data;
+    }).catch((err) => {
+      if (err.name !== 'ApiError') {
+        this.storage.stashRequest(options)
+          .then(() => this.isConnected(false));
+      }
+
+      if (this.DEBUG) { // eslint-disable-next-line no-console
+        console.err('Could not fetch:', this.parseFetchOptions(options));
+        throw err;
+      } else { // eslint-disable-next-line no-console
+        console.warn('Could not fetch from remote:', name, params);
+      }
     });
 
-    const cache = cachable ? this.storage.get({ name, method, ...params })
-                           : Promise.reject();
-
-    // We have an REDUX action to dispatch! Use whatever is faster, but give
-    // the remote endpoint precedence over the cache.
-    if (action) {
-      return cache.then((cached) => {
-        // Remote was faster: Use it right away.
-        if (gotRemoteResponse) {
-          return remote;
+    if (cachable) {
+      return this.storage.get({ name, method, ...params }).then((cache) => {
+        if (Date.now() > cache.expire) {
+          fetchRemote(true); // Update cache and dispatch fresh data.
         }
 
-        // Remote did not reply yet. Use cached data and dispatch remote data
-        // later on.
-        remote.then(payload => this.store.dispatch({ type: action, payload }));
-        return cached.data;
-      }).catch(() => remote); // Data not found in cache.
+        return cache.data;
+      }).catch(() => fetchRemote());
     }
 
-    return remote.catch((err) => {
-      if (err.name !== 'ApiError') {
-        this.storage.stashRequest(options).then(() => this.isConnected(false));
-        if (cachable) {
-          return this.storage.get({ name, method, ...params });
-        }
-      }
-      throw err;
-    });
+    return fetchRemote();
   }
 
   /**
