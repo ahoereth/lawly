@@ -1,5 +1,7 @@
 :local(.header)
   :local(.row)
+    @media (max-width: 499px)
+      padding-left: 60px
     @media (min-width: 500px) and (max-width: 1023px)
       padding-left: 16px
     @media (min-width: 1024px)
@@ -11,5 +13,8 @@
     display: none !important
 
 .mdl-layout__drawer-button
-  @media (min-width: 500px)
-    display: none !important
+  display: none !important
+
+.mdl-layout__drawer-button.custom
+  @media (max-width: 499px)
+    display: block !important

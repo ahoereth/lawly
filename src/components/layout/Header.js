@@ -4,8 +4,9 @@ import { Link } from 'react-router';
 import { Tooltip, Header as MdHeader, HeaderRow, Navigation } from 'react-mdl';
 
 import FlashOffIcon from 'react-icons/md/flash-off';
+import MenuIcon from 'react-icons/md/menu';
 
-import { SearchInput } from '~/components';
+import { SearchInput, IconButton } from '~/components';
 import { header, row, nav, searchinput } from './header.sss';
 import { background } from './layout.sss';
 
@@ -16,7 +17,8 @@ const Header = ({ isOnline, title, links, search, query }) => (
     waterfall
     className={cn(header, background, { online: isOnline, offline: !isOnline })}
   >
-    <HeaderRow title={title} className={row}>
+    <IconButton className={'mdl-layout__drawer-button custom'} icon={MenuIcon} />
+    <HeaderRow className={row} title={title}>
       {isOnline ||
         <Tooltip label='Verbindung zum Server nicht verfügbar.'>
           <FlashOffIcon />
