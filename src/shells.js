@@ -39,9 +39,12 @@ module.exports = function render(locals, callback) {
 
 
   if (endsWith(path, 'manifest.appcache')) {
-    const externals = Object.keys(stats.compilation.assets).filter(notCssOrJS);
+    const statics = stats.toJson().modules
+      .filter(module => /(png|svg|woff2?)/i.test(module.assets[0]))
+      .reduce((agg, { name, assets }) => ({ ...agg, [name]: assets[0] }), {});
+
     const appcacheContents = appcacheTemplate({
-      assets: [...flatten(assets), ...map(prefixPath, externals)],
+      assets: [...flatten(assets), ...map(prefixPath, statics)],
       fallback: mapValues(prefixPath, {
         '/gesetze': 'gesetze.html',
         '/gesetz': 'gesetz.html',

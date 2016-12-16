@@ -289,7 +289,6 @@ if (process.env.NODE_ENV === 'node') {
           ],
         },
         { test: /\.css$/, loader: 'css-loader' },
-        { test: /\.(woff2?|eot|ttf|png|svg)$/i, loader: 'ignore-loader' },
       ]),
     }),
     node: {
