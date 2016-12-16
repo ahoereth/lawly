@@ -51,7 +51,14 @@ const AppHtml = ({
       {meta.map(([tag, props], idx) => (
         React.createElement(tag, { ...props, key: idx })
       ))}
-      <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto:400,400i,700,700i' />
+      <script>{`
+       WebFontConfig = { google: { families: [ 'Roboto:400,400i,700,700i' ] } };
+       (function(d) {
+          var wf = d.createElement('script'), s = d.scripts[0];
+          wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.16/webfont.js';
+          s.parentNode.insertBefore(wf, s);
+       })(document);
+      `}</script>
       {css.map(src => (
         <link rel='stylesheet' href={src} key={src} />
       ))}
