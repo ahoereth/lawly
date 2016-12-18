@@ -9,15 +9,22 @@ import { browserHistory as hist } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import { AppContainer } from 'react-hot-loader';
 import { isUndefined } from 'lodash';
+import WebFontLoader from 'webfontloader';
 
 import ApiClient from './helpers/ApiClient';
 import createStore from './store/createStore';
 import AppClient from './components/AppClient';
 import { updateAvailable, renderShells } from './modules/core';
 
-
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
+
+
+WebFontLoader.load({
+  google: {
+    families: ['Roboto:400,400i,700,700i'],
+  },
+});
 
 
 const client = new ApiClient(process.env.APIURL);
