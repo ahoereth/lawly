@@ -8,7 +8,7 @@ import MenuIcon from 'react-icons/md/menu';
 
 import { IconButton } from '~/components';
 import { SearchInput } from '~/components/search';
-import { header, row, nav, searchinput } from './header.sss';
+import { header, row, nav, searchinput, flash } from './header.sss';
 import { background } from './layout.sss';
 
 
@@ -22,7 +22,7 @@ const Header = ({ isOnline, title, links, search, query }) => (
     <HeaderRow className={row} title={title}>
       {isOnline ||
         <Tooltip label='Verbindung zum Server nicht verfügbar.'>
-          <FlashOffIcon />
+          <FlashOffIcon className={flash} />
         </Tooltip>
       }
       <Navigation className={nav}>
