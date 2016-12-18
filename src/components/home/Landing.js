@@ -8,7 +8,7 @@ import CenterFocusStrongIcon from 'react-icons/md/center-focus-strong';
 import screenshot from 'screenshots/urhg.png';
 import { getNormLink } from '~/helpers';
 import { UserForm, IconButton } from '~/components';
-import { imageCard } from './common.sss';
+import { imageCard } from '~/components/common.sss';
 
 
 const lead = [

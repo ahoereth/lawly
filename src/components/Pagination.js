@@ -5,7 +5,7 @@ import { Button } from 'react-mdl';
 import KeyboardArrowLeftIcon from 'react-icons/md/keyboard-arrow-left';
 import KeyboardArrowRightIcon from 'react-icons/md/keyboard-arrow-right';
 
-import { IconButton } from '~/components';
+import IconButton from './IconButton';
 
 
 const Pagination = ({

@@ -19,7 +19,7 @@ import {
 } from '~/modules/law_index';
 import { getIndexStars, isLoggedin, star } from '~/modules/user';
 import { getShellMode, setTitle, isOnline } from '~/modules/core';
-import { LawIndex } from '~/components';
+import { LawIndex } from '~/components/laws';
 import { isNumeric as isNum } from '~/helpers/utils';
 
 

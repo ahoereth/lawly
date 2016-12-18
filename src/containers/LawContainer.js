@@ -8,7 +8,7 @@ import { push } from 'react-router-redux';
 import { selectLaw, getNormHierarchy } from '~/modules/laws';
 import { getSelectionAnnotations, star } from '~/modules/user';
 import { getShellMode, setTitle } from '~/modules/core';
-import { Law } from '~/components';
+import { Law } from '~/components/laws';
 
 
 const mapStateToProps = state => ({

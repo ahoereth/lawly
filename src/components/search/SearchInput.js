@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 
 import SearchIcon from 'react-icons/md/search';
 
-import Textfield from './Textfield';
+import { Textfield } from '~/components';
 
 
 function submit({ nativeEvent, currentTarget }, handler) {

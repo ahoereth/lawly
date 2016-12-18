@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { search, getQuery } from '~/modules/search';
 import { getTitle, isUpdateAvailable, isOnline, getPathname } from '~/modules/core';
-import { Layout } from '~/components';
+import { Layout } from '~/components/layout';
 
 
 const navigation = {

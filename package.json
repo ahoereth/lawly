@@ -16,6 +16,7 @@
     "analyze": "NODE_ENV=production webpack --json | webpack-bundle-size-analyzer"
   },
   "dependencies": {
+    "circular-dependency-plugin": "^2.0.0",
     "classnames": "^2.2.3",
     "elasticlunr": "^0.9.0",
     "isomorphic-fetch": "^2.2.1",

@@ -14,10 +14,9 @@ import CenterFocusStrongIcon from 'react-icons/md/center-focus-strong';
 
 import { getNormLink } from '~/helpers';
 import { slugify } from '~/helpers/utils';
-import { Html, Norms, IconButton } from '~/components';
+import { Html, IconButton } from '~/components';
 import { getTextblock, getTextline } from '~/helpers/shells';
 import styles from './norm.sss';
-
 
 
 export default class Norm extends React.Component {
@@ -163,12 +162,16 @@ export default class Norm extends React.Component {
           {body}
           <Html>{data.get('foot', '')}</Html>
           {!expanded ? more : (
-            <Norms
-              annotations={annotations}
-              deeplink={deeplink}
-              nodes={descendants}
-              star={star}
-            />
+            descendants.map((node, i) => (
+              <Norm
+                key={node.getIn(['norm', 'enumeration'], i)}
+                data={node.get('norm')}
+                deeplink={deeplink}
+                descendants={node.get('children')}
+                annotations={annotations}
+                star={star}
+              />
+            ))
           )}
         </CardText>
       </Card>

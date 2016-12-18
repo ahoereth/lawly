@@ -7,7 +7,7 @@ import { Grid, Cell, Card, CardTitle, CardText, FABButton } from 'react-mdl';
 import FormatIndentIncreaseIcon from 'react-icons/md/format-indent-increase';
 import MenuIcon from 'react-icons/md/menu';
 
-import { NormList, Norms } from '~/components';
+import { NormList, Norms } from '~/components/norms';
 import { getNormLink } from '~/helpers';
 import styles from './law.sss';
 

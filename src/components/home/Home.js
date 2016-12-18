@@ -2,8 +2,9 @@ import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Grid, Cell, Card } from 'react-mdl';
 
-import { LawList } from '~/components';
+import { LawList } from '~/components/laws';
 import Landing from './Landing';
+
 
 const Home = ({ user, laws, login, logout }) => (
   <div>

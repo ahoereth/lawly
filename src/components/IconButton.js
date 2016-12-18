@@ -2,7 +2,15 @@ import React, { PropTypes } from 'react';
 import { FABButton, Button } from 'react-mdl';
 import cn from 'classnames';
 
-const IconButton = ({ raised, icon, square, style, className, ...rest }) => {
+
+const IconButton = ({
+  raised = false,
+  icon,
+  square = false,
+  style = {},
+  className = '',
+  ...rest
+}) => {
   const ico = React.createElement(icon, { style: { verticalAlign: 'sub' } });
   if (raised) {
     return (
@@ -34,13 +42,6 @@ IconButton.propTypes = {
   square: PropTypes.bool,
   icon: PropTypes.func.isRequired,
   style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
-};
-
-IconButton.defaultProps = {
-  className: '',
-  raised: false,
-  square: false,
-  style: {},
 };
 
 

@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Grid, Cell } from 'react-mdl';
 
-import { LawList } from '~/components';
+import { LawList } from '~/components/laws';
 import SearchInput from './SearchInput';
 
 

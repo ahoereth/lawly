@@ -12,6 +12,7 @@ const AssetsPlugin = require('assets-webpack-plugin');
 const StaticSiteGenPlugin = require('static-site-generator-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const mapValues = require('lodash/fp/mapValues');
+const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const stringifyValues = mapValues(JSON.stringify);
 
@@ -112,6 +113,10 @@ let config = {
       flattening: true,
       placeholders: true,
     }),
+    new CircularDependencyPlugin({
+      exclude: /node_modules/,
+      failOnError: true
+    })
   ],
 };
 

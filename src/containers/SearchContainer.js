@@ -15,7 +15,7 @@ import {
   selectPage,
 } from '~/modules/search';
 import { setTitle } from '~/modules/core';
-import { Search } from '~/components';
+import { Search } from '~/components/search';
 
 
 const mapStateToProps = state => ({

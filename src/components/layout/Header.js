@@ -6,7 +6,8 @@ import { Tooltip, Header as MdHeader, HeaderRow, Navigation } from 'react-mdl';
 import FlashOffIcon from 'react-icons/md/flash-off';
 import MenuIcon from 'react-icons/md/menu';
 
-import { SearchInput, IconButton } from '~/components';
+import { IconButton } from '~/components';
+import { SearchInput } from '~/components/search';
 import { header, row, nav, searchinput } from './header.sss';
 import { background } from './layout.sss';
 

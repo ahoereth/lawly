@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import { login, logout, getUser, getUserLaws } from '~/modules/user';
 import { setTitle } from '~/modules/core';
-import { Home } from '~/components';
+import { Home } from '~/components/home';
 
 
 /* eslint-disable react/no-unused-prop-types */
