@@ -35,7 +35,7 @@ export default class ApiClient {
   constructor(apiurl) {
     this.headers = {};
     this.apiurl = apiurl;
-    this.online = false;
+    this.online = true;
     this.storage = new DataClient();
     this.isNode = process.env.NODE_ENV === 'node';
     this.DEBUG = process.env.NODE_ENV === 'development';
@@ -183,7 +183,7 @@ export default class ApiClient {
    * @param  {object} options (optional)
    * @return {Promise}
    */
-  fetch(options) {
+  fetch(options, raise = true) {
     const {
       url, body, name, params, method, action, cachable,
     } = this.parseFetchOptions(options);
@@ -219,6 +219,9 @@ export default class ApiClient {
         throw err;
       } else { // eslint-disable-next-line no-console
         console.warn('Could not fetch from remote:', name, params);
+        if (raise) {
+          throw err;
+        }
       }
     });
 
@@ -252,8 +255,8 @@ export default class ApiClient {
    * @param  {object} data
    * @return {Promise}
    */
-  post(resource) {
-    return this.fetch({ ...resource, method: 'post' });
+  post(resource, raise) {
+    return this.fetch({ ...resource, method: 'post' }, raise);
   }
 
   /**
@@ -287,7 +290,7 @@ export default class ApiClient {
    * @return {Promise}
    */
   auth(email, password = undefined, signup = false) {
-    return this.post({ name: 'users', email, password, signup })
+    return this.post({ name: 'users', email, password, signup }, true)
       .then(result => this.storage.stash(email, result))
       .catch((err) => {
         if (err.name === 'ApiError') {
