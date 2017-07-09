@@ -6,6 +6,7 @@ services:
     working_dir: /wd
     volumes:
       - ${WD:-/home/ubuntu}/web:/wd
+      - /wd/node_modules
     command: npm run up
     ports:
-      - 80:80
+      - 8000:8000

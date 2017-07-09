@@ -1,12 +1,15 @@
 version: "3.3"
 services:
   web:
-    depends_on:
-      - letsencrypt  # From api/docker-compose.prod.yaml
+    external_links:
+      - nginx-ssl  # From api/docker-compose.prod.yaml
+    ports:
+      - 8000:8000
     environment:
       VIRTUAL_HOST: lawly.org,www.lawly.org
-      VIRTUAL_PORT: 80
+      VIRTUAL_PORT: 8000
       LETSENCRYPT_EMAIL: letsencrypt@lawly.org
-      LETSENCRYPT_HOST: lawly.org,www.lawly.org,api.lawly.org,pg.lawly.org,redis.lawly.org
+      LETSENCRYPT_HOST: lawly.org,www.lawly.org
+      LETSENCRYPT_TEST: "true"   # Staging Certs!
       ACME_CA_URI: https://acme-staging.api.letsencrypt.org/directory  # Staging Certs!
       DEBUG: "true"

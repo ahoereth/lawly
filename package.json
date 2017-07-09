@@ -13,7 +13,8 @@
     "server:dev": "NODE_ENV=development node scripts/devserver.js",
     "server:shell": "node scripts/shellserver.js",
     "server:ssr": "node dist/server.js",
-    "analyze": "NODE_ENV=production webpack --json | webpack-bundle-size-analyzer"
+    "analyze": "NODE_ENV=production webpack --json | webpack-bundle-size-analyzer",
+    "up": "npm install --silent && npm run build && npm run server:shell"
   },
   "dependencies": {
     "circular-dependency-plugin": "^2.0.0",
