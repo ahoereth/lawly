@@ -1,0 +1,11 @@
+version: "3.3"
+services:
+  web:
+    image: node:7
+    container_name: lawly_web
+    working_dir: /wd
+    volumes:
+      - ${WD:-/home/ubuntu}/web:/wd
+    command: npm run up
+    ports:
+      - 80:80
