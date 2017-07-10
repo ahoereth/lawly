@@ -5,9 +5,7 @@ import { List, Map, fromJS } from 'immutable';
 
 import createReducer from '~/store/createReducer';
 
-
 export const SCOPE = 'search';
-
 
 // ******************************************************************
 // ACTIONS
@@ -17,29 +15,31 @@ export const LOCAL_ONLY = 'search/filter/LOCAL_ONLY';
 export const SELECT_PAGE = 'search/SELECT_PAGE';
 export const LOADING = 'search/LOADING';
 
-
-
 // ******************************************************************
 // REDUCERS
-export default createReducer(Map({
-  loading: false,
-  page: 1,
-  pageSize: 20,
-  query: '',
-  results: List(),
-  total: 0,
-}), {
-  [LOADING]: (state, { payload }) => state.set('loading', payload),
-  [SEARCH]: (state, { payload = '' }) => state.set('query', payload),
-  [SEARCHED]: (state, { payload: { results, total } }) => state.merge(Map({
+export default createReducer(
+  Map({
     loading: false,
-    results: fromJS(results || []),
-    total: total || 0,
-  })),
-  [SELECT_PAGE]: (state, { payload = 1 }) => state.set('page', payload),
-});
-
-
+    page: 1,
+    pageSize: 20,
+    query: '',
+    results: List(),
+    total: 0,
+  }),
+  {
+    [LOADING]: (state, { payload }) => state.set('loading', payload),
+    [SEARCH]: (state, { payload = '' }) => state.set('query', payload),
+    [SEARCHED]: (state, { payload: { results, total } }) =>
+      state.merge(
+        Map({
+          loading: false,
+          results: fromJS(results || []),
+          total: total || 0,
+        }),
+      ),
+    [SELECT_PAGE]: (state, { payload = 1 }) => state.set('page', payload),
+  },
+);
 
 // ******************************************************************
 // ACTION CREATORS
@@ -50,12 +50,14 @@ export const selectPage = (page = 1) => (dispatch, getState) => {
   dispatch(push(`/suche/${query}${pagePath}`));
 };
 
-export const search = (query = '') => (dispatch) => {
-  dispatch(batchActions([
-    { type: SEARCH, payload: query },
-    { type: SEARCHED, payload: {} },
-    { type: LOADING, payload: true },
-  ]));
+export const search = (query = '') => dispatch => {
+  dispatch(
+    batchActions([
+      { type: SEARCH, payload: query },
+      { type: SEARCHED, payload: {} },
+      { type: LOADING, payload: true },
+    ]),
+  );
   dispatch(selectPage(1));
   return dispatch({
     type: SEARCHED,
@@ -63,8 +65,6 @@ export const search = (query = '') => (dispatch) => {
     promise: api => api.search(query),
   });
 };
-
-
 
 // ******************************************************************
 // SELECTORS

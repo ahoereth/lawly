@@ -4,11 +4,13 @@ import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { omit } from 'lodash';
 import {
-  Card, CardTitle, CardText, CardActions,
-  Textfield, Button,
+  Card,
+  CardTitle,
+  CardText,
+  CardActions,
+  Textfield,
+  Button,
 } from 'react-mdl';
-
-
 
 class LoginForm extends React.Component {
   static propTypes = {
@@ -37,24 +39,24 @@ class LoginForm extends React.Component {
     return shallowCompare(this, nextProps, nextState);
   }
 
-  submit = (e) => {
+  submit = e => {
     e && e.preventDefault();
     const { email, password } = this.state;
     this.props.login(email, password);
-  }
+  };
 
-  signup = (e) => {
+  signup = e => {
     e && e.preventDefault();
     const { email, password } = this.state;
     this.props.login(email, password, /* signup: */ true);
-  }
+  };
 
-  input = (e) => {
+  input = e => {
     const { name, value } = e.currentTarget;
     if (name === 'email' || name === 'password') {
       this.setState({ [name]: value });
     }
-  }
+  };
 
   render() {
     const { email, password } = this.state;
@@ -66,18 +68,18 @@ class LoginForm extends React.Component {
           <CardText>
             <Textfield
               floatingLabel
-              type='email'
-              name='email'
-              label='E-Mail'
+              type="email"
+              name="email"
+              label="E-Mail"
               style={{ width: '100%' }}
               value={email}
               onChange={this.input}
             />
             <Textfield
               floatingLabel
-              type='password'
-              name='password'
-              label='Passwort'
+              type="password"
+              name="password"
+              label="Passwort"
               style={{ width: '100%' }}
               value={password}
               onChange={this.input}
@@ -85,14 +87,17 @@ class LoginForm extends React.Component {
           </CardText>
           <CardActions>
             <Button
-              ripple raised accent
+              ripple
+              raised
+              accent
               style={{ float: 'right' }}
-              type='submit'
+              type="submit"
             >
               Einloggen
             </Button>
             <Button
-              ripple raised
+              ripple
+              raised
               style={{ float: 'right', marginRight: '1em' }}
               onClick={this.signup}
             >
@@ -104,6 +109,5 @@ class LoginForm extends React.Component {
     );
   }
 }
-
 
 export default LoginForm;

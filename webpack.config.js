@@ -16,11 +16,10 @@ const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 const stringifyValues = mapValues(JSON.stringify);
 
-
 const SRC = path.resolve(__dirname, 'src');
 const DST = path.resolve(__dirname, 'dist');
 const DEV_HOST = 'localhost';
-const DEV_PORT = 8080;
+const DEV_PORT = 8000;
 
 const env = {
   development: {
@@ -40,7 +39,6 @@ const env = {
     APIURL: 'http://localhost:3000/v0',
   },
 };
-
 
 // *****************************************************************************
 // Base
@@ -65,10 +63,7 @@ let config = {
       {
         test: /\.js$/,
         include: SRC,
-        loaders: [
-          'babel-loader?cacheDirectory=tmp/cache',
-          'eslint-loader',
-        ],
+        loaders: ['babel-loader?cacheDirectory=tmp/cache', 'eslint-loader'],
       },
       {
         test: /\.(woff2?|eot|ttf|png)$/i,
@@ -91,7 +86,7 @@ let config = {
   plugins: [
     new webpack.LoaderOptionsPlugin({
       options: {
-        postcss: () => ([
+        postcss: () => [
           precss,
           autoprefixer({
             browsers: [
@@ -101,7 +96,7 @@ let config = {
               'not ie < 9', // React doesn't support IE8 anyway
             ],
           }),
-        ]),
+        ],
       },
     }),
     new webpack.NormalModuleReplacementPlugin(/\/iconv-loader$/, 'node-noop'),
@@ -115,11 +110,10 @@ let config = {
     }),
     new CircularDependencyPlugin({
       exclude: /node_modules/,
-      failOnError: true
-    })
+      failOnError: true,
+    }),
   ],
 };
-
 
 // *****************************************************************************
 // Development and production
@@ -140,7 +134,6 @@ if (process.env.NODE_ENV !== 'node') {
     ]),
   });
 }
-
 
 // *****************************************************************************
 // Development
@@ -193,7 +186,7 @@ if (process.env.NODE_ENV === 'development') {
         chunks: ['tests'],
       }),
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoErrorsPlugin(),
+      new webpack.NoEmitOnErrorsPlugin(),
       new webpack.DefinePlugin({
         'process.env': stringifyValues(env.development),
       }),
@@ -201,7 +194,6 @@ if (process.env.NODE_ENV === 'development') {
     ]),
   });
 }
-
 
 // *****************************************************************************
 // Production and node
@@ -211,9 +203,11 @@ if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'node') {
     output: Object.assign({}, config.output, {
       publicPath: env.production.PUBLIC_PATH,
     }),
+    plugins: config.plugins.concat([
+      new webpack.optimize.ModuleConcatenationPlugin(),
+    ]),
   });
 }
-
 
 // *****************************************************************************
 // Production
@@ -269,7 +263,6 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-
 // *****************************************************************************
 // Node
 if (process.env.NODE_ENV === 'node') {
@@ -301,22 +294,25 @@ if (process.env.NODE_ENV === 'node') {
       __filename: false,
     },
     plugins: config.plugins.concat([
-      new StaticSiteGenPlugin('shells', [
-        '/static/manifest.json',
-        '/static/manifest.appcache',
-        '/',
-        '/static/home.html',
-        '/static/gesetz.html',
-        '/static/gesetze.html',
-        '/static/impressum.html',
-      ], {}),
+      new StaticSiteGenPlugin(
+        'shells',
+        [
+          '/static/manifest.json',
+          '/static/manifest.appcache',
+          '/',
+          '/static/home.html',
+          '/static/gesetz.html',
+          '/static/gesetze.html',
+          '/static/impressum.html',
+        ],
+        {},
+      ),
       new webpack.DefinePlugin({
         'process.env': stringifyValues(env.node),
       }),
     ]),
   });
 }
-
 
 // *****************************************************************************
 // Export

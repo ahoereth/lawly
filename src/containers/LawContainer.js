@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import Immutable from 'immutable';
@@ -10,13 +11,11 @@ import { getSelectionAnnotations, star } from '~/modules/user';
 import { getShellMode, setTitle } from '~/modules/core';
 import { Law } from '~/components/laws';
 
-
 const mapStateToProps = state => ({
   annotations: getSelectionAnnotations(state),
   norms: getNormHierarchy(state),
   shell: getShellMode(state),
 });
-
 
 const mapDispatchToProps = {
   push,
@@ -25,16 +24,16 @@ const mapDispatchToProps = {
   star,
 };
 
-
 class LawContainer extends React.Component {
   static propTypes = {
     annotations: ImmutableTypes.map.isRequired,
     norms: ImmutableTypes.list.isRequired,
     // See github.com/yannickcr/eslint-plugin-react/issues/816
-    params: PropTypes.shape({ /* eslint-disable react/no-unused-prop-types */
+    params: PropTypes.shape({
+      /* eslint-disable react/no-unused-prop-types */
       groupkey: PropTypes.string,
       enumeration: PropTypes.string,
-    }).isRequired, /* eslint-enable react/no-unused-prop-types */
+    }).isRequired /* eslint-enable react/no-unused-prop-types */,
     push: PropTypes.func.isRequired,
     selectLaw: PropTypes.func.isRequired,
     setTitle: PropTypes.func.isRequired,
@@ -85,6 +84,5 @@ class LawContainer extends React.Component {
     );
   }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(LawContainer);

@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
@@ -17,7 +18,6 @@ import {
 import { setTitle } from '~/modules/core';
 import { Search } from '~/components/search';
 
-
 const mapStateToProps = state => ({
   loading: isLoading(state),
   page: getPage(state),
@@ -27,13 +27,11 @@ const mapStateToProps = state => ({
   total: getTotal(state),
 });
 
-
 const mapDispatchToProps = {
   search,
   setTitle,
   selectPage,
 };
-
 
 /* eslint-disable react/no-unused-prop-types */
 class SearchContainer extends React.Component {
@@ -70,6 +68,5 @@ class SearchContainer extends React.Component {
     return <Search {...props} />;
   }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchContainer);

@@ -4,8 +4,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const config = require('../webpack.config');
 
 const DEV_HOST = 'localhost';
-const DEV_PORT = 8080;
-
+const DEV_PORT = 8000;
 
 new WebpackDevServer(webpack(config), {
   publicPath: config.output.publicPath,
@@ -14,7 +13,7 @@ new WebpackDevServer(webpack(config), {
     disableDotRule: true,
   },
   // quiet: true,
-}).listen(DEV_PORT, DEV_HOST, (err) => {
+}).listen(DEV_PORT, DEV_HOST, err => {
   if (err) {
     console.log(err);
   } else {

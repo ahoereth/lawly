@@ -16,7 +16,6 @@ import { renderShells } from '~/modules/core';
 import ApiClient from './ApiClient';
 import settle from './settle';
 
-
 const publicPath = process.env.PUBLIC_PATH;
 const readJSON = flow(partialRight(fs.readFileSync, 'utf8'), JSON.parse);
 const toArray = e => (Array.isArray(e) ? e : [e]);
@@ -35,10 +34,9 @@ const { js, css } = toArrays(assets.app);
 // Only read from file system once.
 let manifest = false;
 
-
-export default function (location, { manifest: devMan, asyncDeps = [] } = {}) {
+export default function(location, { manifest: devMan, asyncDeps = [] } = {}) {
   manifest = devMan || (manifest || readJSON(DIST_MANIFEST_PATH));
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const memoryHistory = createMemoryHistory(location);
     const store = createStore(memoryHistory, client, {});
     const history = syncHistoryWithStore(memoryHistory, store, {
@@ -59,12 +57,13 @@ export default function (location, { manifest: devMan, asyncDeps = [] } = {}) {
       }
 
       store.dispatch(renderShells(true));
-      asyncDeps = asyncDeps.concat([ // eslint-disable-line no-param-reassign
+      asyncDeps = asyncDeps.concat([
+        // eslint-disable-line no-param-reassign
         store.dispatch(fetchLawIndex({ limit: true, cachable: false })),
       ]);
 
       Promise.all(asyncDeps.map(settle)).then(() => {
-        const page = renderToString((
+        const page = renderToString(
           <AppHtml
             appcache={prefixPath('manifest.appcache')}
             assets={assets}
@@ -76,8 +75,8 @@ export default function (location, { manifest: devMan, asyncDeps = [] } = {}) {
             title={manifest.short_name}
           >
             <AppServer renderProps={props} store={store} />
-          </AppHtml>
-        ));
+          </AppHtml>,
+        );
         resolve(`<!doctype html>\n${page}\n`);
       });
     });

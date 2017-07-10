@@ -1,22 +1,24 @@
+/* eslint-disable no-shadow */
 import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import { connect } from 'react-redux';
 
 import { search, getQuery } from '~/modules/search';
-import { getTitle, isUpdateAvailable, isOnline, getPathname } from '~/modules/core';
+import {
+  getTitle,
+  isUpdateAvailable,
+  isOnline,
+  getPathname,
+} from '~/modules/core';
 import { Layout } from '~/components/layout';
-
 
 const navigation = {
   primary: [
     { to: '/', text: 'Heimatseite' },
     { to: '/gesetze', text: 'Gesetzesübersicht' },
   ],
-  secondary: [
-    { to: '/impressum', text: 'Impressum' },
-  ],
+  secondary: [{ to: '/impressum', text: 'Impressum' }],
 };
-
 
 const mapStateToProps = state => ({
   isOnline: isOnline(state),
@@ -26,11 +28,9 @@ const mapStateToProps = state => ({
   pathname: getPathname(state),
 });
 
-
 const mapDispatchToProps = {
   search,
 };
-
 
 class LayoutContainer extends React.Component {
   static propTypes = {
@@ -49,7 +49,13 @@ class LayoutContainer extends React.Component {
 
   render() {
     const {
-      children, isOnline, outdated, query, search, title, pathname,
+      children,
+      isOnline,
+      outdated,
+      query,
+      search,
+      title,
+      pathname,
     } = this.props;
 
     return (
@@ -67,6 +73,5 @@ class LayoutContainer extends React.Component {
     );
   }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(LayoutContainer);

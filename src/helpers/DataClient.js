@@ -4,7 +4,6 @@ import { isPlainObject, isUndefined } from 'lodash';
 
 import localSearch from './LocalSearch';
 
-
 export default class DataClient {
   static options = {
     name: 'lawly',
@@ -25,7 +24,7 @@ export default class DataClient {
   }
 
   get(key) {
-    return this.forage.getItem(stringify(key)).then((cache) => {
+    return this.forage.getItem(stringify(key)).then(cache => {
       if (!cache) {
         throw new Error('NO_CACHE');
       }
@@ -39,9 +38,11 @@ export default class DataClient {
   }
 
   auth(token = undefined) {
-    if (token === null) { // Unset token.
+    if (token === null) {
+      // Unset token.
       return this.forage.removeItem('auth');
-    } else if (!isUndefined(token)) { // Set token.
+    } else if (!isUndefined(token)) {
+      // Set token.
       return this.forage.setItem('auth', token);
     }
 
@@ -50,19 +51,23 @@ export default class DataClient {
   }
 
   stashRequest(request) {
-    return this.forage.getItem('requests').then((requests) => {
+    return this.forage.getItem('requests').then(requests => {
       const reqStr = stringify(request);
-      const value = (requests || []).filter(req => stringify(req) !== reqStr)
-                                    .concat([request]);
+      const value = (requests || [])
+        .filter(req => stringify(req) !== reqStr)
+        .concat([request]);
       return this.forage.setItem('requests', value);
     });
   }
 
   popRequest() {
-    return this.forage.getItem('requests').then((requests) => {
-      if (!Array.isArray(requests) || !requests.length) { return undefined; }
-      return this.forage.setItem('requests', requests.slice(1))
-                        .then(() => requests[0]);
+    return this.forage.getItem('requests').then(requests => {
+      if (!Array.isArray(requests) || !requests.length) {
+        return undefined;
+      }
+      return this.forage
+        .setItem('requests', requests.slice(1))
+        .then(() => requests[0]);
     });
   }
 }

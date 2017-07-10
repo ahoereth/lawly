@@ -7,11 +7,8 @@ import manifest from '!!json-loader!./manifest.json';
 import ssr, { assets, prefixPath, stripPath } from './helpers/ssr';
 import appcacheTemplate from './appcache.ejs';
 
-
 const join = a => b => `${trimEnd(a, '/')}/${trimStart(b, '/')}`;
 const flatten = flow(map(map(i => i)), flattenDeep);
-const notCssOrJS = str => !str.match(/js|css$/i);
-
 
 // eslint-disable-next-line import/no-commonjs
 module.exports = function render(locals, callback) {
@@ -23,13 +20,16 @@ module.exports = function render(locals, callback) {
       if (err || !fsStats.isDirectory()) {
         callback(err || `${imgPath} is not a directory`);
       } else {
-        manifest.icons = fs.readdirSync(imgPath)
+        manifest.icons = fs
+          .readdirSync(imgPath)
           .filter(f => f.match(/icon-\d{2,3}\.png$/))
           .map(join(prefixPath('img')))
-          .map(src => ({ src, size: (/-(\d{2,3})\.png$/).exec(src)[1] }))
-          .sort((a, b) => (b.size - a.size))
+          .map(src => ({ src, size: /-(\d{2,3})\.png$/.exec(src)[1] }))
+          .sort((a, b) => b.size - a.size)
           .map(({ src, size }) => ({
-            src, sizes: `${size}x${size}`, type: 'image/png',
+            src,
+            sizes: `${size}x${size}`,
+            type: 'image/png',
           }));
         // callback(null, JSON.stringify(manifest, null, 2));
         callback(null, JSON.stringify(manifest));
@@ -37,10 +37,10 @@ module.exports = function render(locals, callback) {
     });
   }
 
-
   if (endsWith(path, 'manifest.appcache')) {
-    const statics = stats.toJson().modules
-      .filter(module => /(png|svg|woff2?)/i.test(module.assets[0]))
+    const statics = stats
+      .toJson()
+      .modules.filter(module => /(png|svg|woff2?)/i.test(module.assets[0]))
       .reduce((agg, { name, assets }) => ({ ...agg, [name]: assets[0] }), {});
 
     const appcacheContents = appcacheTemplate({
@@ -55,7 +55,6 @@ module.exports = function render(locals, callback) {
     });
     callback(null, appcacheContents);
   }
-
 
   if (endsWith(path, '.html') || endsWith(path, '/')) {
     let location = stripPath(path.replace('.html', ''));

@@ -2,24 +2,18 @@ import React, { PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import cn from 'classnames';
 import { isUndefined } from 'lodash';
-import {
-  Layout as MaterialLayout,
-  Content,
-  Snackbar,
-} from 'react-mdl';
+import { Layout as MaterialLayout, Content, Snackbar } from 'react-mdl';
 
 import Header from './Header';
 import Drawer from './Drawer';
 import Footer from './Footer';
 import { wrapper, content, push, background } from './layout.sss';
 
-
 function reload() {
   if (!isUndefined(global.location)) {
     global.location.reload(true);
   }
 }
-
 
 export default class Layout extends React.Component {
   // See github.com/yannickcr/eslint-plugin-react/issues/816
@@ -30,14 +24,18 @@ export default class Layout extends React.Component {
     outdated: PropTypes.bool.isRequired,
     pathname: PropTypes.string.isRequired,
     navigation: PropTypes.shape({
-      primary: PropTypes.arrayOf(PropTypes.shape({
-        to: PropTypes.string.isRequired,
-        text: PropTypes.string.isRequired,
-      })),
-      secondary: PropTypes.arrayOf(PropTypes.shape({
-        to: PropTypes.string.isRequired,
-        text: PropTypes.string.isRequired,
-      })),
+      primary: PropTypes.arrayOf(
+        PropTypes.shape({
+          to: PropTypes.string.isRequired,
+          text: PropTypes.string.isRequired,
+        }),
+      ),
+      secondary: PropTypes.arrayOf(
+        PropTypes.shape({
+          to: PropTypes.string.isRequired,
+          text: PropTypes.string.isRequired,
+        }),
+      ),
     }),
     query: PropTypes.string,
     search: PropTypes.func.isRequired,
@@ -75,7 +73,9 @@ export default class Layout extends React.Component {
       <MaterialLayout
         fixedHeader
         className={cn({ [background]: pathname === '/' })}
-        ref={(layoutref) => { this.ref = layoutref; }}
+        ref={layoutref => {
+          this.ref = layoutref;
+        }}
       >
         <Header
           isOnline={isOnline}
@@ -86,7 +86,7 @@ export default class Layout extends React.Component {
           title={title}
           toggleDrawer={() => this.toggleDrawer()}
         />
-        <Drawer title='Lawly' navigation={navigation} />
+        <Drawer title="Lawly" navigation={navigation} />
         <Content className={wrapper}>
           <div className={content}>
             {children}
@@ -99,7 +99,7 @@ export default class Layout extends React.Component {
           onClick={reload}
           onTimeout={() => {}}
           timeout={15000}
-          action='Jetzt laden'
+          action="Jetzt laden"
         >
           Aktualisierung verfügbar
         </Snackbar>

@@ -1,6 +1,5 @@
 import { isFunction, isError } from 'lodash';
 
-
 /**
  * Handles actions for executing API calls using ApiClient. The action
  * needs to contain a `type` (*string*) and `promise` (*function*) --
@@ -10,7 +9,7 @@ import { isFunction, isError } from 'lodash';
  * @return {Function} Redux Middleware
  */
 export default function promiseMiddleware(client) {
-  return (/* store */) => next => (action) => {
+  return () => /* store */ next => action => {
     const { promise, type } = action;
     if (!type || !promise || !isFunction(promise)) {
       return next(action);
@@ -18,10 +17,12 @@ export default function promiseMiddleware(client) {
 
     return promise(client).then(
       result => next({ type, payload: result }),
-      error => next({
-        type, error: true,
-        payload: isError(error) ? error.toString() : error,
-      }),
+      error =>
+        next({
+          type,
+          error: true,
+          payload: isError(error) ? error.toString() : error,
+        }),
     );
   };
 }

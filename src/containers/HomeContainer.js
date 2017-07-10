@@ -7,7 +7,6 @@ import { login, logout, getUser, getUserLaws } from '~/modules/user';
 import { setTitle } from '~/modules/core';
 import { Home } from '~/components/home';
 
-
 /* eslint-disable react/no-unused-prop-types */
 class HomeContainer extends React.Component {
   static propTypes = {
@@ -30,7 +29,6 @@ class HomeContainer extends React.Component {
     return <Home {...this.props} />;
   }
 }
-
 
 export default connect(
   state => ({

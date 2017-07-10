@@ -1,13 +1,8 @@
 import elasticlunr from 'elasticlunr';
 import { isPlainObject } from 'lodash';
 
-
 export default class LocalSearchWorker {
-  static fields = [
-    'groupkey',
-    'title',
-    'body',
-  ];
+  static fields = ['groupkey', 'title', 'body'];
 
   static trimmer(token) {
     if (token === null || token === undefined) {
@@ -23,8 +18,9 @@ export default class LocalSearchWorker {
     const oldTrimmer = elasticlunr.Pipeline.getRegisteredFunction('trimmer');
     const newTrimmer = elasticlunr.Pipeline.getRegisteredFunction('trim');
 
-    // TODO: Index should be stored in forage because it's creation is expensive
-    this.index = elasticlunr(function () {
+    // TODO: Index should be stored in forage because it's creation is
+    // quiet expensive.
+    this.index = elasticlunr(function createIndex() {
       this.addField('groupkey');
       this.addField('title');
       this.addField('body');
@@ -41,14 +37,21 @@ export default class LocalSearchWorker {
   indexLaw(norms) {
     let normsList = norms;
     if (isPlainObject(normsList)) {
-      normsList = Object.keys(norms).reduce((list, key) => (
-        list.concat(norms[key])
-      ), []);
+      normsList = Object.keys(norms).reduce(
+        (list, key) => list.concat(norms[key]),
+        [],
+      );
     }
 
-    normsList.forEach(norm => this.index.addDoc({
-      ...norm, id: `${norm.groupkey}::${norm.enumeration}`,
-    }, false));
+    normsList.forEach(norm =>
+      this.index.addDoc(
+        {
+          ...norm,
+          id: `${norm.groupkey}::${norm.enumeration}`,
+        },
+        false,
+      ),
+    );
   }
 
   search(query) {

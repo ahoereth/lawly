@@ -10,7 +10,6 @@ import {
   localeCompare,
 } from './utils';
 
-
 describe('utils', () => {
   describe('isNumeric', () => {
     it('recognizes numbers as numeric', () => {
@@ -32,7 +31,8 @@ describe('utils', () => {
       expect(isNumeric('-1e-100')).to.be.true;
     });
 
-    it('recognizes infinity as not numeric', () => { // should it?
+    it('recognizes infinity as not numeric', () => {
+      // should it?
       expect(isNumeric(Infinity)).to.be.false;
       expect(isNumeric(-Infinity)).to.be.false;
     });
@@ -58,7 +58,7 @@ describe('utils', () => {
 
     it('recognizes functions, undefined or null as not numeric', () => {
       // eslint-disable-next-line prefer-arrow-callback
-      expect(isNumeric(function () {})).to.be.false;
+      expect(isNumeric(function func() {})).to.be.false;
       expect(isNumeric(undefined)).to.be.false;
       expect(isNumeric(null)).to.be.false;
     });

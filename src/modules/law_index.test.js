@@ -5,16 +5,13 @@ import { List, Map, fromJS } from 'immutable';
 import mockStore, { mockApi } from '~/store/mockStore';
 import reducer, {
   SCOPE,
-
   FETCH,
   SELECT_INITIAL,
   SELECT_PAGE,
   SELECT_COLLECTION,
   FILTER,
-
   fetchLawIndex,
   filterLawIndex,
-
   getLawIndex,
   getPage,
   getPageSize,
@@ -26,17 +23,10 @@ import reducer, {
   // getCollection,
   // getCollectionTitles,
   // getLawsByCollection,
-  getLawsByInitial,
-  // getStarFilteredLawsByInitial,
-  // getStarAndKeyFilteredLawsByInitial,
-  // getFilteredLaws,
-  // getFilteredLawsCount,
-  // getFilteredLawsByPage,
+  getLawsByInitial, // getStarFilteredLawsByInitial, // getStarAndKeyFilteredLawsByInitial, // getFilteredLaws, // getFilteredLawsCount, // getFilteredLawsByPage,
 } from './law_index';
 
-
 chai.use(chaiImmutable);
-
 
 describe('law_index', () => {
   const localState = Map({
@@ -64,7 +54,10 @@ describe('law_index', () => {
       const initials = ['a', 'b'];
       const index = [{ groupkey: 'a' }, { groupkey: 'b' }];
       const collections = [{ title: 'Deutsche Gesetze', laws: ['a', 'b'] }];
-      const action = { type: FETCH, payload: { index, initials, collections } };
+      const action = {
+        type: FETCH,
+        payload: { index, initials, collections },
+      };
       const state = reducer(localState, action);
 
       expect(state.get('laws')).to.equal(fromJS(index));
@@ -98,17 +91,19 @@ describe('law_index', () => {
     });
   });
 
-
   describe('actions', () => {
-    it('fetchLawIndex() should dispatch FETCH', (done) => {
+    it('fetchLawIndex() should dispatch FETCH', done => {
       const payload = { initials: [], index: [] };
       const action = { type: FETCH, payload };
       mockApi.reset(() => Promise.resolve(payload));
       const store = mockStore(initialState);
-      store.dispatch(fetchLawIndex()).then((dispatchedAction) => {
-        expect(mockApi.get).to.be.called.once;
-        expect(dispatchedAction).to.deep.equal(action);
-      }).then(done, done);
+      store
+        .dispatch(fetchLawIndex())
+        .then(dispatchedAction => {
+          expect(mockApi.get).to.be.called.once;
+          expect(dispatchedAction).to.deep.equal(action);
+        })
+        .then(done, done);
     });
 
     it('filterLawIndex should dispatch FILTER', () => {
@@ -126,7 +121,6 @@ describe('law_index', () => {
       expect(store.getActions()).to.deep.contain(action);
     });
   });
-
 
   describe('selectors', () => {
     it('should provide getLawIndex()', () => {
@@ -169,7 +163,6 @@ describe('law_index', () => {
       const expectedSlice = laws.filter(law => law.get('groupkey') === 'z');
       expect(getLawsByInitial(state)).to.equal(expectedSlice);
     });
-
     // getStarFilteredLawsByInitial,
     // getStarAndKeyFilteredLawsByInitial,
     // getFilteredLaws,

@@ -4,18 +4,15 @@ import { Map, List, fromJS } from 'immutable';
 import mockStore, { mockApi } from '~/store/mockStore';
 import reducer, {
   SCOPE,
-
   FETCH_SINGLE,
   SELECT,
   fetchLaw,
   selectLaw,
-
   getLaws,
   getSelection,
   getSelected,
   getNormHierarchy,
 } from './laws';
-
 
 describe('laws', () => {
   const localState = Map({
@@ -26,7 +23,6 @@ describe('laws', () => {
   const initialState = Map({
     [SCOPE]: localState,
   });
-
 
   describe('reducer', () => {
     it('should return the initial state', () => {
@@ -46,16 +42,18 @@ describe('laws', () => {
     });
   });
 
-
   describe('actions', () => {
-    it('fetchLaw() should dispatch FETCH_SINGLE', (done) => {
+    it('fetchLaw() should dispatch FETCH_SINGLE', done => {
       const action = { type: FETCH_SINGLE, payload: { groupkey: 'foo' } };
       const store = mockStore(initialState);
       mockApi.reset(({ groupkey }) => Promise.resolve({ groupkey }));
-      store.dispatch(fetchLaw('foo')).then((dispatchedAction) => {
-        expect(mockApi.get).to.be.called.once;
-        expect(dispatchedAction).to.deep.equal(action);
-      }).then(done, done);
+      store
+        .dispatch(fetchLaw('foo'))
+        .then(dispatchedAction => {
+          expect(mockApi.get).to.be.called.once;
+          expect(dispatchedAction).to.deep.equal(action);
+        })
+        .then(done, done);
     });
 
     it('selectLaw() should dispatch SELECT', () => {
@@ -65,7 +63,6 @@ describe('laws', () => {
       expect(store.getActions()).to.deep.contain(action);
     });
   });
-
 
   describe('selectors', () => {
     it('should provide getLaws()', () => {
@@ -81,44 +78,63 @@ describe('laws', () => {
 
     it('should provide getSelected()', () => {
       const laws = fromJS({ a: [{ groupkey: 'a' }], b: [{ groupkey: 'b' }] });
-      const state = initialState.mergeIn([SCOPE], Map({ selected: 'b', laws }));
+      const state = initialState.mergeIn(
+        [SCOPE],
+        Map({ selected: 'b', laws }),
+      );
       expect(getSelected(state)).to.equal(laws.get('b'));
     });
 
     it('should provide getNormHierarchy()', () => {
-      const laws = fromJS({ foo: [
-        { enumeration: '0' },
-        { enumeration: '1' },
-        { enumeration: '1.1' },
-        { enumeration: '1.2' },
-        { enumeration: '1.2.1' },
-        { enumeration: '2' },
-        { enumeration: '3' },
-        { enumeration: '3.1' },
-        { enumeration: '3.1.1' },
-        { enumeration: '3.1.2' },
-        { enumeration: '3.2' },
-      ] });
+      const laws = fromJS({
+        foo: [
+          { enumeration: '0' },
+          { enumeration: '1' },
+          { enumeration: '1.1' },
+          { enumeration: '1.2' },
+          { enumeration: '1.2.1' },
+          { enumeration: '2' },
+          { enumeration: '3' },
+          { enumeration: '3.1' },
+          { enumeration: '3.1.1' },
+          { enumeration: '3.1.2' },
+          { enumeration: '3.2' },
+        ],
+      });
       const hierarchy = fromJS([
         { norm: { enumeration: '0' } },
-        { norm: { enumeration: '1' }, children: [
-          { norm: { enumeration: '1.1' } },
-          { norm: { enumeration: '1.2' }, children: [
-            { norm: { enumeration: '1.2.1' } },
-          ] },
-        ] },
+        {
+          norm: { enumeration: '1' },
+          children: [
+            { norm: { enumeration: '1.1' } },
+            {
+              norm: { enumeration: '1.2' },
+              children: [{ norm: { enumeration: '1.2.1' } }],
+            },
+          ],
+        },
         { norm: { enumeration: '2' } },
-        { norm: { enumeration: '3' }, children: [
-          { norm: { enumeration: '3.1' }, children: [
-            { norm: { enumeration: '3.1.1' } },
-            { norm: { enumeration: '3.1.2' } },
-          ] },
-          { norm: { enumeration: '3.2' } },
-        ] },
+        {
+          norm: { enumeration: '3' },
+          children: [
+            {
+              norm: { enumeration: '3.1' },
+              children: [
+                { norm: { enumeration: '3.1.1' } },
+                { norm: { enumeration: '3.1.2' } },
+              ],
+            },
+            { norm: { enumeration: '3.2' } },
+          ],
+        },
       ]);
-      const state = initialState.mergeIn([SCOPE], Map({
-        laws, selected: 'foo',
-      }));
+      const state = initialState.mergeIn(
+        [SCOPE],
+        Map({
+          laws,
+          selected: 'foo',
+        }),
+      );
       expect(getNormHierarchy(state)).to.equal(hierarchy);
     });
   });

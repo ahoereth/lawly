@@ -22,10 +22,7 @@ const propTypes = {
   required: PropTypes.bool,
   rows: PropTypes.number,
   style: PropTypes.object,
-  value: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.number,
-  ]),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 class Textfield extends React.Component {
@@ -49,7 +46,10 @@ class Textfield extends React.Component {
       findDOMNode(this).MaterialTextfield.checkDisabled();
     }
 
-    if (value !== prevProps.value && this.inputRef !== document.activeElement) {
+    if (
+      value !== prevProps.value &&
+      this.inputRef !== document.activeElement
+    ) {
       findDOMNode(this).MaterialTextfield.change(this.props.value);
     }
 
@@ -70,10 +70,18 @@ class Textfield extends React.Component {
 
   render() {
     const {
-      className, inputClassName, id,
-      error, expandable, expandableIcon,
-      floatingLabel, label, maxRows,
-      rows, style, children,
+      className,
+      inputClassName,
+      id,
+      error,
+      expandable,
+      expandableIcon,
+      floatingLabel,
+      label,
+      maxRows,
+      rows,
+      style,
+      children,
       ...otherProps
     } = this.props;
 
@@ -85,43 +93,54 @@ class Textfield extends React.Component {
       className: classNames('mdl-textfield__input', inputClassName),
       id: customId,
       rows,
-      ref: (c) => { this.inputRef = c; },
+      ref: c => {
+        this.inputRef = c;
+      },
       ...otherProps,
     };
 
     const input = React.createElement(inputTag, inputProps);
     const labelContainer = (
-      <label className='mdl-textfield__label' htmlFor={customId}>{label}</label>
+      <label className="mdl-textfield__label" htmlFor={customId}>
+        {label}
+      </label>
     );
-    const errorContainer = !!error && (
-      <span className='mdl-textfield__error'>{error}</span>
+    const errorContainer =
+      !!error &&
+      <span className="mdl-textfield__error">
+        {error}
+      </span>;
+
+    const containerClasses = classNames(
+      'mdl-textfield mdl-js-textfield',
+      {
+        'mdl-textfield--floating-label': floatingLabel,
+        'mdl-textfield--expandable': expandable,
+      },
+      className,
     );
 
-    const containerClasses = classNames('mdl-textfield mdl-js-textfield', {
-      'mdl-textfield--floating-label': floatingLabel,
-      'mdl-textfield--expandable': expandable,
-    }, className);
-
-    return expandable ? (
-      <div className={containerClasses} style={style}>
-        <label className='mdl-button mdl-js-button mdl-button--icon' htmlFor={customId}>
-          {expandableIcon}
-        </label>
-        <div className='mdl-textfield__expandable-holder'>
+    return expandable
+      ? <div className={containerClasses} style={style}>
+          <label
+            className="mdl-button mdl-js-button mdl-button--icon"
+            htmlFor={customId}
+          >
+            {expandableIcon}
+          </label>
+          <div className="mdl-textfield__expandable-holder">
+            {input}
+            {labelContainer}
+            {errorContainer}
+          </div>
+          {children}
+        </div>
+      : <div className={containerClasses} style={style}>
           {input}
           {labelContainer}
           {errorContainer}
-        </div>
-        {children}
-      </div>
-    ) : (
-      <div className={containerClasses} style={style}>
-        {input}
-        {labelContainer}
-        {errorContainer}
-        {children}
-      </div>
-    );
+          {children}
+        </div>;
   }
 }
 

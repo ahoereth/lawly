@@ -13,7 +13,6 @@ import {
   fetchMiddleware,
 } from './middlewares';
 
-
 export default function createStore(history, client, data = {}) {
   const middlewares = [
     createDebounce(),
@@ -32,10 +31,7 @@ export default function createStore(history, client, data = {}) {
   const store = _createStore(
     enableBatching(rootReducer),
     Immutable.fromJS(data),
-    compose(
-      applyMiddleware(...middlewares),
-      devToolsExtension,
-    ),
+    compose(applyMiddleware(...middlewares), devToolsExtension),
   );
 
   client.init(store);

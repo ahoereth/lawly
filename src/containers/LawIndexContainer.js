@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import React, { PropTypes } from 'react';
 import shallowCompare from 'react-addons-shallow-compare';
 import ImmutableTypes from 'react-immutable-proptypes';
@@ -6,10 +7,15 @@ import { pick, isUndefined, isEqual } from 'lodash';
 import { List } from 'immutable';
 
 import {
-  getCollection, getCollectionTitles,
-  getFilters, getFilteredLawsByPage, getFilteredLawsCount,
-  getInitial, getInitials,
-  getPage, getPageSize,
+  getCollection,
+  getCollectionTitles,
+  getFilters,
+  getFilteredLawsByPage,
+  getFilteredLawsCount,
+  getInitial,
+  getInitials,
+  getPage,
+  getPageSize,
   getToggles,
   isLoaded,
   fetchLawIndex,
@@ -21,7 +27,6 @@ import { getIndexStars, isLoggedin, star } from '~/modules/user';
 import { getShellMode, setTitle, isOnline } from '~/modules/core';
 import { LawIndex } from '~/components/laws';
 import { isNumeric as isNum } from '~/helpers/utils';
-
 
 const mapStateToProps = state => ({
   count: getFilteredLawsCount(state),
@@ -41,7 +46,6 @@ const mapStateToProps = state => ({
   collection: getCollection(state),
 });
 
-
 const mapDispatchToProps = {
   fetchIndex: fetchLawIndex,
   filter: filterLawIndex,
@@ -50,7 +54,6 @@ const mapDispatchToProps = {
   showToggles,
   star,
 };
-
 
 /* eslint-disable react/no-unused-prop-types */
 class LawIndexContainer extends React.Component {
@@ -96,13 +99,8 @@ class LawIndexContainer extends React.Component {
   }
 
   init(props) {
-    const {
-      fetchIndex,
-      loading,
-      select,
-      setTitle,
-      params,
-    } = props || this.props;
+    const { fetchIndex, loading, select, setTitle, params } =
+      props || this.props;
 
     setTitle('Übersicht');
 
@@ -127,6 +125,5 @@ class LawIndexContainer extends React.Component {
     return <LawIndex {...props} laws={laws} />;
   }
 }
-
 
 export default connect(mapStateToProps, mapDispatchToProps)(LawIndexContainer);

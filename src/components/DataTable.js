@@ -6,7 +6,6 @@ import { range, sample, isPlainObject as isObj } from 'lodash';
 
 import { getTextblock } from '~/helpers/shells';
 
-
 // eslint-disable-next-line react/prop-types
 function renderCell({ name, numeric }, row) {
   const className = !numeric ? 'mdl-data-table__cell--non-numeric' : '';
@@ -15,9 +14,12 @@ function renderCell({ name, numeric }, row) {
     val = getTextblock(val.lines ? sample(val.lines) : 1);
   }
 
-  return <td key={name} className={className}>{val}</td>;
+  return (
+    <td key={name} className={className}>
+      {val}
+    </td>
+  );
 }
-
 
 const propTypes = {
   className: PropTypes.string,
@@ -28,11 +30,9 @@ const propTypes = {
   shell: ImmutableTypes.map,
 };
 
-
 const defaultProps = {
   loading: false,
 };
-
 
 const DataTable = ({
   className,
@@ -49,14 +49,16 @@ const DataTable = ({
   return (
     <table className={classes} {...others}>
       <thead>
-        <tr>{columns}</tr>
+        <tr>
+          {columns}
+        </tr>
       </thead>
       <tbody>
-        {(loading ? List(range(20)).map(shellBase) : rows).map((row, idx) => (
+        {(loading ? List(range(20)).map(shellBase) : rows).map((row, idx) =>
           <tr key={row.get(keyProp, idx)}>
             {columns.map(column => renderCell(column.props, row))}
-          </tr>
-        ))}
+          </tr>,
+        )}
       </tbody>
     </table>
   );
@@ -64,6 +66,5 @@ const DataTable = ({
 
 DataTable.propTypes = propTypes;
 DataTable.defaultProps = defaultProps;
-
 
 export default DataTable;

@@ -4,25 +4,23 @@ import SearchIcon from 'react-icons/md/search';
 
 import { Textfield } from '~/components';
 
-
 function submit({ nativeEvent, currentTarget }, handler) {
   if (nativeEvent.charCode === 13) {
     handler(currentTarget.value);
   }
 }
 
-const SearchInput = ({ expandable, query, search, ...otherProps }) => (
+const SearchInput = ({ expandable, query, search, ...otherProps }) =>
   <Textfield
     value={query}
     onChange={e => search(e.currentTarget.value)}
     onKeyPress={e => submit(e, search)}
-    label='Suchanfrage'
+    label="Suchanfrage"
     expandable={expandable}
     expandableIcon={<SearchIcon />}
     floatingLabel={!expandable}
     {...otherProps}
-  />
-);
+  />;
 
 SearchInput.propTypes = {
   expandable: PropTypes.bool,
@@ -34,6 +32,5 @@ SearchInput.defaultProps = {
   query: '',
   expandable: false,
 };
-
 
 export default SearchInput;

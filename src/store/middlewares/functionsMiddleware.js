@@ -1,6 +1,5 @@
 import { isFunction } from 'lodash';
 
-
 /**
  * Enables action creators to return a function which itself dispatches
  * further actions, for example after a promise resolves.
@@ -8,7 +7,7 @@ import { isFunction } from 'lodash';
  * @return {Function} Redux Middleware
  */
 export default function functionsMiddleware() {
-  return ({ dispatch, getState }) => next => (action) => {
+  return ({ dispatch, getState }) => next => action => {
     if (!isFunction(action)) {
       return next(action);
     }

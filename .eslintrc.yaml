@@ -3,6 +3,10 @@ extends:
   - airbnb
   - plugin:import/errors
   - plugin:import/warnings
+  - prettier
+  - prettier/react
+plugins:
+  - prettier
 settings:
   import/resolver: webpack
 env:
@@ -11,49 +15,20 @@ globals:
   fetch: true # Polyfilled in src/polyfills.js
 rules:
   no-plusplus: off
-  max-len:
-    - warn
-    - code: 80
-      tabWidth: 2
-      ignoreComments: false
-      ignoreTrailingComments: false
-      ignoreUrls: true
-      ignoreStrings: true
-      ignoreTemplateLiterals: true
-  func-names: off # TODO: airbnb link?
-  spaced-comment: warn
-  space-infix-ops: warn
-  jsx-quotes:
-    - warn
-    - prefer-single # https://github.com/airbnb/javascript#strings--quotes
-  object-property-newline: off
-  no-unused-expressions: off # For chaijs tests.
-  one-var-declaration-per-line: off # covered by one-var
-  new-cap:
+  prettier/prettier:
     - error
-    - capIsNewExceptions: # Exceptions for ImmutableJS.
-      - Map
-      - List
-  no-shadow: off
-  comma-spacing: warn
-  prefer-const: warn
-  no-unused-vars: warn
-  semi: warn
-  comma-dangle: warn
-  no-nested-ternary: warn # https://github.com/airbnb/javascript#comparison--nested-ternaries
-  no-prototype-builtins: off # https://github.com/airbnb/javascript#objects--prototype-builtins
-  no-extra-boolean-cast: off # https://github.com/airbnb/javascript#coercion--booleans
-  no-multiple-empty-lines:
-    - warn
-    - max: 3
-  no-global-assign: off # TODO: rule definition not found -- 160816.
-  react/require-extension: off # TODO: deprecation warning -- 160816.
-  react/jsx-filename-extension: off
-  react/style-prop-object: off
-  import/no-unresolved: off # TODO: Handle webpack resolve.alias!
+    - singleQuote: true
+      trailingComma: all
+      printWidth: 79
+  # import/no-unresolved: off # TODO: Handle webpack resolve.alias!
   import/no-extraneous-dependencies: off
   import/no-commonjs: error
   import/no-amd: error
   import/imports-first:
     - error
     - absolute-first: false
+  # react/require-extension: off # TODO: deprecation warning -- 160816.
+  react/jsx-filename-extension: off
+  react/require-default-props: off
+  no-unused-expressions: off # For chaij's tests.
+  react/jsx-curly-spacing: off

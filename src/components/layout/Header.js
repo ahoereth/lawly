@@ -11,26 +11,30 @@ import { SearchInput } from '~/components/search';
 import { header, row, nav, searchinput, flash } from './header.sss';
 import { background } from './layout.sss';
 
-
-const Header = ({ isOnline, title, links, search, query }) => (
+const Header = ({ isOnline, title, links, search, query }) =>
   <MdHeader
     transparent
     waterfall
-    className={cn(header, background, { online: isOnline, offline: !isOnline })}
+    className={cn(header, background, {
+      online: isOnline,
+      offline: !isOnline,
+    })}
   >
-    <IconButton className={'mdl-layout__drawer-button custom'} icon={MenuIcon} />
+    <IconButton
+      className={'mdl-layout__drawer-button custom'}
+      icon={MenuIcon}
+    />
     <HeaderRow className={row} title={title}>
       {isOnline ||
-        <Tooltip label='Verbindung zum Server nicht verfügbar.'>
+        <Tooltip label="Verbindung zum Server nicht verfügbar.">
           <FlashOffIcon className={flash} />
-        </Tooltip>
-      }
+        </Tooltip>}
       <Navigation className={nav}>
-        {links.map((item, idx) => (
-          <Link to={item.to} key={idx} className='mdl-navigation__link'>
+        {links.map(item =>
+          <Link to={item.to} key={item.text} className="mdl-navigation__link">
             {item.text}
-          </Link>
-        ))}
+          </Link>,
+        )}
       </Navigation>
       <SearchInput
         className={searchinput}
@@ -39,8 +43,7 @@ const Header = ({ isOnline, title, links, search, query }) => (
         expandable
       />
     </HeaderRow>
-  </MdHeader>
-);
+  </MdHeader>;
 
 Header.propTypes = {
   isOnline: PropTypes.bool.isRequired,
@@ -54,6 +57,5 @@ Header.propTypes = {
 Header.defaultProps = {
   title: 'Lawly',
 };
-
 
 export default Header;

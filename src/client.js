@@ -19,13 +19,11 @@ import { updateAvailable, renderShells } from './modules/core';
 import 'react-mdl/extra/material';
 import 'react-mdl/extra/css/material.red-amber.min.css';
 
-
 WebFontLoader.load({
   google: {
     families: ['Roboto:400,400i,700,700i'],
   },
 });
-
 
 const client = new ApiClient(process.env.APIURL);
 // eslint-disable-next-line no-underscore-dangle
@@ -49,11 +47,14 @@ store.dispatch(renderShells(false));
 // Application Cache event handling.
 if (!isUndefined(window.applicationCache)) {
   const appcache = window.applicationCache;
-  appcache.addEventListener('updateready', () => {
-    store.dispatch(updateAvailable());
-  }, false);
+  appcache.addEventListener(
+    'updateready',
+    () => {
+      store.dispatch(updateAvailable());
+    },
+    false,
+  );
 }
-
 
 if (process.env.NODE_ENV === 'production') {
   const match = require('react-router').match;

@@ -5,7 +5,6 @@ import ReactGA from 'react-ga';
 
 import routes from '../routes';
 
-
 let log = () => {};
 if (process.env.NODE_ENV === 'production') {
   ReactGA.initialize(process.env.GA_ID);
@@ -21,18 +20,14 @@ if (process.env.NODE_ENV === 'production') {
   };
 }
 
-
-const AppClient = ({ renderProps, store }) => (
+const AppClient = ({ renderProps, store }) =>
   <Provider store={store}>
     <Router {...{ routes, ...renderProps }} onUpdate={log} />
-  </Provider>
-);
-
+  </Provider>;
 
 AppClient.propTypes = {
   renderProps: PropTypes.objectOf(PropTypes.object).isRequired,
   store: PropTypes.object.isRequired, // eslint-disable-line
 };
-
 
 export default AppClient;

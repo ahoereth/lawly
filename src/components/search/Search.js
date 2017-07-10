@@ -5,7 +5,6 @@ import { Grid, Cell } from 'react-mdl';
 import { LawList } from '~/components/laws';
 import SearchInput from './SearchInput';
 
-
 const Search = ({
   loading,
   page,
@@ -15,7 +14,7 @@ const Search = ({
   search,
   selectPage,
   total,
-}) => (
+}) =>
   <Grid>
     <Cell col={12}>
       <SearchInput
@@ -26,8 +25,11 @@ const Search = ({
     </Cell>
     <Cell col={12}>
       <LawList
-        emptysetMessage={!query ? 'Gib oben deine Suchanfrage ein.' :
-          'Für den aktuellen Suchbegirff gibt es keine Ergebnisse'}
+        emptysetMessage={
+          !query
+            ? 'Gib oben deine Suchanfrage ein.'
+            : 'Für den aktuellen Suchbegirff gibt es keine Ergebnisse'
+        }
         laws={results}
         loading={loading}
         page={page}
@@ -36,8 +38,7 @@ const Search = ({
         total={total}
       />
     </Cell>
-  </Grid>
-);
+  </Grid>;
 
 Search.propTypes = {
   loading: PropTypes.bool,
@@ -49,6 +50,5 @@ Search.propTypes = {
   selectPage: PropTypes.func.isRequired,
   total: PropTypes.number.isRequired,
 };
-
 
 export default Search;

@@ -10,9 +10,7 @@ import LawIndexLead from './LawIndexLead';
 import LawInitialChooser from './LawInitialChooser';
 import LawCollectionChooser from './LawCollectionChooser';
 
-
 const noVerticalMargin = { marginTop: 0, marginBottom: 0 };
-
 
 const LawIndex = ({
   count,
@@ -32,7 +30,7 @@ const LawIndex = ({
   star,
   stars,
   togglesVisible,
-}) => (
+}) =>
   <Grid>
     <Cell hideDesktop hideTablet hidePhone={togglesVisible} phone={4}>
       <Button
@@ -100,9 +98,7 @@ const LawIndex = ({
         filters={filters}
       />
     </Cell>
-  </Grid>
-);
-
+  </Grid>;
 
 LawIndex.propTypes = {
   count: PropTypes.number.isRequired,
@@ -126,11 +122,9 @@ LawIndex.propTypes = {
   togglesVisible: PropTypes.bool.isRequired,
 };
 
-
 LawIndex.defaultProps = {
   isOnline: true,
   loading: false,
 };
-
 
 export default LawIndex;

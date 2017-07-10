@@ -6,10 +6,8 @@ import spies from 'chai-spies';
 import React from 'react';
 import SearchInput from './SearchInput';
 
-
 chai.use(chaiEnzyme());
 chai.use(spies);
-
 
 describe('SearchInput', () => {
   it('passes the query to the search function', () => {
@@ -21,7 +19,7 @@ describe('SearchInput', () => {
   });
 
   it('accepts an external query string', () => {
-    const wrap = shallow(<SearchInput search={() => {}} query='text' />);
+    const wrap = shallow(<SearchInput search={() => {}} query="text" />);
     expect(wrap.find('Textfield').node.props.value).to.equal('text');
   });
 });

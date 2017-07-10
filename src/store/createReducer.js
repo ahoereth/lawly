@@ -1,6 +1,6 @@
+/* eslint-disable no-prototype-builtins */
 import * as Immutable from 'immutable';
 import { isFunction } from 'lodash';
-
 
 /**
  * Takes an object of action/handler mappings and prefills them with
@@ -27,8 +27,10 @@ export default function createReducer(
       state = constructor(state);
     }
 
-    const handler = (action && action.type) ? handlers[action.type] : undefined;
-    if (!handler) { return state; }
+    const handler = action && action.type ? handlers[action.type] : undefined;
+    if (!handler) {
+      return state;
+    }
 
     if (action.error === true) {
       if (isFunction(handler) || !handler.hasOwnProperty('throw')) {
@@ -49,7 +51,9 @@ export default function createReducer(
         // Handler has an explicit `next` property.
         state = handler.next(state, action);
       } else {
-        throw new TypeError('handler is not a function and has no `next` prop');
+        throw new TypeError(
+          'handler is not a function and has no `next` prop',
+        );
       }
     }
 

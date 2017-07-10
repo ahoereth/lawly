@@ -4,14 +4,11 @@ import { Map, List } from 'immutable';
 import mockStore, { mockApi } from '~/store/mockStore';
 import reducer, {
   SCOPE,
-
   SEARCH,
   SEARCHED,
   SELECT_PAGE,
-
   selectPage,
   search,
-
   getQuery,
   getPage,
   getPageSize,
@@ -19,7 +16,6 @@ import reducer, {
   getTotal,
   getResultsByPage,
 } from './search';
-
 
 describe('search', () => {
   const localState = Map({
@@ -57,7 +53,6 @@ describe('search', () => {
     });
   });
 
-
   describe('actions', () => {
     it('selectPage() should dispatch SELECT_PAGE', () => {
       const expectedAction = { type: SELECT_PAGE, payload: 12 };
@@ -74,17 +69,19 @@ describe('search', () => {
       expect(store.getActions()).to.contain(expectedAction);
     });
 
-    it('search() should dispatch SEARCHED', (done) => {
+    it('search() should dispatch SEARCHED', done => {
       const action = { type: SEARCHED, payload: { total: 2, results: [] } };
       mockApi.reset(() => Promise.resolve(action.payload));
       const store = mockStore(localState);
-      store.dispatch(search()).then((dispatchedAction) => {
-        expect(mockApi.search).to.be.called.once;
-        expect(dispatchedAction).to.deep.equal(action);
-      }).then(done, done);
+      store
+        .dispatch(search())
+        .then(dispatchedAction => {
+          expect(mockApi.search).to.be.called.once;
+          expect(dispatchedAction).to.deep.equal(action);
+        })
+        .then(done, done);
     });
   });
-
 
   describe('selectors', () => {
     it('should provide getQuery()', () => {
@@ -120,9 +117,15 @@ describe('search', () => {
         Map({ groupkey: 'yop', title: 'exactly' }),
         Map({ groupkey: 'yes', title: 'this as well' }),
       ]);
-      const state = initialState.mergeIn([SCOPE], Map({
-        results, total: 4, page: 2, pageSize: 2,
-      }));
+      const state = initialState.mergeIn(
+        [SCOPE],
+        Map({
+          results,
+          total: 4,
+          page: 2,
+          pageSize: 2,
+        }),
+      );
       expect(getResultsByPage(state)).to.equal(results.slice(-2));
     });
   });

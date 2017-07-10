@@ -2,7 +2,6 @@ import { expect } from 'chai';
 
 import semverCompare from './semverCompare';
 
-
 describe('semverCompare', () => {
   const chaos = [
     '2.5.10.4159',

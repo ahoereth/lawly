@@ -4,11 +4,9 @@ import { connect } from 'react-redux';
 import { setTitle } from '~/modules/core';
 import { LegalNotice } from '~/components';
 
-
 const mapDispatchToProps = {
   setTitle,
 };
-
 
 class LegalNoticeContainer extends React.Component {
   static propTypes = {
@@ -23,6 +21,5 @@ class LegalNoticeContainer extends React.Component {
     return <LegalNotice />;
   }
 }
-
 
 export default connect(() => ({}), mapDispatchToProps)(LegalNoticeContainer);

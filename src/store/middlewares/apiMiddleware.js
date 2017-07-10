@@ -1,6 +1,5 @@
 import { isPlainObject } from 'lodash';
 
-
 /**
  * Handles actions for executing API calls using ApiClient. The action
  * needs to contain a `type` (*string*) and `promise` (*function*) --
@@ -10,7 +9,7 @@ import { isPlainObject } from 'lodash';
  * @return {Function} Redux Middleware
  */
 export default function apiMiddleware(client) {
-  return (/* store */) => next => (action) => {
+  return () => /* store */ next => action => {
     const { api, type, payload } = action;
 
     // Check wheather this is the correct middleware to handle this action.
@@ -29,8 +28,11 @@ export default function apiMiddleware(client) {
     }
 
     const request = { ...payload, ...rest, name, action: type };
-    return client[method](request).then(payload => next({
-      type, payload,
-    }));
+    return client[method](request).then(resolvedPayload =>
+      next({
+        type,
+        payload: resolvedPayload,
+      }),
+    );
   };
 }

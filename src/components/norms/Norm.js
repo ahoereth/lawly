@@ -18,12 +18,13 @@ import { Html, IconButton } from '~/components';
 import { getTextblock, getTextline } from '~/helpers/shells';
 import styles from './norm.sss';
 
-
 export default class Norm extends React.Component {
   static propTypes = {
-    annotations: ImmutableTypes.mapOf(ImmutableTypes.mapContains({
-      starred: PropTypes.bool,
-    }).isRequired).isRequired,
+    annotations: ImmutableTypes.mapOf(
+      ImmutableTypes.mapContains({
+        starred: PropTypes.bool,
+      }).isRequired,
+    ).isRequired,
     data: ImmutableTypes.mapContains({
       enumeration: PropTypes.string,
       groupkey: PropTypes.string,
@@ -45,9 +46,10 @@ export default class Norm extends React.Component {
   constructor(props) {
     super(props);
     const { data, deeplink } = props;
-    this.shell = data.get('enumeration', '0') === '0' ? [
-      getTextline('title'), getTextblock(8),
-    ] : [null, null];
+    this.shell =
+      data.get('enumeration', '0') === '0'
+        ? [getTextline('title'), getTextblock(8)]
+        : [null, null];
     this.state = {
       expanded: deeplink.indexOf(data.get('enumeration', '0')) === 0,
       focused: false,
@@ -79,15 +81,15 @@ export default class Norm extends React.Component {
 
   expand = () => {
     this.setState({ expanded: !this.state.expanded });
-  }
+  };
 
   focus(state = !this.state.focus) {
     this.setState({ focused: !!state });
   }
 
-  saveElemRef = (ref) => {
+  saveElemRef = ref => {
     this.elem = ref;
-  }
+  };
 
   render() {
     const { annotations, data, deeplink, descendants, star } = this.props;
@@ -99,13 +101,22 @@ export default class Norm extends React.Component {
     const lead = enumeration === '0';
     const level = lead ? 1 : enumeration.split('.').length + 1;
     const heading = level > 6 ? 6 : level;
-    const icons = lead ? [BookIcon, BookIcon]
-                       : [BookmarkIcon, BookmarkOutlineIcon];
+    const icons = lead
+      ? [BookIcon, BookIcon]
+      : [BookmarkIcon, BookmarkOutlineIcon];
 
     const groupkey = data.get('groupkey');
     let title = data.get('title');
-    let key = <span key='groupkey'>{data.get('groupkey')}</span>;
-    let body = <Html>{data.get('body', '')}</Html>;
+    let key = (
+      <span key="groupkey">
+        {data.get('groupkey')}
+      </span>
+    );
+    let body = (
+      <Html>
+        {data.get('body', '')}
+      </Html>
+    );
     if (!data.has('title') && !groupkey) {
       [title, body] = this.shell;
       key = null;
@@ -113,11 +124,11 @@ export default class Norm extends React.Component {
 
     const head = lead ? [key, title] : title;
     const slug = slugify(data.get('title', ''));
-    const more = descendants.isEmpty() ? null : (
-      <Button raised ripple onClick={this.expand}>
-        Untergeordnete Normen anzeigen
-      </Button>
-    );
+    const more = descendants.isEmpty()
+      ? null
+      : <Button raised ripple onClick={this.expand}>
+          Untergeordnete Normen anzeigen
+        </Button>;
 
     return (
       <Card
@@ -140,39 +151,41 @@ export default class Norm extends React.Component {
             onClick={() => star(data, !starred)}
             className={classNames({ visible: starred || focused })}
           />
-          {deeplinked ? (
-            <IconButton
-              ripple disabled
-              icon={CenterFocusStrongIcon}
-              className='visible'
-            />
-          ) : (
-            <Link
-              to={getNormLink(groupkey, enumeration, title)}
-              style={{ color: 'inherit' }}
-            >
-              <IconButton
-                ripple icon={CenterFocusWeakIcon}
-                className={classNames({ visible: focused })}
+          {deeplinked
+            ? <IconButton
+                ripple
+                disabled
+                icon={CenterFocusStrongIcon}
+                className="visible"
               />
-            </Link>
-          )}
+            : <Link
+                to={getNormLink(groupkey, enumeration, title)}
+                style={{ color: 'inherit' }}
+              >
+                <IconButton
+                  ripple
+                  icon={CenterFocusWeakIcon}
+                  className={classNames({ visible: focused })}
+                />
+              </Link>}
         </CardMenu>
         <CardText>
           {body}
-          <Html>{data.get('foot', '')}</Html>
-          {!expanded ? more : (
-            descendants.map((node, i) => (
-              <Norm
-                key={node.getIn(['norm', 'enumeration'], i)}
-                data={node.get('norm')}
-                deeplink={deeplink}
-                descendants={node.get('children')}
-                annotations={annotations}
-                star={star}
-              />
-            ))
-          )}
+          <Html>
+            {data.get('foot', '')}
+          </Html>
+          {!expanded
+            ? more
+            : descendants.map((node, i) =>
+                <Norm
+                  key={node.getIn(['norm', 'enumeration'], i)}
+                  data={node.get('norm')}
+                  deeplink={deeplink}
+                  descendants={node.get('children')}
+                  annotations={annotations}
+                  star={star}
+                />,
+              )}
         </CardText>
       </Card>
     );

@@ -1,7 +1,15 @@
 import React, { PropTypes } from 'react';
 import ImmutableTypes from 'react-immutable-proptypes';
 import { Link } from 'react-router';
-import { Grid, Cell, Card, CardTitle, CardText, CardActions, Button } from 'react-mdl';
+import {
+  Grid,
+  Cell,
+  Card,
+  CardTitle,
+  CardText,
+  CardActions,
+  Button,
+} from 'react-mdl';
 
 import CenterFocusStrongIcon from 'react-icons/md/center-focus-strong';
 
@@ -9,7 +17,6 @@ import screenshot from 'screenshots/urhg.png';
 import { getNormLink } from '~/helpers';
 import { UserForm, IconButton } from '~/components';
 import { imageCard } from '~/components/common.sss';
-
 
 const lead = [
   'Lawly ist eine neue Art Gesetzestexte zu durchsuchen, zu lesen und zu verwalten.',
@@ -19,7 +26,6 @@ const lead = [
 const urhg = [
   'Nach dem Verständnis vieler Menschenrechtler gehört der freie und umfängliche Zugriff auf Gesetzestexte zur Grundlage einer mündigen Teilhabe am öffentlichen Leben und ist eine Notwendigkeit für die aktive Mitgestaltung  eines demokratischen Landes. In Deutschland sind Gesetzestexte und Rechtssprechungen urheberrechtsfrei, allerdings nicht immer angemessen Verfügbar.',
 ];
-
 
 export default class Landing extends React.Component {
   static propTypes = {
@@ -53,7 +59,13 @@ export default class Landing extends React.Component {
           >
             <CardTitle>Willkommen bei Lawly!</CardTitle>
             <CardText>
-              {lead.map((par, i) => <p key={i}>{par}</p>)}
+              {/* eslint-disable react/no-array-index-key */}
+              {lead.map((paragraph, idx) =>
+                <p key={idx}>
+                  {paragraph}
+                </p>,
+              )}
+              {/* eslint-enable react/no-array-index-key */}
             </CardText>
             <CardActions>
               <Button>Schreib uns was du denkst</Button>
@@ -77,7 +89,15 @@ export default class Landing extends React.Component {
             onMouseLeave={() => this.hover(0)}
           >
             <CardTitle>Urheberrechtsgesetz</CardTitle>
-            <CardText>{urhg.map((par, i) => <p key={i}>{par}</p>)}</CardText>
+            <CardText>
+              {/* eslint-disable react/no-array-index-key */}
+              {urhg.map((paragraph, idx) =>
+                <p key={idx}>
+                  {paragraph}
+                </p>,
+              )}
+              {/* eslint-enable react/no-array-index-key */}
+            </CardText>
           </Card>
         </Cell>
         <Cell col={6} tablet={6} offsetTablet={1} phone={6}>
@@ -96,7 +116,9 @@ export default class Landing extends React.Component {
               Gesetze sind in Deutschland urheberrechtsfrei.
               <Link to={getNormLink('UrhG', '1.2.4', '5-amtliche-werke')}>
                 <IconButton
-                  raised accent style={{ float: 'right' }}
+                  raised
+                  accent
+                  style={{ float: 'right' }}
                   icon={CenterFocusStrongIcon}
                 />
               </Link>

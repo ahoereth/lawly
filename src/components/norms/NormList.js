@@ -5,15 +5,16 @@ import { Link } from 'react-router';
 
 import { getNormLink } from '~/helpers';
 
-
 export default class NormList extends React.Component {
   static propTypes = {
-    nodes: ImmutableTypes.listOf(ImmutableTypes.mapContains({
-      norm: ImmutableTypes.mapContains({
-        title: PropTypes.string.isRequired,
-      }).isRequired,
-      children: ImmutableTypes.list,
-    })).isRequired,
+    nodes: ImmutableTypes.listOf(
+      ImmutableTypes.mapContains({
+        norm: ImmutableTypes.mapContains({
+          title: PropTypes.string.isRequired,
+        }).isRequired,
+        children: ImmutableTypes.list,
+      }),
+    ).isRequired,
   };
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -28,11 +29,13 @@ export default class NormList extends React.Component {
     const enumeration = norm.get('enumeration');
     return (
       <li key={enumeration || i}>
-        <Link to={getNormLink(groupkey, enumeration, title)}>{title}</Link>
+        <Link to={getNormLink(groupkey, enumeration, title)}>
+          {title}
+        </Link>
         {!children ? false : <NormList nodes={children} />}
       </li>
     );
-  }
+  };
 
   render() {
     const { nodes, ...otherProps } = this.props;

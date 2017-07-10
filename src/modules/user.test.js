@@ -4,11 +4,9 @@ import { List, Map, fromJS } from 'immutable';
 import mockStore, { mockApi } from '~/store/mockStore';
 import reducer, {
   SCOPE,
-
   LOGIN,
   LOGOUT,
   STAR,
-
   login,
   logout,
   star,
@@ -19,7 +17,6 @@ import reducer, {
   getSelectionAnnotations,
 } from './user';
 import { SCOPE as lawsSCOPE } from './laws';
-
 
 describe('user', () => {
   const localState = Map({
@@ -67,31 +64,39 @@ describe('user', () => {
     });
   });
 
-
   describe('actions', () => {
-    it('login() should dispatch LOGIN', (done) => {
+    it('login() should dispatch LOGIN', done => {
       const expectedAction = {
-        type: LOGIN, payload: {
+        type: LOGIN,
+        payload: {
           email: 'mail',
           laws: [{ groupkey: 'a' }],
         },
       };
       const store = mockStore(initialState);
       mockApi.reset(() => Promise.resolve(expectedAction.payload));
-      store.dispatch(login('mail', 'pw')).then((action) => {
-        expect(action).to.deep.equal(expectedAction);
-        expect(mockApi.auth).to.be.called.once;
-      }).then(done).catch(done);
+      store
+        .dispatch(login('mail', 'pw'))
+        .then(action => {
+          expect(action).to.deep.equal(expectedAction);
+          expect(mockApi.auth).to.be.called.once;
+        })
+        .then(done)
+        .catch(done);
     });
 
-    it('logout() should dispatch LOGOUT', (done) => {
+    it('logout() should dispatch LOGOUT', done => {
       const expectedAction = { type: LOGOUT, payload: undefined };
       const store = mockStore(initialState);
       mockApi.reset(() => Promise.resolve());
-      store.dispatch(logout('mail')).then((action) => {
-        expect(action).to.deep.equal(expectedAction);
-        expect(mockApi.unauth).to.be.called.once;
-      }).then(done).catch(done);
+      store
+        .dispatch(logout('mail'))
+        .then(action => {
+          expect(action).to.deep.equal(expectedAction);
+          expect(mockApi.unauth).to.be.called.once;
+        })
+        .then(done)
+        .catch(done);
     });
 
     it('star() should dispatch STAR', () => {
@@ -111,7 +116,6 @@ describe('user', () => {
     });
   });
 
-
   describe('selectors', () => {
     it('should provide getUser()', () => {
       const state = initialState.setIn([SCOPE, 'email'], 'foo');
@@ -125,34 +129,45 @@ describe('user', () => {
     });
 
     it('should provide getStarredUserLaws()', () => {
-      const state = initialState.setIn([SCOPE, 'laws'], fromJS([
-        { groupkey: 'a', enumeration: '0', starred: true },
-        { groupkey: 'a', enumeration: '1.3', starred: false },
-        { groupkey: 'c', enumeration: '0', starred: false },
-      ]));
+      const state = initialState.setIn(
+        [SCOPE, 'laws'],
+        fromJS([
+          { groupkey: 'a', enumeration: '0', starred: true },
+          { groupkey: 'a', enumeration: '1.3', starred: false },
+          { groupkey: 'c', enumeration: '0', starred: false },
+        ]),
+      );
       const starred = [{ groupkey: 'a', enumeration: '0', starred: true }];
       expect(getStarredUserLaws(state)).to.equal(fromJS(starred));
     });
 
     it('should provide getIndexStars()', () => {
-      const state = initialState.setIn([SCOPE, 'laws'], fromJS([
-        { groupkey: 'a', enumeration: '0', starred: true },
-        { groupkey: 'a', enumeration: '1.3', starred: false },
-        { groupkey: 'a', enumeration: '1.6', starred: true },
-        { groupkey: 'b', enumeration: '0', starred: true },
-        { groupkey: 'c', enumeration: '0', starred: false },
-      ]));
+      const state = initialState.setIn(
+        [SCOPE, 'laws'],
+        fromJS([
+          { groupkey: 'a', enumeration: '0', starred: true },
+          { groupkey: 'a', enumeration: '1.3', starred: false },
+          { groupkey: 'a', enumeration: '1.6', starred: true },
+          { groupkey: 'b', enumeration: '0', starred: true },
+          { groupkey: 'c', enumeration: '0', starred: false },
+        ]),
+      );
       expect(getIndexStars(state)).to.equal(Map({ a: 1, b: 0 }));
     });
 
     it('should provide getSelectionAnnotations()', () => {
-      const state = initialState.setIn([SCOPE, 'laws'], fromJS([
-        { groupkey: 'a', enumeration: '0', starred: true },
-        { groupkey: 'a', enumeration: '1.3', starred: false },
-        { groupkey: 'a', enumeration: '1.6', starred: true },
-        { groupkey: 'b', enumeration: '0', starred: true },
-        { groupkey: 'c', enumeration: '0', starred: false },
-      ])).setIn([lawsSCOPE, 'selected'], 'a');
+      const state = initialState
+        .setIn(
+          [SCOPE, 'laws'],
+          fromJS([
+            { groupkey: 'a', enumeration: '0', starred: true },
+            { groupkey: 'a', enumeration: '1.3', starred: false },
+            { groupkey: 'a', enumeration: '1.6', starred: true },
+            { groupkey: 'b', enumeration: '0', starred: true },
+            { groupkey: 'c', enumeration: '0', starred: false },
+          ]),
+        )
+        .setIn([lawsSCOPE, 'selected'], 'a');
       let target = state.getIn([SCOPE, 'laws']).take(3);
       target = Map(target.map(norm => norm.get('enumeration')).zip(target));
       expect(getSelectionAnnotations(state)).to.equal(target);

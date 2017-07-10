@@ -7,24 +7,45 @@ import { shallow, render } from 'enzyme';
 import { getNormLink } from '~/helpers';
 import NormList from './NormList';
 
-
 /* eslint-disable max-len */
 const props = {
   nodes: fromJS([
     { norm: { groupkey: 'a/b', enumeration: '0', title: 'Citron' } },
-    { norm: { groupkey: 'a/b', enumeration: '1', title: 'Clementine' }, children: [
-      { norm: { groupkey: 'a/b', enumeration: '1.1', title: 'Grapefruit' } },
-      { norm: { groupkey: 'a/b', enumeration: '1.2', title: 'Blood Orange' }, children: [
-        { norm: { groupkey: 'a/b', enumeration: '1.2.1', title: 'Kumquat' } },
-      ] },
-    ] },
+    {
+      norm: { groupkey: 'a/b', enumeration: '1', title: 'Clementine' },
+      children: [
+        { norm: { groupkey: 'a/b', enumeration: '1.1', title: 'Grapefruit' } },
+        {
+          norm: { groupkey: 'a/b', enumeration: '1.2', title: 'Blood Orange' },
+          children: [
+            {
+              norm: {
+                groupkey: 'a/b',
+                enumeration: '1.2.1',
+                title: 'Kumquat',
+              },
+            },
+          ],
+        },
+      ],
+    },
     { norm: { groupkey: 'a/b', enumeration: '2', title: 'Lemon' } },
-    { norm: { groupkey: 'a/b', enumeration: '3', title: 'Lime' }, children: [
-      { norm: { groupkey: 'a/b', enumeration: '3.1', title: 'Mandarin' }, children: [
-        { norm: { groupkey: 'a/b', enumeration: '3.1.1', title: 'Orange' } },
-        { norm: { groupkey: 'a/b', enumeration: '3.1.2', title: 'Pomelo' } },
-      ] },
-    ] },
+    {
+      norm: { groupkey: 'a/b', enumeration: '3', title: 'Lime' },
+      children: [
+        {
+          norm: { groupkey: 'a/b', enumeration: '3.1', title: 'Mandarin' },
+          children: [
+            {
+              norm: { groupkey: 'a/b', enumeration: '3.1.1', title: 'Orange' },
+            },
+            {
+              norm: { groupkey: 'a/b', enumeration: '3.1.2', title: 'Pomelo' },
+            },
+          ],
+        },
+      ],
+    },
     { norm: { groupkey: 'a/b', enumeration: '3.2', title: 'Tangerine' } },
   ]),
 };
@@ -39,7 +60,7 @@ describe('NormList', () => {
 
   it('all items have a link', () => {
     expect(wrapper.children()).to.have.lengthOf(5);
-    wrapper.find('>li').forEach((li) => {
+    wrapper.find('>li').forEach(li => {
       expect(li.find('Link')).to.have.lengthOf(1);
     });
   });

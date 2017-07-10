@@ -2,7 +2,6 @@ import React, { PropTypes } from 'react';
 import { FABButton, Button } from 'react-mdl';
 import cn from 'classnames';
 
-
 const IconButton = ({
   raised = false,
   icon,
@@ -15,8 +14,15 @@ const IconButton = ({
   if (raised) {
     return (
       <FABButton
-        ripple mini
-        style={{ width: 32, minWidth: 32, height: 32, minHeight: 32, ...style }}
+        ripple
+        mini
+        style={{
+          width: 32,
+          minWidth: 32,
+          height: 32,
+          minHeight: 32,
+          ...style,
+        }}
         {...rest}
       >
         {ico}
@@ -43,6 +49,5 @@ IconButton.propTypes = {
   icon: PropTypes.func.isRequired,
   style: PropTypes.object, // eslint-disable-line react/forbid-prop-types
 };
-
 
 export default IconButton;

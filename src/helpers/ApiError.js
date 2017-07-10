@@ -1,7 +1,7 @@
 function ApiError(message = 'API request rejected.') {
   this.name = 'ApiError';
   this.message = message;
-  this.stack = (new Error()).stack;
+  this.stack = new Error().stack;
 }
 
 ApiError.prototype = Object.create(Error.prototype);

@@ -5,7 +5,7 @@ const worker = self;
 
 const search = new LocalSearchWorker();
 
-worker.onmessage = function (e) {
+worker.onmessage = function onMessage(e) {
   const { type, id, cmd, args } = e.data;
 
   // This receives messages in both directions -- ignore outgoing.

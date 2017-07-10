@@ -10,7 +10,6 @@ import localSearch from './LocalSearch';
 import ApiError from './ApiError';
 import { joinPath, parseJWT, obj2query } from './utils';
 
-
 export default class ApiClient {
   static NO_CONNECTION_NO_CACHE = 'NO_CONNECTION_NO_CACHE';
 
@@ -45,8 +44,10 @@ export default class ApiClient {
     this.store = store;
 
     // Initialize authentication.
-    this.storage.auth().then((token) => {
-      if (!token) { return; }
+    this.storage.auth().then(token => {
+      if (!token) {
+        return;
+      }
       this.setAuthToken(token);
       const { payload } = parseJWT(token);
       this.store.dispatch(login(payload.email));
@@ -54,20 +55,25 @@ export default class ApiClient {
   }
 
   isConnected(status = null) {
-    if (status !== null) { // set
+    if (status !== null) {
+      // set
       if (this.online !== status) {
         this.store.dispatch(setOnline(status));
         clearInterval(this.networkCheck);
         if (status) {
-          this.networkCheck = this.isNode || setInterval(
-            () => this.fetch({ method: 'get', name: 'base' }),
-            20000,
-          );
+          this.networkCheck =
+            this.isNode ||
+            setInterval(
+              () => this.fetch({ method: 'get', name: 'base' }),
+              20000,
+            );
         } else {
-          this.networkCheck = this.isNode || setInterval(
-            () => this.fetch({ method: 'get', name: 'base' }),
-            2500,
-          );
+          this.networkCheck =
+            this.isNode ||
+            setInterval(
+              () => this.fetch({ method: 'get', name: 'base' }),
+              2500,
+            );
         }
       }
 
@@ -76,7 +82,7 @@ export default class ApiClient {
       if (this.online) {
         // Refire the earliest failed request if any. This triggers a loop
         // which will fire off all outstanding one by one.
-        this.storage.popRequest().then((request) => {
+        this.storage.popRequest().then(request => {
           if (request) {
             this.fetch(request);
           }
@@ -112,13 +118,15 @@ export default class ApiClient {
     }
 
     return {
-      method, name, action, cachable,
+      method,
+      name,
+      action,
+      cachable,
       params: filter(params, x => !isUndefined(x)),
       url: joinPath(this.apiurl, path),
       body: method !== 'get' ? body : undefined,
     };
   }
-
 
   /**
    * Sets the authorization header used in all future requests and saves the
@@ -149,7 +157,7 @@ export default class ApiClient {
       return response.text();
     }
 
-    return response.json().then((result) => {
+    return response.json().then(result => {
       const { status, message, data, token } = result;
 
       if (!status) {
@@ -158,7 +166,9 @@ export default class ApiClient {
       }
 
       // Refresh token if one is provided.
-      if (token) { this.setAuthToken(token); }
+      if (token) {
+        this.setAuthToken(token);
+      }
 
       // Handle response accordingly to status.
       switch (status) {
@@ -185,54 +195,70 @@ export default class ApiClient {
    */
   fetch(options, raise = true) {
     const {
-      url, body, name, params, method, action, cachable,
+      url,
+      body,
+      name,
+      params,
+      method,
+      action,
+      cachable,
     } = this.parseFetchOptions(options);
 
-    const fetchRemote = (dispatch = false) => fetch(url, {
-      method,
-      body: JSON.stringify(body),
-      headers: {
-        ...ApiClient.jsonHeaders,
-        ...this.headers,
-        ...options.headers,
-      },
-    }).then(res => this.parseResponse(res)).then((data) => {
-      this.isConnected(true);
-      if (cachable) {
-        const expire = Date.now() + (1 * 24 * 60 * 60 * 1000); // TOMORROW
-        this.storage.stash({ name, method, ...params }, { expire, data });
-      }
+    const fetchRemote = (dispatch = false) =>
+      fetch(url, {
+        method,
+        body: JSON.stringify(body),
+        headers: {
+          ...ApiClient.jsonHeaders,
+          ...this.headers,
+          ...options.headers,
+        },
+      })
+        .then(res => this.parseResponse(res))
+        .then(data => {
+          this.isConnected(true);
+          if (cachable) {
+            const expire = Date.now() + 1 * 24 * 60 * 60 * 1000; // TOMORROW
+            this.storage.stash({ name, method, ...params }, { expire, data });
+          }
 
-      if (dispatch) {
-        this.store.dispatch({ type: action, payload: data });
-      }
+          if (dispatch) {
+            this.store.dispatch({ type: action, payload: data });
+          }
 
-      return data;
-    }).catch((err) => {
-      if (err.name !== 'ApiError') {
-        this.storage.stashRequest(options)
-          .then(() => this.isConnected(false));
-      }
+          return data;
+        })
+        .catch(err => {
+          if (err.name !== 'ApiError') {
+            this.storage
+              .stashRequest(options)
+              .then(() => this.isConnected(false));
+          }
 
-      if (this.DEBUG) { // eslint-disable-next-line no-console
-        console.err('Could not fetch:', this.parseFetchOptions(options));
-        throw err;
-      } else { // eslint-disable-next-line no-console
-        console.warn('Could not fetch from remote:', name, params);
-        if (raise) {
-          throw err;
-        }
-      }
-    });
+          if (this.DEBUG) {
+            // eslint-disable-next-line no-console
+            console.err('Could not fetch:', this.parseFetchOptions(options));
+            throw err;
+          } else {
+            // eslint-disable-next-line no-console
+            console.warn('Could not fetch from remote:', name, params);
+            if (raise) {
+              throw err;
+            }
+          }
+        });
 
     if (cachable) {
-      return this.storage.get({ name, method, ...params }).then((cache) => {
-        if (Date.now() > cache.expire) {
-          fetchRemote(true); // Update cache and dispatch fresh data.
-        }
+      return this.storage
+        .get({ name, method, ...params })
+        .then(cache => {
+          if (Date.now() > cache.expire) {
+            fetchRemote(true); // Update cache and dispatch fresh data.
+          }
 
-        return cache.data;
-      }).catch(() => fetchRemote());
+          return cache.data;
+        })
+        .catch(() => fetchRemote());
     }
 
     return fetchRemote();
@@ -292,25 +318,31 @@ export default class ApiClient {
   auth(email, password = undefined, signup = false) {
     return this.post({ name: 'users', email, password, signup }, true)
       .then(result => this.storage.stash(email, result))
-      .catch((err) => {
+      .catch(err => {
         if (err.name === 'ApiError') {
           this.unauth(email, { localOnly: true });
           throw err;
         } else {
-          return this.storage.get(email).catch((err) => {
+          return this.storage.get(email).catch(e => {
             this.unauth(email, true);
-            throw err;
+            throw e;
           });
         }
       })
-      .then((result) => {
+      .then(result => {
         // Fetch all starred laws and insert them into the redux store.
         const groupkeys = uniq(result.laws.map(law => law.groupkey));
-        Promise.all(groupkeys.map(groupkey => (
-          this.get({ name: 'law', groupkey, cachable: true })
-        ))).then(laws => this.store.dispatch(batchActions(
-          laws.map(payload => ({ type: FETCH_SINGLE, payload })),
-        )));
+        Promise.all(
+          groupkeys.map(groupkey =>
+            this.get({ name: 'law', groupkey, cachable: true }),
+          ),
+        ).then(laws =>
+          this.store.dispatch(
+            batchActions(
+              laws.map(payload => ({ type: FETCH_SINGLE, payload })),
+            ),
+          ),
+        );
 
         return result;
       });
@@ -325,8 +357,9 @@ export default class ApiClient {
    */
   unauth(email, { localOnly = false, deleteUser = false }) {
     const resource = deleteUser ? 'users' : 'user_sessions';
-    const req = !localOnly ? this.remove({ name: resource, email })
-                           : Promise.resolve();
+    const req = !localOnly
+      ? this.remove({ name: resource, email })
+      : Promise.resolve();
     this.storage.remove(email);
     this.setAuthToken();
     return req;

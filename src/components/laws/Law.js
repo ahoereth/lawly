@@ -11,7 +11,6 @@ import { NormList, Norms } from '~/components/norms';
 import { getNormLink } from '~/helpers';
 import styles from './law.sss';
 
-
 export default class Law extends React.Component {
   static propTypes = {
     annotations: ImmutableTypes.mapOf(ImmutableTypes.map).isRequired,
@@ -48,7 +47,7 @@ export default class Law extends React.Component {
       fullscreenIndex: !this.state.fullscreenIndex,
       fullscreenNorms: false,
     });
-  }
+  };
 
   render() {
     const { fullscreenIndex, fullscreenNorms } = this.state;
@@ -57,8 +56,8 @@ export default class Law extends React.Component {
 
     return (
       <Grid>
-        {fullscreenIndex || (
-          <Cell col={fullscreenNorms ? 12 : 8} className='law'>
+        {fullscreenIndex ||
+          <Cell col={fullscreenNorms ? 12 : 8} className="law">
             <Norms
               annotations={annotations}
               className={styles.norms}
@@ -67,22 +66,22 @@ export default class Law extends React.Component {
               nodes={norms}
               star={star}
             />
-          </Cell>
-        )}
-        {fullscreenNorms || (
-          <Cell col={fullscreenIndex ? 12 : 4} className='law-sidebar'>
+          </Cell>}
+        {fullscreenNorms ||
+          <Cell col={fullscreenIndex ? 12 : 4} className="law-sidebar">
             <Card className={styles.normlist} shadow={1}>
-              <CardTitle><h2>Inhaltsübersicht</h2></CardTitle>
-              <CardText><NormList nodes={norms.slice(1)} /></CardText>
+              <CardTitle>
+                <h2>Inhaltsübersicht</h2>
+              </CardTitle>
+              <CardText>
+                <NormList nodes={norms.slice(1)} />
+              </CardText>
             </Card>
-          </Cell>
-        )}
-        <Link
-          to={getNormLink(groupkey)}
-          style={{ color: 'inherit' }}
-        >
+          </Cell>}
+        <Link to={getNormLink(groupkey)} style={{ color: 'inherit' }}>
           <FABButton
-            raised ripple
+            raised
+            ripple
             className={styles.fab}
             onClick={this.toggleFullscreenIndex}
           >

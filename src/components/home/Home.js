@@ -5,24 +5,21 @@ import { Grid, Cell, Card } from 'react-mdl';
 import { LawList } from '~/components/laws';
 import Landing from './Landing';
 
-
-const Home = ({ user, laws, login, logout }) => (
+const Home = ({ user, laws, login, logout }) =>
   <div>
-    {user.get('loggedin') && (
+    {user.get('loggedin') &&
       <Grid>
         <Cell col={10} offsetDesktop={1} tablet={6} offsetTablet={1} phone={6}>
           <Card shadow={1}>
             <LawList
               laws={laws}
-              emptysetMessage='Hier werden deine gespeicherten Gesetze erscheinen.'
+              emptysetMessage="Hier werden deine gespeicherten Gesetze erscheinen."
             />
           </Card>
         </Cell>
-      </Grid>
-    )}
+      </Grid>}
     <Landing login={login} logout={logout} user={user} />
-  </div>
-);
+  </div>;
 
 Home.propTypes = {
   laws: ImmutableTypes.list.isRequired,
@@ -33,6 +30,5 @@ Home.propTypes = {
     loggedin: PropTypes.bool.isRequired,
   }).isRequired,
 };
-
 
 export default Home;

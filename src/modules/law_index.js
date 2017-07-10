@@ -7,9 +7,7 @@ import createReducer from '~/store/createReducer';
 import { escapeStringRegexp } from '~/helpers';
 import { getIndexStars } from './user';
 
-
 export const SCOPE = 'law_index';
-
 
 // ******************************************************************
 // ACTIONS
@@ -20,39 +18,38 @@ export const SELECT_COLLECTION = 'law_index/SELECT_COLLECTION';
 export const FILTER = 'law_index/FILTER';
 export const SHOW_TOGGLES = 'law_index/SHOW_TOGGLES';
 
-
-
 // ******************************************************************
 // REDUCERS
-export default createReducer(Map({
-  collections: List(),
-  collection: undefined,
-  error: undefined,
-  filters: Map(),
-  initials: List(),
-  initial: '',
-  laws: List(),
-  page: 1,
-  pageSize: 25,
-  total: -1,
-  showToggles: false,
-}), {
-  [FETCH]: (state, { payload: { initials, index, collections, total } }) => (
-    state.merge({
-      initials: List(initials || []),
-      laws: Immutable.fromJS(index || []),
-      collections: Immutable.fromJS(collections || []),
-      total,
-    })
-  ),
-  [SHOW_TOGGLES]: (state, { payload }) => state.set('showToggles', payload),
-  [SELECT_COLLECTION]: (state, { payload }) => state.set('collection', payload),
-  [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),
-  [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
-  [FILTER]: (state, { payload }) => state.mergeIn(['filters'], Map(payload)),
-});
-
-
+export default createReducer(
+  Map({
+    collections: List(),
+    collection: undefined,
+    error: undefined,
+    filters: Map(),
+    initials: List(),
+    initial: '',
+    laws: List(),
+    page: 1,
+    pageSize: 25,
+    total: -1,
+    showToggles: false,
+  }),
+  {
+    [FETCH]: (state, { payload: { initials, index, collections, total } }) =>
+      state.merge({
+        initials: List(initials || []),
+        laws: Immutable.fromJS(index || []),
+        collections: Immutable.fromJS(collections || []),
+        total,
+      }),
+    [SHOW_TOGGLES]: (state, { payload }) => state.set('showToggles', payload),
+    [SELECT_COLLECTION]: (state, { payload }) =>
+      state.set('collection', payload),
+    [SELECT_INITIAL]: (state, { payload }) => state.set('initial', payload),
+    [SELECT_PAGE]: (state, { payload }) => state.set('page', payload),
+    [FILTER]: (state, { payload }) => state.mergeIn(['filters'], Map(payload)),
+  },
+);
 
 // ******************************************************************
 // ACTION CREATORS
@@ -61,28 +58,31 @@ export const fetchLawIndex = params => ({
   api: { method: 'get', name: 'laws', cachable: true, ...params },
 });
 
-export const showToggles = (state = true) => (
-  { type: SHOW_TOGGLES, payload: !!state }
-);
+export const showToggles = (state = true) => ({
+  type: SHOW_TOGGLES,
+  payload: !!state,
+});
 
-export const select = options => (dispatch) => {
+export const select = options => dispatch => {
   const { collection, initial = '', page = 1 } = options;
-  dispatch(batchActions([
-    { type: SELECT_COLLECTION, payload: collection },
-    { type: SELECT_INITIAL, payload: initial.toLowerCase() },
-    { type: SELECT_PAGE, payload: parseInt(page, 10) },
-  ]));
+  dispatch(
+    batchActions([
+      { type: SELECT_COLLECTION, payload: collection },
+      { type: SELECT_INITIAL, payload: initial.toLowerCase() },
+      { type: SELECT_PAGE, payload: parseInt(page, 10) },
+    ]),
+  );
 };
 
-export const filterLawIndex = (filters = {}) => (dispatch) => {
+export const filterLawIndex = (filters = {}) => dispatch => {
   const payload = pick(filters, ['starred', 'title', 'groupkey']);
-  dispatch(batchActions([
-    { type: FILTER, payload },
-    { type: SELECT_PAGE, payload: 1 },
-  ]));
+  dispatch(
+    batchActions([
+      { type: FILTER, payload },
+      { type: SELECT_PAGE, payload: 1 },
+    ]),
+  );
 };
-
-
 
 // ******************************************************************
 // SELECTORS
@@ -119,7 +119,9 @@ export const getCollectionTitles = createSelector(
 export const getCollection = createSelector(
   [getCollections, getCollectionTitle],
   (collections, title) => {
-    if (!title) { return Map(); }
+    if (!title) {
+      return Map();
+    }
     const result = collections.find(coll => coll.get('title') === title);
     return result || Map();
   },
@@ -128,8 +130,12 @@ export const getCollection = createSelector(
 export const getLawsByCollection = createSelector(
   [getLawIndex, getCollection],
   (laws, collection) => {
-    if (!collection.has('laws')) { return laws; }
-    const keys = collection.get('laws').map(groupkey => groupkey.toLowerCase());
+    if (!collection.has('laws')) {
+      return laws;
+    }
+    const keys = collection
+      .get('laws')
+      .map(groupkey => groupkey.toLowerCase());
     return laws.filter(l => keys.includes(l.get('groupkey').toLowerCase()));
   },
 );
@@ -137,7 +143,9 @@ export const getLawsByCollection = createSelector(
 export const getLawsByInitial = createSelector(
   [getLawsByCollection, getInitial],
   (laws, char) => {
-    if (!char) { return laws; }
+    if (!char) {
+      return laws;
+    }
     const pattern = new RegExp(`^${char}`, 'i');
     return laws.filter(law => pattern.test(law.get('groupkey')));
   },
