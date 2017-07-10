@@ -2,14 +2,29 @@ version: "3.3"
 services:
   web:
     external_links:
-      - nginx-ssl  # From api/docker-compose.prod.yaml
+      - letsencrypt  # From api/docker-compose.prod.yaml
     ports:
       - 8000:8000
     environment:
-      VIRTUAL_HOST: lawly.org,www.lawly.org
+      VIRTUAL_HOST: www.lawly.org
       VIRTUAL_PORT: 8000
       LETSENCRYPT_EMAIL: letsencrypt@lawly.org
       LETSENCRYPT_HOST: lawly.org,www.lawly.org
-      LETSENCRYPT_TEST: "true"   # Staging Certs!
-      ACME_CA_URI: https://acme-staging.api.letsencrypt.org/directory  # Staging Certs!
-      DEBUG: "true"
+      # LETSENCRYPT_TEST: "true"   # Staging Certs!
+      # ACME_CA_URI: https://acme-staging.api.letsencrypt.org/directory  # Staging Certs!
+      # DEBUG: "true"
+
+  redirect:
+    image: julusian/nginx-redirect
+    container_name: www-redirect
+    environment:
+      REDIRECT_URL: www.lawly.org
+      HOSTNAME: lawly.org
+      VIRTUAL_HOST: lawly.org
+      LETSENCRYPT_EMAIL: letsencrypt@lawly.org
+      LETSENCRYPT_HOST: lawly.org,www.lawly.org
+
+networks:
+  default:
+    external:
+      name: nginx
